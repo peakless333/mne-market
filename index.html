@@ -242,11 +242,11 @@
 
                 for (const file of files) {
                     const fileExt = file.name.split('.').pop();
-                    // Исправлено: убран пробел и использован substring без ошибок
                     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
                     
+                    // Исправлено на правильное имя бакета: 'post-images'
                     const { data: uploadData, error: uploadError } = await supabaseClient.storage
-                        .from('posts')
+                        .from('post-images')
                         .upload(fileName, file);
 
                     if (uploadError) {
@@ -257,7 +257,7 @@
 
                     if (uploadData) {
                         const { data: publicUrlData } = supabaseClient.storage
-                            .from('posts')
+                            .from('post-images')
                             .getPublicUrl(fileName);
                     
                         if (publicUrlData && publicUrlData.publicUrl) {
