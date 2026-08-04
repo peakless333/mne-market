@@ -12,6 +12,11 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
+    <!-- Toast уведомление -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900/95 backdrop-blur-md text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-xl z-50 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none flex items-center gap-2">
+        <span id="toastText">Уведомление</span>
+    </div>
+
     <!-- Шапка сайта -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
@@ -75,12 +80,16 @@
                     <button onclick="setCategory('furniture')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-cat="furniture" data-i18n="cat_furniture">Мебель</button>
                     <button onclick="setCategory('tech')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-cat="tech" data-i18n="cat_tech">Техника</button>
                     <button onclick="setCategory('auto')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-cat="auto" data-i18n="cat_auto">Авто</button>
-                    <button onclick="setCategory('clothes')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-cat="clothes" data-i18n="cat_clothes">Одежда</option>
-                    <button onclick="setCategory('other')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-cat="other" data-i18n="cat_other">Разное</option>
+                    <button onclick="setCategory('clothes')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-cat="clothes" data-i18n="cat_clothes">Одежда</button>
+                    <button onclick="setCategory('other')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-cat="other" data-i18n="cat_other">Разное</button>
                 </div>
 
-                <!-- Сортировка и кнопка сброса -->
-                <div class="flex items-center gap-2 shrink-0">
+                <!-- Доп. фильтры, счетчик и сортировка -->
+                <div class="flex items-center justify-between md:justify-end gap-2 shrink-0">
+                    <button id="freeFilterBtn" onclick="toggleFreeFilter()" class="text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1">
+                        <i data-lucide="gift" class="w-3.5 h-3.5 text-emerald-600"></i> <span data-i18n="freeOnly">Бесплатно</span>
+                    </button>
+
                     <button id="resetFiltersBtn" onclick="resetAllFilters()" class="hidden text-xs font-semibold text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="resetFilters">Сбросить</span>
                     </button>
@@ -93,6 +102,11 @@
                 </div>
 
             </div>
+        </div>
+
+        <!-- Строка со счетчиком результатов -->
+        <div class="flex items-center justify-between px-1">
+            <span id="resultsCountText" class="text-xs font-medium text-gray-500"></span>
         </div>
 
         <!-- Список объявлений -->
@@ -133,24 +147,30 @@
                 postAd: "Подать объявление", searchPh: "Поиск товаров...", allCities: "Все города",
                 cat_all: "Все", cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_other: "Разное",
                 sort_newest: "Сначала новые", sort_cheap: "Сначала дешевле", sort_expensive: "Сначала дороже",
-                resetFilters: "Сбросить", emptyTitle: "Ничего не найдено", emptyDesc: "Попробуйте изменить параметры поиска или сбросить фильтры.",
+                resetFilters: "Сбросить", freeOnly: "Бесплатно", emptyTitle: "Ничего не найдено", emptyDesc: "Попробуйте изменить параметры поиска или сбросить фильтры.",
                 free: "Бесплатно", newBadge: "NEW",
+                addedToFav: "Добавлено в избранное ❤️", removedFromFav: "Удалено из избранного",
+                foundCount: (n) => `Найдено объявлений: ${n}`,
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
             en: {
                 postAd: "Post ad", searchPh: "Search items...", allCities: "All cities",
                 cat_all: "All", cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_other: "Other",
                 sort_newest: "Newest first", sort_cheap: "Cheapest first", sort_expensive: "Most expensive",
-                resetFilters: "Reset", emptyTitle: "No items found", emptyDesc: "Try changing your search parameters or reset filters.",
+                resetFilters: "Reset", freeOnly: "Free", emptyTitle: "No items found", emptyDesc: "Try changing your search parameters or reset filters.",
                 free: "Free", newBadge: "NEW",
+                addedToFav: "Added to favorites ❤️", removedFromFav: "Removed from favorites",
+                foundCount: (n) => `Items found: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
             cnr: {
                 postAd: "Objavi oglas", searchPh: "Pretraga artikala...", allCities: "Svi gradovi",
                 cat_all: "Sve", cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_other: "Razno",
                 sort_newest: "Najnovije", sort_cheap: "Najjeftinije", sort_expensive: "Najskuplje",
-                resetFilters: "Resetuj", emptyTitle: "Nema rezultata", emptyDesc: "Pokušajte da promijenite parametre pretrage ili resetujte filtere.",
+                resetFilters: "Resetuj", freeOnly: "Besplatno", emptyTitle: "Nema rezultata", emptyDesc: "Pokušajte da promijenite parametre pretrage ili resetujte filtere.",
                 free: "Besplatno", newBadge: "NOVO",
+                addedToFav: "Dodato u omiljene ❤️", removedFromFav: "Uklonjeno iz omiljenih",
+                foundCount: (n) => `Pronađeno oglasa: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
         };
@@ -161,8 +181,22 @@
         let selectedCategory = 'all';
         let searchQuery = '';
         let showOnlyFavorites = false;
+        let showOnlyFree = false;
         let favorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
         let searchTimeout = null;
+        let toastTimeout = null;
+
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toastText');
+            toastText.innerText = text;
+            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }, 1500);
+        }
 
         function changeLanguage(lang) {
             currentLang = lang;
@@ -174,11 +208,8 @@
             });
 
             document.getElementById('searchInput').placeholder = dict[lang].searchPh;
-
-            // Перевод кнопки "Все города"
             document.querySelector('[data-city="all"]').innerText = dict[lang].allCities;
 
-            // Перевод названий городов в фильтрах
             const citiesObj = dict[lang].cities;
             for (const [code, name] of Object.entries(citiesObj)) {
                 const btn = document.querySelector(`[data-city="${code}"]`);
@@ -207,8 +238,10 @@
             const index = favorites.indexOf(id);
             if (index > -1) {
                 favorites.splice(index, 1);
+                showToast(dict[currentLang].removedFromFav);
             } else {
                 favorites.push(id);
+                showToast(dict[currentLang].addedToFav);
             }
             localStorage.setItem('mne_favorites', JSON.stringify(favorites));
             updateFavoritesBadge();
@@ -223,6 +256,19 @@
             } else {
                 btn.classList.remove('bg-rose-50', 'border', 'border-rose-200');
             }
+            checkResetButtonVisibility();
+            renderPosts();
+        }
+
+        function toggleFreeFilter() {
+            showOnlyFree = !showOnlyFree;
+            const btn = document.getElementById('freeFilterBtn');
+            if (showOnlyFree) {
+                btn.classList.add('bg-emerald-50', 'border', 'border-emerald-200', 'text-emerald-700');
+            } else {
+                btn.classList.remove('bg-emerald-50', 'border', 'border-emerald-200', 'text-emerald-700');
+            }
+            checkResetButtonVisibility();
             renderPosts();
         }
 
@@ -263,7 +309,7 @@
 
         function checkResetButtonVisibility() {
             const resetBtn = document.getElementById('resetFiltersBtn');
-            if (selectedCity !== 'all' || selectedCategory !== 'all' || searchQuery !== '' || showOnlyFavorites) {
+            if (selectedCity !== 'all' || selectedCategory !== 'all' || searchQuery !== '' || showOnlyFavorites || showOnlyFree) {
                 resetBtn.classList.remove('hidden');
                 resetBtn.classList.add('flex');
             } else {
@@ -277,8 +323,10 @@
             selectedCategory = 'all';
             searchQuery = '';
             showOnlyFavorites = false;
+            showOnlyFree = false;
             document.getElementById('searchInput').value = '';
             document.getElementById('favoritesHeaderBtn').classList.remove('bg-rose-50', 'border', 'border-rose-200');
+            document.getElementById('freeFilterBtn').classList.remove('bg-emerald-50', 'border', 'border-emerald-200', 'text-emerald-700');
             setCity('all');
             setCategory('all');
             checkResetButtonVisibility();
@@ -304,21 +352,24 @@
             const container = document.getElementById('postsContainer');
             const emptyState = document.getElementById('emptyState');
             const sortBy = document.getElementById('sortSelect').value;
+            const countText = document.getElementById('resultsCountText');
 
             let filtered = posts.filter(post => {
                 if (selectedCity !== 'all' && post.city !== selectedCity) return false;
                 if (selectedCategory !== 'all' && post.category !== selectedCategory) return false;
                 if (showOnlyFavorites && !favorites.includes(post.id)) return false;
+                if (showOnlyFree && Number(post.price || 0) > 0) return false;
                 if (searchQuery && !post.title.toLowerCase().includes(searchQuery) && !post.description.toLowerCase().includes(searchQuery)) return false;
                 return true;
             });
 
-            // Сортировка
             filtered.sort((a, b) => {
                 if (sortBy === 'cheap') return (a.price || 0) - (b.price || 0);
                 if (sortBy === 'expensive') return (b.price || 0) - (a.price || 0);
                 return new Date(b.created_at || 0) - new Date(a.created_at || 0);
             });
+
+            countText.innerText = dict[currentLang].foundCount(filtered.length);
 
             if (filtered.length === 0) {
                 container.innerHTML = '';
@@ -336,8 +387,6 @@
                 const cityName = citiesMap[post.city] || post.city;
                 const priceText = post.price > 0 ? `${post.price} €` : dict[currentLang].free;
                 const imageUrl = post.image_url || (post.images && post.images[0]) || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
-                
-                // Проверка на свежесть (менее 48 часов)
                 const isNew = post.created_at && (now - new Date(post.created_at) < 48 * 3600 * 1000);
 
                 return `
