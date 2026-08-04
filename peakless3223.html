@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNE Market — Барахолка Черногории</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-24">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl">🇲🇪</span>
+            <h1 class="font-bold text-xl tracking-tight text-slate-900">MNE Market</h1>
+        </div>
+        <!-- Выбор города -->
+        <select id="cityFilter" class="bg-gray-100 text-sm font-medium border-0 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="all">Все города</option>
+            <option value="Будва">Будва</option>
+            <option value="Бар">Бар</option>
+            <option value="Тиват">Тиват</option>
+            <option value="Котор">Котор</option>
+            <option value="Подгорица">Подгорица</option>
+            <option value="Херцег-Нови">Херцег-Нови</option>
+        </select>
+    </header>
+
+    <!-- Поиск и категории -->
+    <section class="p-4 bg-white border-b border-gray-100 sticky top-[57px] z-30">
+        <!-- Поиск -->
+        <div class="relative mb-3">
+            <i data-lucide="search" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
+            <input type="text" id="searchInput" placeholder="Поиск вещей, мебели, авто..." class="w-full bg-gray-100 pl-10 pr-4 py-2 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+        </div>
+
+        <!-- Чипсы категорий -->
+        <div class="flex gap-2 overflow-x-auto no-scrollbar py-1 text-sm font-medium" id="categoryChips">
+            <button data-cat="all" class="cat-chip active px-4 py-1.5 bg-blue-600 text-white rounded-full whitespace-nowrap">Все</button>
+            <button data-cat="Даром" class="cat-chip px-4 py-1.5 bg-emerald-100 text-emerald-800 rounded-full whitespace-nowrap">🎁 Отдам даром</button>
+            <button data-cat="Мебель" class="cat-chip px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full whitespace-nowrap">Мебель</button>
+            <button data-cat="Техника" class="cat-chip px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full whitespace-nowrap">Техника</button>
+            <button data-cat="Детское" class="cat-chip px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full whitespace-nowrap">Детское</button>
+            <button data-cat="Авто" class="cat-chip px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full whitespace-nowrap">Авто / Мото</button>
+        </div>
+    </section>
+
+    <!-- Сетка товаров -->
+    <main class="p-4 max-w-5xl mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="productsGrid">
+            <!-- Сюда JavaScript будет подгружать объявления из базы -->
+            <div class="col-span-full text-center py-12 text-gray-400">
+                Загрузка объявлений...
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно: Подача объявления -->
+    <div id="addModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-6 shadow-xl animate-in slide-in-from-bottom">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-900">Подать объявление</h2>
+                <button id="closeModalBtn" class="p-2 text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <form id="addPostForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Название товара *</label>
+                    <input type="text" id="postTitle" required placeholder="Например: Диван IKEA" class="w-full bg-gray-100 border-0 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Цена (€) *</label>
+                        <input type="number" id="postPrice" placeholder="0 = Даром" class="w-full bg-gray-100 border-0 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Город *</label>
+                        <select id="postCity" class="w-full bg-gray-100 border-0 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Будва">Будва</option>
+                            <option value="Бар">Бар</option>
+                            <option value="Тиват">Тиват</option>
+                            <option value="Котор">Котор</option>
+                            <option value="Подгорица">Подгорица</option>
+                            <option value="Херцег-Нови">Херцег-Нови</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Категория *</label>
+                    <select id="postCategory" class="w-full bg-gray-100 border-0 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Мебель">Мебель</option>
+                        <option value="Техника">Техника</option>
+                        <option value="Детское">Детское</option>
+                        <option value="Авто">Авто / Мото</option>
+                        <option value="Одежда">Одежда</option>
+                        <option value="Разное">Разное</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Ссылка на фото (URL)</label>
+                    <input type="url" id="postImage" placeholder="https://..." class="w-full bg-gray-100 border-0 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    <span class="text-[10px] text-gray-400">Пока можно вставить прямую ссылку на фото</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Ваш Telegram Username *</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3 text-gray-400 text-sm">@</span>
+                        <input type="text" id="postTg" required placeholder="durov" class="w-full bg-gray-100 border-0 pl-8 pr-3 py-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Описание</label>
+                    <textarea id="postDesc" rows="3" placeholder="Состояние, условия самовывоза..." class="w-full bg-gray-100 border-0 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold p-3.5 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30">
+                    Опубликовать объявление
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Нижняя навигация (Fixed Bottom Bar) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-2 flex justify-around items-center z-40">
+        <button class="flex flex-col items-center text-blue-600">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-[10px] mt-1 font-medium">Главная</span>
+        </button>
+        <button id="openModalBtn" class="flex flex-col items-center text-gray-400 hover:text-gray-600">
+            <div class="bg-blue-600 text-white p-3 rounded-full -mt-6 shadow-lg border-4 border-gray-50 hover:bg-blue-700 transition-all">
+                <i data-lucide="plus" class="w-6 h-6"></i>
+            </div>
+            <span class="text-[10px] mt-0.5 font-medium text-gray-600">Продать</span>
+        </button>
+        <button class="flex flex-col items-center text-gray-400 hover:text-gray-600">
+            <i data-lucide="user" class="w-6 h-6"></i>
+            <span class="text-[10px] mt-1 font-medium">Профиль</span>
+        </button>
+    </nav>
+
+    <!-- Скрипт логики интерфейса -->
+    <script>
+        lucide.createIcons();
+
+        // Управление модалкой
+        const modal = document.getElementById('addModal');
+        const openBtn = document.getElementById('openModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+
+        openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+        closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) modal.classList.add('hidden');
+        });
+    </script>
+<script>
+    // Подключение к Supabase (Замени URL и KEY на свои)
+    const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co/rest/v1/';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const productsGrid = document.getElementById('productsGrid');
+    const addPostForm = document.getElementById('addPostForm');
+
+    // Функция загрузки объявлений из базы
+    async function loadPosts() {
+        const { data: posts, error } = await supabase
+            .from('posts')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Ошибка загрузки:', error);
+            productsGrid.innerHTML = `<div class="col-span-full text-center text-red-500">Не удалось загрузить данные</div>`;
+            return;
+        }
+
+        if (posts.length === 0) {
+            productsGrid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-12">Пока нет объявлений. Будьте первым!</div>`;
+            return;
+        }
+
+        renderPosts(posts);
+    }
+
+    // Функция отрисовки карточек
+    function renderPosts(posts) {
+        productsGrid.innerHTML = posts.map(post => {
+            const isFree = Number(post.price) === 0;
+            const priceTag = isFree 
+                ? `<span class="font-bold text-base text-emerald-600">Бесплатно</span>`
+                : `<span class="font-bold text-base text-blue-600">${post.price} €</span>`;
+
+            const img = post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
+
+            return `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col cursor-pointer hover:shadow-md transition-shadow">
+                    <div class="relative h-40 bg-gray-200">
+                        <img src="${img}" class="w-full h-full object-cover" alt="${post.title}">
+                        <span class="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded-md backdrop-blur-md">${post.city}</span>
+                        ${isFree ? `<span class="absolute top-2 left-2 bg-emerald-500 text-white font-medium text-xs px-2 py-0.5 rounded-md">Даром</span>` : ''}
+                    </div>
+                    <div class="p-3 flex flex-col flex-grow justify-between">
+                        <div>
+                            <h3 class="font-semibold text-sm line-clamp-1 text-gray-900">${post.title}</h3>
+                            <p class="text-xs text-gray-500 mt-1 line-clamp-2">${post.description || ''}</p>
+                        </div>
+                        <div class="mt-3 flex items-center justify-between">
+                            ${priceTag}
+                            <a href="https://t.me/${post.telegram_handle.replace('@', '')}" target="_blank" class="bg-blue-50 text-blue-600 p-1.5 rounded-lg hover:bg-blue-100">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        lucide.createIcons();
+    }
+
+    // Отправка новой формы
+    addPostForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const newPost = {
+            title: document.getElementById('postTitle').value,
+            price: document.getElementById('postPrice').value || 0,
+            city: document.getElementById('postCity').value,
+            category: document.getElementById('postCategory').value,
+            image_url: document.getElementById('postImage').value,
+            telegram_handle: document.getElementById('postTg').value,
+            description: document.getElementById('postDesc').value
+        };
+
+        const { error } = await supabase.from('posts').insert([newPost]);
+
+        if (error) {
+            alert('Ошибка при сохранении: ' + error.message);
+        } else {
+            addPostForm.reset();
+            document.getElementById('addModal').classList.add('hidden');
+            loadPosts(); // Обновляем список
+        }
+    });
+
+    // Запускаем загрузку при старте
+    loadPosts();
+</script>
+</body>
+</html>
