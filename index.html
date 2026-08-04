@@ -89,12 +89,7 @@
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formCity">Город</label>
                         <select id="postCity" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                            <option value="Будва">Budva</option>
-                            <option value="Бар">Bar</option>
-                            <option value="Тиват">Tivat</option>
-                            <option value="Подгорица">Podgorica</option>
-                            <option value="Котор">Kotor</option>
-                            <option value="Херцег-Нови">Herceg Novi</option>
+                            <!-- Заполняется динамически -->
                         </select>
                     </div>
                 </div>
@@ -103,11 +98,7 @@
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formCat">Категория</label>
                         <select id="postCategory" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                            <option value="Мебель">Мебель</option>
-                            <option value="Техника">Техника</option>
-                            <option value="Авто">Авто</option>
-                            <option value="Одежда">Одежда</option>
-                            <option value="Разное">Разное</option>
+                            <!-- Заполняется динамически -->
                         </select>
                     </div>
                     <div>
@@ -117,7 +108,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Фотографии (до 5 шт)</label>
+                    <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formPhotos">Фотографии (до 5 шт)</label>
                     <input type="file" id="postFiles" multiple accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                     <div id="imagePreviewContainer" class="grid grid-cols-5 gap-2 mt-3 hidden"></div>
                 </div>
@@ -146,22 +137,25 @@
                 sellBtn: "Продать", mainTitle: "Свежие объявления", mainSubtitle: "Покупки и продажи по всей Черногории",
                 catAll: "Всё", catFurniture: "🪑 Мебель", catTech: "💻 Техника", catAuto: "🚗 Авто", catClothes: "👕 Одежда", catOther: "📦 Разное",
                 loading: "Загрузка...", noPosts: "В этой категории пока нет объявлений", free: "Бесплатно",
-                modalTitle: "Новое объявление", formTitle: "Название", formPrice: "Цена (€)", formCity: "Город", formCat: "Категория", formTg: "Telegram Ник", formDesc: "Описание", formSubmit: "Опубликовать",
-                cities: { ALL: "Все города", Будва: "Будва", Бар: "Бар", Тиват: "Тиват", Подгорица: "Подгорица", Котор: "Котор", "Херцег-Нови": "Херцег-Нови" }
+                modalTitle: "Новое объявление", formTitle: "Название товара", formPrice: "Цена (€)", formCity: "Город", formCat: "Категория", formTg: "Telegram Ник", formPhotos: "Фотографии (до 5 шт)", formDesc: "Описание", formSubmit: "Опубликовать",
+                cities: { ALL: "Все города", Будва: "Будва", Бар: "Бар", Тиват: "Тиват", Подгорица: "Подгорица", Котор: "Котор", "Херцег-Нови": "Херцег-Нови" },
+                categories: { Мебель: "Мебель", Техника: "Техника", Авто: "Авто", Одежда: "Одежда", Разное: "Разное" }
             },
             en: {
                 sellBtn: "Sell", mainTitle: "Recent Listings", mainSubtitle: "Buy and sell across Montenegro",
                 catAll: "All", catFurniture: "🪑 Furniture", catTech: "💻 Tech", catAuto: "🚗 Auto", catClothes: "👕 Clothes", catOther: "📦 Other",
                 loading: "Loading...", noPosts: "No listings here yet", free: "Free",
-                modalTitle: "New Listing", formTitle: "Title", formPrice: "Price (€)", formCity: "City", formCat: "Category", formTg: "Telegram Handle", formDesc: "Description", formSubmit: "Publish",
-                cities: { ALL: "All cities", Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" }
+                modalTitle: "New Listing", formTitle: "Item Title", formPrice: "Price (€)", formCity: "City", formCat: "Category", formTg: "Telegram Handle", formPhotos: "Photos (up to 5)", formDesc: "Description", formSubmit: "Publish",
+                cities: { ALL: "All cities", Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" },
+                categories: { Мебель: "Furniture", Техника: "Electronics", Авто: "Vehicles", Одежда: "Clothing", Разное: "Other" }
             },
             cnr: {
                 sellBtn: "Prodaj", mainTitle: "Novi oglasi", mainSubtitle: "Kupovina i prodaja širom Crne Gore",
                 catAll: "Sve", catFurniture: "🪑 Namještaj", catTech: "💻 Tehnika", catAuto: "🚗 Auto", catClothes: "👕 Odjeća", catOther: "📦 Razno",
                 loading: "Učitavanje...", noPosts: "Trenutno nema oglasa u ovoj kategoriji", free: "Besplatno",
-                modalTitle: "Novi oglas", formTitle: "Naziv", formPrice: "Cijena (€)", formCity: "Grad", formCat: "Kategorija", formTg: "Telegram korisničko ime", formDesc: "Opis", formSubmit: "Objavi",
-                cities: { ALL: "Svi gradovi", Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" }
+                modalTitle: "Novi oglas", formTitle: "Naziv artikla", formPrice: "Cijena (€)", formCity: "Grad", formCat: "Kategorija", formTg: "Telegram korisničko ime", formPhotos: "Fotografije (do 5)", formDesc: "Opis", formSubmit: "Objavi",
+                cities: { ALL: "Svi gradovi", Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" },
+                categories: { Мебель: "Namještaj", Техника: "Tehnika", Авто: "Auto", Одежда: "Odjeća", Разное: "Razno" }
             }
         };
 
@@ -171,6 +165,8 @@
 
         const productsGrid = document.getElementById('productsGrid');
         const cityFilter = document.getElementById('cityFilter');
+        const postCity = document.getElementById('postCity');
+        const postCategory = document.getElementById('postCategory');
         const addModal = document.getElementById('addModal');
         const openModalBtn = document.getElementById('openModalBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -187,12 +183,27 @@
                 if (dict[lang][key]) el.innerText = dict[lang][key];
             });
 
-            // Перевод выпадающего списка городов
+            // Перевод выпадающего списка городов на главной
             const currentSelectedCity = cityFilter.value || 'ALL';
             cityFilter.innerHTML = Object.entries(dict[lang].cities).map(([val, label]) => 
                 `<option value="${val}">${label}</option>`
             ).join('');
             cityFilter.value = currentSelectedCity;
+
+            // Перевод городов в модальном окне
+            const currentModalCity = postCity.value || 'Будва';
+            postCity.innerHTML = Object.entries(dict[lang].cities)
+                .filter(([val]) => val !== 'ALL')
+                .map(([val, label]) => `<option value="${val}">${label}</option>`)
+                .join('');
+            postCity.value = currentModalCity;
+
+            // Перевод категорий в модальном окне
+            const currentModalCat = postCategory.value || 'Мебель';
+            postCategory.innerHTML = Object.entries(dict[lang].categories)
+                .map(([val, label]) => `<option value="${val}">${label}</option>`)
+                .join('');
+            postCategory.value = currentModalCat;
 
             renderPosts();
         }
@@ -233,6 +244,7 @@
                 const priceTag = isFree ? `<span class="font-bold text-sm text-emerald-600">${dict[currentLang].free}</span>` : `<span class="font-bold text-sm text-blue-600">${post.price} €</span>`;
                 const img = (post.images && post.images.length > 0) ? post.images[0] : (post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
                 const cityName = dict[currentLang].cities[post.city] || post.city;
+                const categoryName = dict[currentLang].categories[post.category] || post.category || 'Razno';
 
                 return `
                     <a href="post.html?id=${post.id}" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200 group">
@@ -243,7 +255,7 @@
                                 ${isFree ? `<span class="absolute top-2 left-2 bg-emerald-500 text-white font-medium text-[10px] px-2 py-0.5 rounded-lg shadow-sm">${dict[currentLang].free}</span>` : ''}
                             </div>
                             <div class="p-3">
-                                <div class="text-[10px] text-blue-600 font-semibold uppercase tracking-wider mb-1">${post.category || 'Razno'}</div>
+                                <div class="text-[10px] text-blue-600 font-semibold uppercase tracking-wider mb-1">${categoryName}</div>
                                 <h3 class="font-semibold text-sm text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">${post.title}</h3>
                                 <p class="text-xs text-gray-500 mt-1 line-clamp-2">${post.description || ''}</p>
                             </div>
