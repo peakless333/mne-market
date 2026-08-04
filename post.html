@@ -30,7 +30,7 @@
         lucide.createIcons();
 
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjcxNzMsImV4cCI6MjA3MTQ0NDM3M30.17Gx37ZpxkJPNICCISTZHOdbf1bmiV36NtORnWjCLOY';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -39,18 +39,25 @@
 
         async function loadSinglePost() {
             if (!postId) {
-                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">Объявление не найдено</div>`;
+                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">ID объявления не указан в ссылке</div>`;
                 return;
             }
 
+            // Запрос к базе данных
             const { data: post, error } = await supabaseClient
                 .from('posts')
                 .select('*')
                 .eq('id', postId)
-                .single();
+                .maybeSingle();
 
-            if (error || !post) {
-                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">Объявление не найдено или было удалено</div>`;
+            if (error) {
+                console.error('Ошибка Supabase:', error);
+                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">Ошибка базы данных: ${error.message}</div>`;
+                return;
+            }
+
+            if (!post) {
+                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">Объявление с ID "${postId}" не найдено в базе</div>`;
                 return;
             }
 
@@ -59,9 +66,15 @@
             const isFree = Number(post.price) === 0;
             const priceTag = isFree ? `<span class="text-2xl font-bold text-emerald-600">Бесплатно</span>` : `<span class="text-2xl font-bold text-blue-600">${post.price} €</span>`;
             
-            const images = (post.images && post.images.length > 0) 
-                ? post.images 
-                : [post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500'];
+            // Получаем изображения
+            let images = [];
+            if (Array.isArray(post.images) && post.images.length > 0) {
+                images = post.images;
+            } else if (post.image_url) {
+                images = [post.image_url];
+            } else {
+                images = ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500'];
+            }
 
             postContainer.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
@@ -71,7 +84,7 @@
                         </div>
                         ${images.length > 1 ? `
                             <div class="grid grid-cols-5 gap-2">
-                                ${images.map((img, idx) => `
+                                ${images.map((img) => `
                                     <button onclick="document.getElementById('mainImg').src='${img}'" class="h-16 rounded-lg overflow-hidden border border-gray-200 focus:ring-2 focus:ring-blue-500">
                                         <img src="${img}" class="w-full h-full object-cover">
                                     </button>
@@ -84,7 +97,7 @@
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <span class="bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-1 rounded-lg">${post.category || 'Разное'}</span>
-                                <span class="text-xs text-gray-400">${new Date(post.created_at).toLocaleDateString('ru-RU')}</span>
+                                <span class="text-xs text-gray-400">${post.created_at ? new Date(post.created_at).toLocaleDateString('ru-RU') : ''}</span>
                             </div>
                             <h1 class="text-2xl font-bold text-gray-900 mb-2">${post.title}</h1>
                             <div class="flex items-center gap-1 text-gray-500 text-xs mb-4">
