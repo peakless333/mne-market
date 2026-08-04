@@ -110,7 +110,7 @@
                 <div>
                     <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formPhotos">Фотографии (до 5 шт)</label>
                     
-                    <!-- Кастомный блок выбора файлов для красивого перевода -->
+                    <!-- Кастомный блок выбора файлов -->
                     <label class="w-full border border-gray-300 rounded-xl p-2.5 text-sm flex items-center justify-between bg-white cursor-pointer hover:bg-gray-50 transition-all">
                         <span id="fileChosenText" class="text-xs text-gray-500 truncate">Файлы не выбраны.</span>
                         <span class="bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-lg shrink-0 ml-2" data-i18n="formBrowse">Обзор...</span>
@@ -242,18 +242,27 @@
 
                 for (const file of files) {
                     const fileExt = file.name.split('.').pop();
-                    const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+                    // Исправлено: убран пробел и использован substring без ошибок
+                    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
                     
                     const { data: uploadData, error: uploadError } = await supabaseClient.storage
                         .from('posts')
                         .upload(fileName, file);
 
-                    if (!uploadError && uploadData) {
+                    if (uploadError) {
+                        console.error('Ошибка загрузки файла в Storage:', uploadError);
+                        alert('Ошибка загрузки фото: ' + uploadError.message);
+                        continue;
+                    }
+
+                    if (uploadData) {
                         const { data: publicUrlData } = supabaseClient.storage
                             .from('posts')
                             .getPublicUrl(fileName);
                     
-                        if (publicUrlData) imageUrls.push(publicUrlData.publicUrl);
+                        if (publicUrlData && publicUrlData.publicUrl) {
+                            imageUrls.push(publicUrlData.publicUrl);
+                        }
                     }
                 }
 
@@ -296,7 +305,6 @@
                 if (dict[lang][key]) el.innerText = dict[lang][key];
             });
 
-            // Обновляем текст "Файлы не выбраны" если файлы не выбраны
             if (postFilesInput.files.length === 0) {
                 fileChosenText.innerText = dict[lang].formNoFiles;
             }
