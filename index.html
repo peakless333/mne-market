@@ -182,7 +182,12 @@
         let searchQuery = '';
         let showOnlyFavorites = false;
         let showOnlyFree = false;
-        let favorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
+        
+        // Загружаем избранное и сразу очищаем от возможных дубликатов и приводим к строкам
+        let rawFavorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
+        let favorites = [...new Set(rawFavorites.map(id => String(id)))];
+        localStorage.setItem('mne_favorites', JSON.stringify(favorites));
+
         let searchTimeout = null;
         let toastTimeout = null;
 
@@ -235,15 +240,21 @@
 
         function toggleFavorite(e, id) {
             e.stopPropagation();
-            const index = favorites.indexOf(id);
+            const stringId = String(id);
+            const index = favorites.indexOf(stringId);
+            
             if (index > -1) {
                 favorites.splice(index, 1);
                 showToast(dict[currentLang].removedFromFav);
             } else {
-                favorites.push(id);
+                favorites.push(stringId);
                 showToast(dict[currentLang].addedToFav);
             }
+            
+            // Защита от дубликатов на всякий случай
+            favorites = [...new Set(favorites)];
             localStorage.setItem('mne_favorites', JSON.stringify(favorites));
+            
             updateFavoritesBadge();
             renderPosts();
         }
@@ -355,9 +366,10 @@
             const countText = document.getElementById('resultsCountText');
 
             let filtered = posts.filter(post => {
+                const postIdStr = String(post.id);
                 if (selectedCity !== 'all' && post.city !== selectedCity) return false;
                 if (selectedCategory !== 'all' && post.category !== selectedCategory) return false;
-                if (showOnlyFavorites && !favorites.includes(post.id)) return false;
+                if (showOnlyFavorites && !favorites.includes(postIdStr)) return false;
                 if (showOnlyFree && Number(post.price || 0) > 0) return false;
                 if (searchQuery && !post.title.toLowerCase().includes(searchQuery) && !post.description.toLowerCase().includes(searchQuery)) return false;
                 return true;
@@ -383,7 +395,8 @@
             const now = new Date();
 
             container.innerHTML = filtered.map(post => {
-                const isFav = favorites.includes(post.id);
+                const postIdStr = String(post.id);
+                const isFav = favorites.includes(postIdStr);
                 const cityName = citiesMap[post.city] || post.city;
                 const priceText = post.price > 0 ? `${post.price} €` : dict[currentLang].free;
                 const imageUrl = post.image_url || (post.images && post.images[0]) || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
