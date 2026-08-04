@@ -52,11 +52,11 @@
         <!-- Категории -->
         <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar" id="categoryTabs">
             <button data-cat="ALL" onclick="selectCategory('ALL', this)" class="cat-btn bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap shadow-sm transition-all" data-i18n="catAll">Всё</button>
-            <button data-cat="Мебель" onclick="selectCategory('Мебель', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catFurniture">🪑 Мебель</button>
-            <button data-cat="Техника" onclick="selectCategory('Техника', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catTech">💻 Техника</button>
-            <button data-cat="Авто" onclick="selectCategory('Авто', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catAuto">🚗 Авто</button>
-            <button data-cat="Одежда" onclick="selectCategory('Одежда', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catClothes">👕 Одежда</button>
-            <button data-cat="Разное" onclick="selectCategory('Разное', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catOther">📦 Разное</button>
+            <button data-cat="furniture" onclick="selectCategory('furniture', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catFurniture">🪑 Мебель</button>
+            <button data-cat="tech" onclick="selectCategory('tech', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catTech">💻 Техника</button>
+            <button data-cat="auto" onclick="selectCategory('auto', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catAuto">🚗 Авто</button>
+            <button data-cat="clothes" onclick="selectCategory('clothes', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catClothes">👕 Одежда</button>
+            <button data-cat="other" onclick="selectCategory('other', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catOther">📦 Разное</button>
         </div>
 
         <!-- Сетка товаров -->
@@ -139,24 +139,24 @@
                 catAll: "Всё", catFurniture: "🪑 Мебель", catTech: "💻 Техника", catAuto: "🚗 Авто", catClothes: "👕 Одежда", catOther: "📦 Разное",
                 loading: "Загрузка...", noPosts: "В этой категории пока нет объявлений", free: "Бесплатно",
                 modalTitle: "Новое объявление", formTitle: "Название товара", formPrice: "Цена (€)", formCity: "Город", formCat: "Категория", formTg: "Telegram Ник", formPhotos: "Фотографии (до 5 шт)", formDesc: "Описание", formSubmit: "Опубликовать",
-                cities: { ALL: "Все города", Будва: "Будва", Бар: "Бар", Тиват: "Тиват", Подгорица: "Подгорица", Котор: "Котор", "Херцег-Нови": "Херцег-Нови" },
-                categories: { Мебель: "Мебель", Техника: "Техника", Авто: "Авто", Одежда: "Одежда", Разное: "Разное" }
+                cities: { ALL: "Все города", budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
+                categories: { furniture: "Мебель", tech: "Техника", auto: "Авто", clothes: "Одежда", other: "Разное" }
             },
             en: {
                 sellBtn: "Sell", mainTitle: "Recent Listings", mainSubtitle: "Buy and sell across Montenegro",
                 catAll: "All", catFurniture: "🪑 Furniture", catTech: "💻 Tech", catAuto: "🚗 Auto", catClothes: "👕 Clothes", catOther: "📦 Other",
                 loading: "Loading...", noPosts: "No listings here yet", free: "Free",
                 modalTitle: "New Listing", formTitle: "Item Title", formPrice: "Price (€)", formCity: "City", formCat: "Category", formTg: "Telegram Handle", formPhotos: "Photos (up to 5)", formDesc: "Description", formSubmit: "Publish",
-                cities: { ALL: "All cities", Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" },
-                categories: { Мебель: "Furniture", Техника: "Electronics", Авто: "Vehicles", Одежда: "Clothing", Разное: "Other" }
+                cities: { ALL: "All cities", budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                categories: { furniture: "Furniture", tech: "Electronics", auto: "Vehicles", clothes: "Clothing", other: "Other" }
             },
             cnr: {
                 sellBtn: "Prodaj", mainTitle: "Novi oglasi", mainSubtitle: "Kupovina i prodaja širom Crne Gore",
                 catAll: "Sve", catFurniture: "🪑 Namještaj", catTech: "💻 Tehnika", catAuto: "🚗 Auto", catClothes: "👕 Odjeća", catOther: "📦 Razno",
                 loading: "Učitavanje...", noPosts: "Trenutno nema oglasa u ovoj kategoriji", free: "Besplatno",
                 modalTitle: "Novi oglas", formTitle: "Naziv artikla", formPrice: "Cijena (€)", formCity: "Grad", formCat: "Kategorija", formTg: "Telegram korisničko ime", formPhotos: "Fotografije (do 5)", formDesc: "Opis", formSubmit: "Objavi",
-                cities: { ALL: "Svi gradovi", Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" },
-                categories: { Мебель: "Namještaj", Техника: "Tehnika", Авто: "Auto", Одежда: "Odjeća", Разное: "Razno" }
+                cities: { ALL: "Svi gradovi", budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                categories: { furniture: "Namještaj", tech: "Tehnika", auto: "Auto", clothes: "Odjeća", other: "Razno" }
             }
         };
 
@@ -222,7 +222,6 @@
 
                 let imageUrls = [];
 
-                // Загружаем картинки в бакет "posts", если файлы выбраны
                 for (const file of files) {
                     const fileExt = file.name.split('.').pop();
                     const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
@@ -240,7 +239,6 @@
                     }
                 }
 
-                // Вставляем новую запись в БД
                 const { error: insertError } = await supabaseClient.from('posts').insert([{
                     title,
                     price: Number(price),
@@ -285,18 +283,18 @@
             ).join('');
             cityFilter.value = currentSelectedCity;
 
-            const currentModalCity = postCity.value;
+            const currentModalCity = postCity.value || 'budva';
             postCity.innerHTML = Object.entries(dict[lang].cities)
                 .filter(([val]) => val !== 'ALL')
                 .map(([val, label]) => `<option value="${val}">${label}</option>`)
                 .join('');
-            if (currentModalCity) postCity.value = currentModalCity;
+            postCity.value = currentModalCity;
 
-            const currentModalCat = postCategory.value;
+            const currentModalCat = postCategory.value || 'furniture';
             postCategory.innerHTML = Object.entries(dict[lang].categories)
                 .map(([val, label]) => `<option value="${val}">${label}</option>`)
                 .join('');
-            if (currentModalCat) postCategory.value = currentModalCat;
+            postCategory.value = currentModalCat;
 
             renderPosts();
         }
@@ -337,7 +335,7 @@
                 const priceTag = isFree ? `<span class="font-bold text-sm text-emerald-600">${dict[currentLang].free}</span>` : `<span class="font-bold text-sm text-blue-600">${post.price} €</span>`;
                 const img = (post.images && post.images.length > 0) ? post.images[0] : (post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
                 const cityName = dict[currentLang].cities[post.city] || post.city;
-                const categoryName = dict[currentLang].categories[post.category] || post.category || 'Razno';
+                const categoryName = dict[currentLang].categories[post.category] || post.category || 'Other';
 
                 return `
                     <a href="post.html?id=${post.id}" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200 group">
