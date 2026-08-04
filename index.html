@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNE Market — Доска объявлений Черногории</title>
+    <title>MNE Market — Доска объявлений в Черногории</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇲🇪</text></svg>">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,125 +13,81 @@
 <body class="bg-gray-50 text-gray-800 pb-20">
 
     <!-- Шапка сайта -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2">
-                <span class="text-2xl">🇲🇪</span>
-                <h1 class="font-bold text-xl text-gray-900 tracking-tight">MNE Market</h1>
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-2 font-bold text-lg text-blue-600">
+                <span>🇲🇪</span> MNE Market
             </a>
+
+            <!-- Поиск по сайту -->
+            <div class="flex-1 max-w-md relative hidden sm:block">
+                <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="searchInput" oninput="filterPosts()" placeholder="Поиск товаров..." class="w-full bg-gray-100 rounded-xl pl-9 pr-4 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+            </div>
             
-            <div class="flex items-center gap-2">
-                <!-- Переключатель языка -->
+            <div class="flex items-center gap-3">
                 <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
                     <option value="ru">🇷🇺 RU</option>
                     <option value="en">🇬🇧 EN</option>
                     <option value="cnr">🇲🇪 CNR</option>
                 </select>
 
-                <button id="openModalBtn" class="bg-blue-600 text-white font-medium text-sm px-4 py-1.5 rounded-xl flex items-center gap-1.5 hover:bg-blue-700 shadow-sm transition-all">
-                    <i data-lucide="plus" class="w-4 h-4"></i> <span data-i18n="sellBtn">Продать</span>
-                </button>
+                <a href="create.html" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5 shrink-0">
+                    <i data-lucide="plus" class="w-4 h-4"></i> <span data-i18n="createBtn">Подать объявление</span>
+                </a>
+            </div>
+        </div>
+        <!-- Мобильный поиск -->
+        <div class="px-4 pb-3 sm:hidden">
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="searchInputMob" oninput="filterPosts()" placeholder="Поиск товаров..." class="w-full bg-gray-100 rounded-xl pl-9 pr-4 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             </div>
         </div>
     </header>
 
     <!-- Основной контент -->
-    <main class="max-w-6xl mx-auto px-4 pt-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900" data-i18n="mainTitle">Свежие объявления</h2>
-                <p class="text-xs text-gray-500" data-i18n="mainSubtitle">Покупки и продажи по всей Черногории</p>
+    <main class="max-w-6xl mx-auto px-4 pt-6 space-y-6">
+        
+        <!-- Панель фильтров и сортировки -->
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-4">
+            <!-- Города -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" id="cityFilters">
+                <button onclick="setCity('all')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-blue-600 text-white transition-all shrink-0 cursor-pointer" data-i18n="allCities">Все города</button>
+                <button onclick="setCity('budva')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Будва</button>
+                <button onclick="setCity('bar')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Бар</button>
+                <button onclick="setCity('tivat')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Тиват</button>
+                <button onclick="setCity('podgorica')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Подгорица</button>
+                <button onclick="setCity('kotor')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Котор</button>
+                <button onclick="setCity('herceg_novi')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Херцег-Нови</button>
             </div>
-            
-            <!-- Фильтр по городам -->
-            <select id="cityFilter" onchange="filterPosts()" class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none shadow-sm cursor-pointer">
-                <!-- Заполняется динамически -->
-            </select>
+
+            <!-- Категории и Сортировка -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-gray-100">
+                <!-- Категории -->
+                <div class="flex items-center gap-1.5 overflow-x-auto w-full pb-1" id="categoryFilters">
+                    <button onclick="setCategory('all')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-900 text-white transition-all shrink-0 cursor-pointer" data-i18n="allCategories">Все</button>
+                    <button onclick="setCategory('furniture')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer" data-i18n="catFurniture">Мебель</button>
+                    <button onclick="setCategory('tech')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer" data-i18n="catTech">Техника</button>
+                    <button onclick="setCategory('auto')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer" data-i18n="catAuto">Авто</button>
+                    <button onclick="setCategory('clothes')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer" data-i18n="catClothes">Одежда</button>
+                    <button onclick="setCategory('other')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer" data-i18n="catOther">Разное</button>
+                </div>
+
+                <!-- Сортировка -->
+                <select id="sortSelect" onchange="filterPosts()" class="bg-gray-100 border-none rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer shrink-0 w-full sm:w-auto">
+                    <option value="newest" data-i18n="sortNew">Сначала новые</option>
+                    <option value="cheap" data-i18n="sortCheap">Сначала дешевле</option>
+                    <option value="expensive" data-i18n="sortExpensive">Сначала дороже</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Категории -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar" id="categoryTabs">
-            <button data-cat="ALL" onclick="selectCategory('ALL', this)" class="cat-btn bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap shadow-sm transition-all" data-i18n="catAll">Всё</button>
-            <button data-cat="furniture" onclick="selectCategory('furniture', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catFurniture">🪑 Мебель</button>
-            <button data-cat="tech" onclick="selectCategory('tech', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catTech">💻 Техника</button>
-            <button data-cat="auto" onclick="selectCategory('auto', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catAuto">🚗 Авто</button>
-            <button data-cat="clothes" onclick="selectCategory('clothes', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catClothes">👕 Одежда</button>
-            <button data-cat="other" onclick="selectCategory('other', this)" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all" data-i18n="catOther">📦 Разное</button>
-        </div>
-
-        <!-- Сетка товаров -->
-        <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <!-- Сетка объявлений -->
+        <div id="postsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="col-span-full text-center text-gray-400 py-12" data-i18n="loading">Загрузка объявлений...</div>
         </div>
     </main>
-
-    <!-- Модалка создания объявления -->
-    <div id="addModal" class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center hidden backdrop-blur-sm transition-all">
-        <div class="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="font-bold text-lg text-gray-900" data-i18n="modalTitle">Новое объявление</h3>
-                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-
-            <form id="addPostForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formTitle">Название товара</label>
-                    <input type="text" id="postTitle" required minlength="3" maxlength="60" placeholder="IKEA" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formPrice">Цена (€)</label>
-                        <input type="number" id="postPrice" min="0" max="1000000" placeholder="0 = Free" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formCity">Город</label>
-                        <select id="postCity" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                            <!-- Заполняется динамически -->
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formCat">Категория</label>
-                        <select id="postCategory" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                            <!-- Заполняется динамически -->
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formTg">Telegram Ник</label>
-                        <input type="text" id="postTg" required placeholder="@username" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formPhotos">Фотографии (до 5 шт)</label>
-                    
-                    <!-- Кастомный блок выбора файлов -->
-                    <label class="w-full border border-gray-300 rounded-xl p-2.5 text-sm flex items-center justify-between bg-white cursor-pointer hover:bg-gray-50 transition-all">
-                        <span id="fileChosenText" class="text-xs text-gray-500 truncate">Файлы не выбраны.</span>
-                        <span class="bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-lg shrink-0 ml-2" data-i18n="formBrowse">Обзор...</span>
-                        <input type="file" id="postFiles" multiple accept="image/*" class="hidden">
-                    </label>
-
-                    <!-- Превью загруженных фото -->
-                    <div id="imagePreviewContainer" class="grid grid-cols-5 gap-2 mt-3 hidden"></div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formDesc">Описание</label>
-                    <textarea id="postDesc" rows="3" minlength="5" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-                </div>
-
-                <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white font-medium py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-sm mt-2 flex items-center justify-center gap-2">
-                    <span id="submitBtnText" data-i18n="formSubmit">Опубликовать</span>
-                </button>
-            </form>
-        </div>
-    </div>
 
     <script>
         lucide.createIcons();
@@ -142,252 +98,138 @@
 
         const dict = {
             ru: {
-                sellBtn: "Продать", mainTitle: "Свежие объявления", mainSubtitle: "Покупки и продажи по всей Черногории",
-                catAll: "Всё", catFurniture: "🪑 Мебель", catTech: "💻 Техника", catAuto: "🚗 Авто", catClothes: "👕 Одежда", catOther: "📦 Разное",
-                loading: "Загрузка...", noPosts: "В этой категории пока нет объявлений", free: "Бесплатно",
-                modalTitle: "Новое объявление", formTitle: "Название товара", formPrice: "Цена (€)", formCity: "Город", formCat: "Категория", formTg: "Telegram Ник", formPhotos: "Фотографии (до 5 шт)", formDesc: "Описание", formSubmit: "Опубликовать",
-                formBrowse: "Обзор...", formNoFiles: "Файлы не выбраны",
-                cities: { ALL: "Все города", budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
+                createBtn: "Подать объявление", loading: "Загрузка...", free: "Бесплатно",
+                allCities: "Все города", allCategories: "Все",
+                catFurniture: "Мебель", catTech: "Техника", catAuto: "Авто", catClothes: "Одежда", catOther: "Разное",
+                sortNew: "Сначала новые", sortCheap: "Сначала дешевле", sortExpensive: "Сначала дороже",
+                noPosts: "Объявлений пока нет",
+                cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 categories: { furniture: "Мебель", tech: "Техника", auto: "Авто", clothes: "Одежда", other: "Разное" }
             },
             en: {
-                sellBtn: "Sell", mainTitle: "Recent Listings", mainSubtitle: "Buy and sell across Montenegro",
-                catAll: "All", catFurniture: "🪑 Furniture", catTech: "💻 Tech", catAuto: "🚗 Auto", catClothes: "👕 Clothes", catOther: "📦 Other",
-                loading: "Loading...", noPosts: "No listings here yet", free: "Free",
-                modalTitle: "New Listing", formTitle: "Item Title", formPrice: "Price (€)", formCity: "City", formCat: "Category", formTg: "Telegram Handle", formPhotos: "Photos (up to 5)", formDesc: "Description", formSubmit: "Publish",
-                formBrowse: "Browse...", formNoFiles: "No files chosen",
-                cities: { ALL: "All cities", budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                createBtn: "Post ad", loading: "Loading...", free: "Free",
+                allCities: "All cities", allCategories: "All",
+                catFurniture: "Furniture", catTech: "Electronics", catAuto: "Vehicles", catClothes: "Clothing", catOther: "Other",
+                sortNew: "Newest first", sortCheap: "Lowest price", sortExpensive: "Highest price",
+                noPosts: "No listings found",
+                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { furniture: "Furniture", tech: "Electronics", auto: "Vehicles", clothes: "Clothing", other: "Other" }
             },
             cnr: {
-                sellBtn: "Prodaj", mainTitle: "Novi oglasi", mainSubtitle: "Kupovina i prodaja širom Crne Gore",
-                catAll: "Sve", catFurniture: "🪑 Namještaj", catTech: "💻 Tehnika", catAuto: "🚗 Auto", catClothes: "👕 Odjeća", catOther: "📦 Razno",
-                loading: "Učitavanje...", noPosts: "Trenutno nema oglasa u ovoj kategoriji", free: "Besplatno",
-                modalTitle: "Novi oglas", formTitle: "Naziv artikla", formPrice: "Cijena (€)", formCity: "Grad", formCat: "Kategorija", formTg: "Telegram korisničko ime", formPhotos: "Fotografije (do 5)", formDesc: "Opis", formSubmit: "Objavi",
-                formBrowse: "Pregledaj...", formNoFiles: "Nema izabranih fajlova",
-                cities: { ALL: "Svi gradovi", budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                createBtn: "Postavi oglas", loading: "Učitavanje...", free: "Besplatno",
+                allCities: "Svi gradovi", allCategories: "Sve",
+                catFurniture: "Namještaj", catTech: "Tehnika", catAuto: "Auto", catClothes: "Odjeća", catOther: "Razno",
+                sortNew: "Najnovije", sortCheap: "Najjeftinije", sortExpensive: "Najskuplje",
+                noPosts: "Nema oglasa",
+                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { furniture: "Namještaj", tech: "Tehnika", auto: "Auto", clothes: "Odjeća", other: "Razno" }
             }
         };
 
         let currentLang = localStorage.getItem('mne_lang') || 'ru';
         let allPosts = [];
-        let activeCategory = 'ALL';
+        let selectedCity = 'all';
+        let selectedCategory = 'all';
 
-        const productsGrid = document.getElementById('productsGrid');
-        const cityFilter = document.getElementById('cityFilter');
-        const postCity = document.getElementById('postCity');
-        const postCategory = document.getElementById('postCategory');
-        const addModal = document.getElementById('addModal');
-        const openModalBtn = document.getElementById('openModalBtn');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const postFilesInput = document.getElementById('postFiles');
-        const fileChosenText = document.getElementById('fileChosenText');
-        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-        const addPostForm = document.getElementById('addPostForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const submitBtnText = document.getElementById('submitBtnText');
-
-        openModalBtn.addEventListener('click', () => addModal.classList.remove('hidden'));
-        closeModalBtn.addEventListener('click', () => addModal.classList.add('hidden'));
-
-        // Обработка выбора файлов и превью
-        postFilesInput.addEventListener('change', function () {
-            const files = Array.from(this.files).slice(0, 5);
-            imagePreviewContainer.innerHTML = '';
-
-            if (files.length === 0) {
-                fileChosenText.innerText = dict[currentLang].formNoFiles;
-                imagePreviewContainer.classList.add('hidden');
+        async function initPage() {
+            document.getElementById('langSelect').value = currentLang;
+            
+            const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
+            if (error) {
+                console.error(error);
                 return;
             }
 
-            if (files.length === 1) {
-                fileChosenText.innerText = files[0].name;
-            } else {
-                fileChosenText.innerText = `${files.length} files selected`;
-            }
-
-            imagePreviewContainer.classList.remove('hidden');
-
-            files.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const imgWrapper = document.createElement('div');
-                    imgWrapper.className = 'relative w-full h-16 rounded-xl overflow-hidden border border-gray-200 bg-gray-100';
-                    imgWrapper.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="Preview ${index + 1}">`;
-                    imagePreviewContainer.appendChild(imgWrapper);
-                };
-                reader.readAsDataURL(file);
-            });
-        });
-
-        // Отправка объявления в Supabase
-        addPostForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            submitBtn.disabled = true;
-            submitBtnText.innerText = dict[currentLang].loading;
-
-            try {
-                const title = document.getElementById('postTitle').value;
-                const price = document.getElementById('postPrice').value || 0;
-                const city = postCity.value;
-                const category = postCategory.value;
-                const telegram = document.getElementById('postTg').value.replace('@', '').trim();
-                const description = document.getElementById('postDesc').value;
-                const files = Array.from(postFilesInput.files).slice(0, 5);
-
-                let imageUrls = [];
-
-                for (const file of files) {
-                    const fileExt = file.name.split('.').pop();
-                    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-                    
-                    // Исправлено на правильное имя бакета: 'post-images'
-                    const { data: uploadData, error: uploadError } = await supabaseClient.storage
-                        .from('post-images')
-                        .upload(fileName, file);
-
-                    if (uploadError) {
-                        console.error('Ошибка загрузки файла в Storage:', uploadError);
-                        alert('Ошибка загрузки фото: ' + uploadError.message);
-                        continue;
-                    }
-
-                    if (uploadData) {
-                        const { data: publicUrlData } = supabaseClient.storage
-                            .from('post-images')
-                            .getPublicUrl(fileName);
-                    
-                        if (publicUrlData && publicUrlData.publicUrl) {
-                            imageUrls.push(publicUrlData.publicUrl);
-                        }
-                    }
-                }
-
-                const { error: insertError } = await supabaseClient.from('posts').insert([{
-                    title,
-                    price: Number(price),
-                    city,
-                    category,
-                    telegram,
-                    description,
-                    images: imageUrls,
-                    image_url: imageUrls[0] || ''
-                }]);
-
-                if (insertError) {
-                    alert('Ошибка при публикации: ' + insertError.message);
-                } else {
-                    addPostForm.reset();
-                    fileChosenText.innerText = dict[currentLang].formNoFiles;
-                    imagePreviewContainer.innerHTML = '';
-                    imagePreviewContainer.classList.add('hidden');
-                    addModal.classList.add('hidden');
-                    await loadPosts();
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Произошла ошибка при отправке');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtnText.innerText = dict[currentLang].formSubmit;
-            }
-        });
+            allPosts = data || [];
+            filterPosts();
+        }
 
         function changeLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('mne_lang', lang);
-
+            
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[lang][key]) el.innerText = dict[lang][key];
             });
 
-            if (postFilesInput.files.length === 0) {
-                fileChosenText.innerText = dict[lang].formNoFiles;
-            }
-
-            const currentSelectedCity = cityFilter.value || 'ALL';
-            cityFilter.innerHTML = Object.entries(dict[lang].cities).map(([val, label]) => 
-                `<option value="${val}">${label}</option>`
-            ).join('');
-            cityFilter.value = currentSelectedCity;
-
-            const currentModalCity = postCity.value || 'budva';
-            postCity.innerHTML = Object.entries(dict[lang].cities)
-                .filter(([val]) => val !== 'ALL')
-                .map(([val, label]) => `<option value="${val}">${label}</option>`)
-                .join('');
-            postCity.value = currentModalCity;
-
-            const currentModalCat = postCategory.value || 'furniture';
-            postCategory.innerHTML = Object.entries(dict[lang].categories)
-                .map(([val, label]) => `<option value="${val}">${label}</option>`)
-                .join('');
-            postCategory.value = currentModalCat;
-
-            renderPosts();
+            filterPosts();
         }
 
-        async function loadPosts() {
-            const { data: posts, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
-            if (!error && posts) {
-                allPosts = posts;
-            }
-            renderPosts();
+        function setCity(city) {
+            selectedCity = city;
+            document.querySelectorAll('.city-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+            });
+            event.currentTarget.classList.remove('bg-gray-100', 'text-gray-600');
+            event.currentTarget.classList.add('bg-blue-600', 'text-white');
+            filterPosts();
         }
 
-        function selectCategory(cat, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.className = 'cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all');
-            btn.className = 'cat-btn bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap shadow-sm transition-all';
-            activeCategory = cat;
+        function setCategory(cat) {
+            selectedCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-gray-900', 'text-white');
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+            });
+            event.currentTarget.classList.remove('bg-gray-100', 'text-gray-600');
+            event.currentTarget.classList.add('bg-gray-900', 'text-white');
             filterPosts();
         }
 
         function filterPosts() {
-            renderPosts();
+            const searchQuery = (document.getElementById('searchInput').value || document.getElementById('searchInputMob').value).toLowerCase();
+            const sortType = document.getElementById('sortSelect').value;
+
+            let filtered = allPosts.filter(p => {
+                const matchCity = selectedCity === 'all' || p.city === selectedCity;
+                const matchCategory = selectedCategory === 'all' || p.category === selectedCategory;
+                const matchSearch = !searchQuery || p.title.toLowerCase().includes(searchQuery) || (p.description && p.description.toLowerCase().includes(searchQuery));
+                return matchCity && matchCategory && matchSearch;
+            });
+
+            // Сортировка
+            filtered.sort((a, b) => {
+                if (sortType === 'newest') return new Date(b.created_at) - new Date(a.created_at);
+                if (sortType === 'cheap') return Number(a.price) - Number(b.price);
+                if (sortType === 'expensive') return Number(b.price) - Number(a.price);
+            });
+
+            renderPosts(filtered);
         }
 
-        function renderPosts() {
-            const selectedCity = cityFilter.value || 'ALL';
-            let filtered = allPosts;
+        function renderPosts(posts) {
+            const container = document.getElementById('postsGrid');
 
-            if (activeCategory !== 'ALL') filtered = filtered.filter(p => p.category === activeCategory);
-            if (selectedCity !== 'ALL') filtered = filtered.filter(p => p.city === selectedCity);
-
-            if (filtered.length === 0) {
-                productsGrid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-12">${dict[currentLang].noPosts}</div>`;
+            if (posts.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center text-gray-400 py-12">${dict[currentLang].noPosts}</div>`;
                 return;
             }
 
-            productsGrid.innerHTML = filtered.map(post => {
-                const isFree = Number(post.price) === 0;
-                const priceTag = isFree ? `<span class="font-bold text-sm text-emerald-600">${dict[currentLang].free}</span>` : `<span class="font-bold text-sm text-blue-600">${post.price} €</span>`;
-                const img = (post.images && post.images.length > 0) ? post.images[0] : (post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
-                const cityName = dict[currentLang].cities[post.city] || post.city;
-                const categoryName = dict[currentLang].categories[post.category] || post.category || 'Other';
+            container.innerHTML = posts.map(p => {
+                const img = (p.images && p.images.length > 0) ? p.images[0] : (p.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+                const isFree = Number(p.price) === 0;
+                const priceText = isFree ? dict[currentLang].free : `${p.price} €`;
+                const cityName = dict[currentLang].cities[p.city] || p.city;
+                const categoryName = dict[currentLang].categories[p.category] || p.category || 'Other';
 
                 return `
-                    <a href="post.html?id=${post.id}" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200 group">
-                        <div>
-                            <div class="relative h-44 bg-gray-100 overflow-hidden">
-                                <img src="${img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="${post.title}">
-                                <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-lg backdrop-blur-md">${cityName}</span>
-                                ${isFree ? `<span class="absolute top-2 left-2 bg-emerald-500 text-white font-medium text-[10px] px-2 py-0.5 rounded-lg shadow-sm">${dict[currentLang].free}</span>` : ''}
-                            </div>
-                            <div class="p-3">
-                                <div class="text-[10px] text-blue-600 font-semibold uppercase tracking-wider mb-1">${categoryName}</div>
-                                <h3 class="font-semibold text-sm text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">${post.title}</h3>
-                                <p class="text-xs text-gray-500 mt-1 line-clamp-2">${post.description || ''}</p>
-                            </div>
+                    <a href="post.html?id=${p.id}" class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col group">
+                        <div class="relative h-44 bg-gray-100 overflow-hidden">
+                            <img src="${img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="${p.title}">
+                            <span class="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-lg backdrop-blur-md uppercase tracking-wider">${categoryName}</span>
                         </div>
-                        <div class="p-3 pt-0 flex items-center justify-between mt-2">
-                            ${priceTag}
-                            <span class="bg-blue-50 text-blue-600 p-2 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </span>
+                        <div class="p-3.5 flex flex-col flex-1 justify-between gap-2">
+                            <div>
+                                <h3 class="font-semibold text-xs text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">${p.title}</h3>
+                                <p class="text-[11px] text-gray-400 mt-0.5 flex items-center gap-1">
+                                    <i data-lucide="map-pin" class="w-3 h-3"></i> ${cityName}
+                                </p>
+                            </div>
+                            <div class="font-black text-sm text-blue-600 pt-1 border-t border-gray-50">
+                                ${priceText}
+                            </div>
                         </div>
                     </a>
                 `;
@@ -395,10 +237,7 @@
             lucide.createIcons();
         }
 
-        // Инициализация
-        document.getElementById('langSelect').value = currentLang;
-        changeLanguage(currentLang);
-        loadPosts();
+        initPage();
     </script>
 </body>
 </html>
