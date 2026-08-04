@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Объявление — MNE Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-12">
+
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                <span>Назад к объявлениям</span>
+            </a>
+            <span class="text-xl">🇲🇪</span>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 pt-6">
+        <div id="postContainer" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-8 text-center text-gray-400">Загрузка информации...</div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjcxNzMsImV4cCI6MjA3MTQ0NDM3M30.17Gx37ZpxkJPNICCISTZHOdbf1bmiV36NtORnWjCLOY';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+        const postContainer = document.getElementById('postContainer');
+
+        async function loadSinglePost() {
+            if (!postId) {
+                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">Объявление не найдено</div>`;
+                return;
+            }
+
+            const { data: post, error } = await supabaseClient
+                .from('posts')
+                .select('*')
+                .eq('id', postId)
+                .single();
+
+            if (error || !post) {
+                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">Объявление не найдено или было удалено</div>`;
+                return;
+            }
+
+            document.title = `${post.title} — MNE Market`;
+
+            const isFree = Number(post.price) === 0;
+            const priceTag = isFree ? `<span class="text-2xl font-bold text-emerald-600">Бесплатно</span>` : `<span class="text-2xl font-bold text-blue-600">${post.price} €</span>`;
+            
+            const images = (post.images && post.images.length > 0) 
+                ? post.images 
+                : [post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500'];
+
+            postContainer.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                    <div>
+                        <div class="h-80 rounded-xl bg-gray-100 overflow-hidden mb-3 border border-gray-100">
+                            <img id="mainImg" src="${images[0]}" class="w-full h-full object-cover" alt="${post.title}">
+                        </div>
+                        ${images.length > 1 ? `
+                            <div class="grid grid-cols-5 gap-2">
+                                ${images.map((img, idx) => `
+                                    <button onclick="document.getElementById('mainImg').src='${img}'" class="h-16 rounded-lg overflow-hidden border border-gray-200 focus:ring-2 focus:ring-blue-500">
+                                        <img src="${img}" class="w-full h-full object-cover">
+                                    </button>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-1 rounded-lg">${post.category || 'Разное'}</span>
+                                <span class="text-xs text-gray-400">${new Date(post.created_at).toLocaleDateString('ru-RU')}</span>
+                            </div>
+                            <h1 class="text-2xl font-bold text-gray-900 mb-2">${post.title}</h1>
+                            <div class="flex items-center gap-1 text-gray-500 text-xs mb-4">
+                                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                                <span>${post.city}</span>
+                            </div>
+                            
+                            <div class="mb-6">${priceTag}</div>
+
+                            <div class="border-t border-gray-100 pt-4 mb-6">
+                                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Описание</h3>
+                                <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">${post.description || 'Описание отсутствует'}</p>
+                            </div>
+                        </div>
+
+                        <a href="https://t.me/${post.telegram_handle}" target="_blank" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>Написать продавцу (@${post.telegram_handle})</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        loadSinglePost();
+    </script>
+</body>
+</html>
