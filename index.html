@@ -15,7 +15,7 @@
     <!-- Шапка сайта -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.reload()">
                 <span class="text-2xl">🇲🇪</span>
                 <h1 class="font-bold text-xl text-gray-900 tracking-tight">MNE Market</h1>
             </div>
@@ -71,7 +71,42 @@
         </div>
     </main>
 
-    <!-- Модальное окно -->
+    <!-- Модальное окно просмотра товара -->
+    <div id="viewModal" class="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center hidden backdrop-blur-sm transition-all p-0 sm:p-4">
+        <div class="bg-white w-full max-w-lg rounded-t-2xl sm:rounded-2xl overflow-hidden max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in slide-in-from-bottom duration-200">
+            <div class="relative h-64 sm:h-72 bg-gray-100 flex-shrink-0">
+                <img id="viewImage" src="" class="w-full h-full object-cover" alt="">
+                <button id="closeViewModalBtn" class="absolute top-3 right-3 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 backdrop-blur-md transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <span id="viewCity" class="absolute bottom-3 left-3 bg-black/60 text-white text-xs font-medium px-2.5 py-1 rounded-lg backdrop-blur-md"></span>
+            </div>
+            
+            <div class="p-5 overflow-y-auto flex-1 space-y-4">
+                <div class="flex items-start justify-between gap-2">
+                    <div>
+                        <span id="viewCategory" class="text-xs font-semibold text-blue-600 uppercase tracking-wider"></span>
+                        <h2 id="viewTitle" class="text-xl font-bold text-gray-900 mt-0.5"></h2>
+                    </div>
+                    <div id="viewPrice" class="text-xl font-extrabold text-blue-600 whitespace-nowrap"></div>
+                </div>
+
+                <div class="border-t border-gray-100 pt-3">
+                    <h4 class="text-xs font-semibold text-gray-400 uppercase mb-1" data-i18n="formDesc">Описание</h4>
+                    <p id="viewDesc" class="text-sm text-gray-700 whitespace-pre-line leading-relaxed"></p>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-gray-100 bg-gray-50">
+                <a id="viewContactBtn" href="" target="_blank" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors shadow-sm">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                    <span data-i18n="contactSeller">Написать продавцу</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно создания объявления -->
     <div id="addModal" class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center hidden backdrop-blur-sm transition-all">
         <div class="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl">
             <div class="flex items-center justify-between mb-4">
@@ -143,11 +178,10 @@
         lucide.createIcons();
 
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjcxNzMsImV4cCI6MjA3MTQ0NDM3M30.17Gx37ZpxkJPNICCISTZHOdbf1bmiV36NtORnWjCLOY';
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Словари языков
         const translations = {
             ru: {
                 sellBtn: "Продать",
@@ -172,7 +206,8 @@
                 formImg: "Ссылка на фото (URL)",
                 formDesc: "Описание",
                 formSubmit: "Опубликовать",
-                badWordsAlert: "Объявление содержит недопустимые выражения или спам!",
+                contactSeller: "Написать продавцу",
+                badWordsAlert: "Объявление содержит недопустимые выражения!",
                 successAlert: "Объявление успешно создано!"
             },
             en: {
@@ -198,7 +233,8 @@
                 formImg: "Photo Link (URL)",
                 formDesc: "Description",
                 formSubmit: "Publish",
-                badWordsAlert: "Listing contains prohibited words or spam!",
+                contactSeller: "Contact Seller",
+                badWordsAlert: "Listing contains prohibited words!",
                 successAlert: "Listing successfully created!"
             },
             cnr: {
@@ -224,7 +260,8 @@
                 formImg: "Link fotografije (URL)",
                 formDesc: "Opis",
                 formSubmit: "Objavi",
-                badWordsAlert: "Oglas sadrži zabranjene riječi ili neprimjeren sadržaj!",
+                contactSeller: "Kontaktirajte prodavca",
+                badWordsAlert: "Oglas sadrži zabranjene riječi!",
                 successAlert: "Oglas je uspješno kreiran!"
             }
         };
@@ -234,7 +271,6 @@
         let activeCategory = 'ALL';
         let activeCity = 'ALL';
 
-        // Список нецензурных/спам слов для авто-фильтра
         const BANNED_WORDS = [
             'хуй', 'пизда', 'пенис', 'член', 'залупа', 'ебать', 'сука', 'блят', 'урод',
             'satan', 'penis', 'dick', 'fuck', 'bitch', 'cock', 'pussy', 'kurac', 'pizda'
@@ -248,10 +284,14 @@
         const cityFilter = document.getElementById('cityFilter');
         const langSelect = document.getElementById('langSelect');
 
+        // Модалка просмотра
+        const viewModal = document.getElementById('viewModal');
+        const closeViewModalBtn = document.getElementById('closeViewModalBtn');
+
         openModalBtn.addEventListener('click', () => addModal.classList.remove('hidden'));
         closeModalBtn.addEventListener('click', () => addModal.classList.add('hidden'));
+        closeViewModalBtn.addEventListener('click', () => viewModal.classList.add('hidden'));
 
-        // Переключение языка
         langSelect.addEventListener('change', (e) => {
             currentLang = e.target.value;
             updateInterfaceLanguage();
@@ -315,6 +355,25 @@
             applyFilters();
         });
 
+        // Открытие карточки
+        function openProductView(postId) {
+            const post = allPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            const lang = translations[currentLang];
+            const isFree = Number(post.price) === 0;
+
+            document.getElementById('viewImage').src = post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
+            document.getElementById('viewTitle').innerText = post.title;
+            document.getElementById('viewCategory').innerText = post.category || 'Разное';
+            document.getElementById('viewCity').innerText = post.city;
+            document.getElementById('viewDesc').innerText = post.description || 'Описание отсутствует';
+            document.getElementById('viewPrice').innerText = isFree ? lang.free : `${post.price} €`;
+            document.getElementById('viewContactBtn').href = `https://t.me/${post.telegram_handle.replace('@', '')}`;
+
+            viewModal.classList.remove('hidden');
+        }
+
         function renderPosts(posts) {
             const lang = translations[currentLang];
 
@@ -332,24 +391,24 @@
                 const img = post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
 
                 return `
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200">
+                    <div onclick="openProductView(${post.id})" class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200 cursor-pointer group">
                         <div>
-                            <div class="relative h-44 bg-gray-100">
-                                <img src="${img}" class="w-full h-full object-cover" alt="${post.title}">
+                            <div class="relative h-44 bg-gray-100 overflow-hidden">
+                                <img src="${img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="${post.title}">
                                 <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-lg backdrop-blur-md">${post.city}</span>
                                 ${isFree ? `<span class="absolute top-2 left-2 bg-emerald-500 text-white font-medium text-[10px] px-2 py-0.5 rounded-lg shadow-sm">${lang.free}</span>` : ''}
                             </div>
                             <div class="p-3">
                                 <div class="text-[10px] text-blue-600 font-semibold uppercase tracking-wider mb-1">${post.category || 'Разное'}</div>
-                                <h3 class="font-semibold text-sm text-gray-900 line-clamp-1">${post.title}</h3>
+                                <h3 class="font-semibold text-sm text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">${post.title}</h3>
                                 <p class="text-xs text-gray-500 mt-1 line-clamp-2">${post.description || ''}</p>
                             </div>
                         </div>
                         <div class="p-3 pt-0 flex items-center justify-between mt-2">
                             ${priceTag}
-                            <a href="https://t.me/${post.telegram_handle.replace('@', '')}" target="_blank" class="bg-blue-50 text-blue-600 p-2 rounded-xl hover:bg-blue-100 transition-colors">
-                                <i data-lucide="send" class="w-4 h-4"></i>
-                            </a>
+                            <span class="bg-blue-50 text-blue-600 p-2 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </span>
                         </div>
                     </div>
                 `;
@@ -357,15 +416,11 @@
             lucide.createIcons();
         }
 
-        // Проверка текста на заблокированные слова и бессмысленный набор букв
         function isContentClean(text) {
             const cleanText = text.toLowerCase();
-            
-            // 1. Проверка стоп-слов
             const hasBannedWord = BANNED_WORDS.some(word => cleanText.includes(word));
             if (hasBannedWord) return false;
 
-            // 2. Защита от зажатых букв (авыавыавыав / fffffff)
             const repeatedLetters = /(.)\1{4,}/; 
             if (repeatedLetters.test(cleanText)) return false;
 
@@ -379,7 +434,6 @@
             const title = document.getElementById('postTitle').value.trim();
             const description = document.getElementById('postDesc').value.trim();
 
-            // Автоматическая проверка перед отправкой
             if (!isContentClean(title) || !isContentClean(description)) {
                 alert(lang.badWordsAlert);
                 return;
