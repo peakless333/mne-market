@@ -70,12 +70,7 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="cityLabel">Город</label>
                         <select id="postCity" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
-                            <option value="budva">Будва</option>
-                            <option value="bar">Бар</option>
-                            <option value="tivat">Тиват</option>
-                            <option value="podgorica">Подгорица</option>
-                            <option value="kotor">Котор</option>
-                            <option value="herceg_novi">Херцег-Нови</option>
+                            <!-- Заполняется динамически из словаря -->
                         </select>
                     </div>
                 </div>
@@ -129,7 +124,11 @@
                 categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
                 descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление",
                 cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_other: "Разное",
-                publishing: "Публикация...", maxPhotos: "Максимально можно загрузить 5 фотографий"
+                publishing: "Публикация...", maxPhotos: "Максимально можно загрузить 5 фотографий",
+                ph_title: "Например: iPhone 13 Pro 128GB",
+                ph_price: "0 (если бесплатно)",
+                ph_desc: "Опишите состояние, комплектацию и детали...",
+                cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
             en: {
                 back: "Back", title: "New Listing", photosLabel: "Photos (up to 5)",
@@ -137,7 +136,11 @@
                 categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
                 descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing",
                 cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_other: "Other",
-                publishing: "Publishing...", maxPhotos: "Maximum 5 photos allowed"
+                publishing: "Publishing...", maxPhotos: "Maximum 5 photos allowed",
+                ph_title: "e.g. iPhone 13 Pro 128GB",
+                ph_price: "0 (if free)",
+                ph_desc: "Describe condition, package and details...",
+                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
             cnr: {
                 back: "Nazad", title: "Novi oglas", photosLabel: "Fotografije (do 5)",
@@ -145,7 +148,11 @@
                 categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
                 descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas",
                 cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_other: "Razno",
-                publishing: "Objavljivanje...", maxPhotos: "Možete otpremiti najviše 5 fotografija"
+                publishing: "Objavljivanje...", maxPhotos: "Možete otpremiti najviše 5 fotografija",
+                ph_title: "npr. iPhone 13 Pro 128GB",
+                ph_price: "0 (ako je besplatno)",
+                ph_desc: "Opišite stanje, opremu i detalje...",
+                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
         };
 
@@ -155,11 +162,27 @@
         function changeLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('mne_lang', lang);
+            
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[lang][key]) el.innerText = dict[lang][key];
             });
+
+            // Обновляем плейсхолдеры
+            document.getElementById('postTitle').placeholder = dict[lang].ph_title;
+            document.getElementById('postPrice').placeholder = dict[lang].ph_price;
+            document.getElementById('postDesc').placeholder = dict[lang].ph_desc;
+
+            // Обновляем выпадающий список городов под выбранный язык
+            const citySelect = document.getElementById('postCity');
+            const currentCityValue = citySelect.value || 'budva';
+            const citiesObj = dict[lang].cities;
+            
+            citySelect.innerHTML = Object.keys(citiesObj).map(code => `
+                <option value="${code}" ${code === currentCityValue ? 'selected' : ''}>${citiesObj[code]}</option>
+            `).join('');
         }
+
         document.getElementById('langSelect').value = currentLang;
         changeLanguage(currentLang);
 
@@ -172,7 +195,7 @@
             
             selectedFiles = selectedFiles.concat(files);
             renderPreviews();
-            e.target.value = ''; // сброс инпута для возможности повторного выбора того же файла
+            e.target.value = '';
         }
 
         function removeImage(index) {
@@ -212,7 +235,6 @@
             try {
                 let imageUrls = [];
 
-                // Загружаем файлы в Supabase Storage
                 for (const file of selectedFiles) {
                     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}_${file.name}`;
                     const { data, error } = await supabaseClient.storage.from('posts_images').upload(fileName, file);
@@ -223,7 +245,6 @@
                     imageUrls.push(publicUrlData.publicUrl);
                 }
 
-                // Запасное фото, если ничего не выбрали
                 if (imageUrls.length === 0) {
                     imageUrls.push('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
                 }
@@ -236,7 +257,7 @@
                     description: document.getElementById('postDesc').value,
                     telegram: document.getElementById('postTelegram').value,
                     images: imageUrls,
-                    image_url: imageUrls[0], // для обратной совместимости
+                    image_url: imageUrls[0],
                     views: 0
                 };
 
