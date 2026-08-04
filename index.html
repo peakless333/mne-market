@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MNE Market — Доска объявлений Черногории</title>
-    <!-- Эмодзи-иконка для браузера -->
+    <!-- Эмодзи-иконка -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇲🇪</text></svg>">
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -19,34 +19,58 @@
 
     <!-- Шапка сайта -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <span class="text-2xl">🇲🇪</span>
-                <h1 class="font-bold text-lg text-gray-900">MNE Market</h1>
+                <h1 class="font-bold text-xl text-gray-900 tracking-tight">MNE Market</h1>
             </div>
-            <button id="openModalBtn" class="bg-blue-600 text-white font-medium text-sm px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-blue-700">
+            <button id="openModalBtn" class="bg-blue-600 text-white font-medium text-sm px-4 py-2 rounded-xl flex items-center gap-1.5 hover:bg-blue-700 shadow-sm transition-all">
                 <i data-lucide="plus" class="w-4 h-4"></i> Продать
             </button>
         </div>
     </header>
 
     <!-- Основной контент -->
-    <main class="max-w-md mx-auto px-4 pt-4">
-        <!-- Заголовок -->
-        <div class="mb-4">
-            <h2 class="text-xl font-bold text-gray-900">Свежие объявления</h2>
-            <p class="text-xs text-gray-500">Покупки и продажи по всей Черногории</p>
+    <main class="max-w-6xl mx-auto px-4 pt-6">
+        
+        <!-- Заголовок и фильтр по городам -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Свежие объявления</h2>
+                <p class="text-xs text-gray-500">Покупки и продажи по всей Черногории</p>
+            </div>
+            
+            <!-- Фильтр по городам -->
+            <select id="cityFilter" class="bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none shadow-sm cursor-pointer">
+                <option value="ALL">Все города</option>
+                <option value="Будва">Будва</option>
+                <option value="Бар">Бар</option>
+                <option value="Тиват">Тиват</option>
+                <option value="Подгорица">Подгорица</option>
+                <option value="Котор">Котор</option>
+                <option value="Херцег-Нови">Херцег-Нови</option>
+            </select>
         </div>
 
-        <!-- Сетка товаров -->
-        <div id="productsGrid" class="grid grid-cols-2 gap-3">
+        <!-- Переключатель категорий (Быстрые табы) -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar" id="categoryTabs">
+            <button data-cat="ALL" class="cat-btn bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap shadow-sm transition-all">Всё</button>
+            <button data-cat="Мебель" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all">🪑 Мебель</button>
+            <button data-cat="Техника" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all">💻 Техника</button>
+            <button data-cat="Авто" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all">🚗 Авто</button>
+            <button data-cat="Одежда" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all">👕 Одежда</button>
+            <button data-cat="Разное" class="cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all">📦 Разное</button>
+        </div>
+
+        <!-- Адаптивная сетка товаров: 2 на мобилках, 3 на планшетах, 4-5 на ПК -->
+        <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             <div class="col-span-full text-center text-gray-400 py-12">Загрузка объявлений...</div>
         </div>
     </main>
 
     <!-- Модальное окно создания объявления -->
-    <div id="addModal" class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center hidden">
-        <div class="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 max-h-[90vh] overflow-y-auto">
+    <div id="addModal" class="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center hidden backdrop-blur-sm transition-all">
+        <div class="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[90vh] overflow-y-auto shadow-2xl">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-bold text-lg text-gray-900">Новое объявление</h3>
                 <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">
@@ -54,20 +78,20 @@
                 </button>
             </div>
 
-            <form id="addPostForm" class="space-y-3">
+            <form id="addPostForm" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-gray-700 mb-1">Название товара</label>
-                    <input type="text" id="postTitle" required placeholder="Например: Диван IKEA" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="text" id="postTitle" required placeholder="Например: Диван IKEA" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Цена (€)</label>
-                        <input type="number" id="postPrice" placeholder="0 = Бесплатно" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="number" id="postPrice" placeholder="0 = Бесплатно" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Город</label>
-                        <select id="postCity" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <select id="postCity" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                             <option value="Будва">Будва</option>
                             <option value="Бар">Бар</option>
                             <option value="Тиват">Тиват</option>
@@ -78,10 +102,10 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Категория</label>
-                        <select id="postCategory" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <select id="postCategory" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                             <option value="Мебель">Мебель</option>
                             <option value="Техника">Техника</option>
                             <option value="Авто">Авто</option>
@@ -91,21 +115,21 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-700 mb-1">Telegram Ник</label>
-                        <input type="text" id="postTg" required placeholder="@username" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <input type="text" id="postTg" required placeholder="@username" class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-medium text-gray-700 mb-1">Ссылка на фото (Image URL)</label>
-                    <input type="url" id="postImage" placeholder="https://..." class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="url" id="postImage" placeholder="https://..." class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
 
                 <div>
                     <label class="block text-xs font-medium text-gray-700 mb-1">Описание</label>
-                    <textarea id="postDesc" rows="3" placeholder="Опишите состояние товара..." class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                    <textarea id="postDesc" rows="3" placeholder="Опишите состояние товара..." class="w-full border border-gray-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
                 </div>
 
-                <button type="submit" class="w-full bg-blue-600 text-white font-medium py-2.5 rounded-lg hover:bg-blue-700 transition-colors mt-2">
+                <button type="submit" class="w-full bg-blue-600 text-white font-medium py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-sm mt-2">
                     Опубликовать
                 </button>
             </form>
@@ -114,27 +138,30 @@
 
     <!-- JavaScript логика -->
     <script>
-        // Инициализация иконок Lucide
         lucide.createIcons();
 
-        // 1. Настройки подключения к Supabase
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
+        // Укажи здесь твой рабочий ключ Supabase
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Элементы DOM
+        // Хранилище загруженных объявлений и активных фильтров
+        let allPosts = [];
+        let activeCategory = 'ALL';
+        let activeCity = 'ALL';
+
         const productsGrid = document.getElementById('productsGrid');
         const addModal = document.getElementById('addModal');
         const openModalBtn = document.getElementById('openModalBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const addPostForm = document.getElementById('addPostForm');
+        const cityFilter = document.getElementById('cityFilter');
 
-        // Управление модальным окном
         openModalBtn.addEventListener('click', () => addModal.classList.remove('hidden'));
         closeModalBtn.addEventListener('click', () => addModal.classList.add('hidden'));
 
-        // 2. Функция загрузки объявлений из базы
+        // Загрузка объявлений из базы
         async function loadPosts() {
             const { data: posts, error } = await supabaseClient
                 .from('posts')
@@ -147,16 +174,51 @@
                 return;
             }
 
+            allPosts = posts || [];
+            applyFilters();
+        }
+
+        // Применение фильтров категорий и городов
+        function applyFilters() {
+            let filtered = allPosts;
+
+            if (activeCategory !== 'ALL') {
+                filtered = filtered.filter(post => post.category === activeCategory);
+            }
+
+            if (activeCity !== 'ALL') {
+                filtered = filtered.filter(post => post.city === activeCity);
+            }
+
+            renderPosts(filtered);
+        }
+
+        // Клик по категориям
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.cat-btn').forEach(b => {
+                    b.className = 'cat-btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-100 text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap transition-all';
+                });
+                e.target.className = 'cat-btn bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-xl whitespace-nowrap shadow-sm transition-all';
+                
+                activeCategory = e.target.getAttribute('data-cat');
+                applyFilters();
+            });
+        });
+
+        // Смена города
+        cityFilter.addEventListener('change', (e) => {
+            activeCity = e.target.value;
+            applyFilters();
+        });
+
+        // Отрисовка карточек
+        function renderPosts(posts) {
             if (!posts || posts.length === 0) {
-                productsGrid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-12">Пока нет объявлений. Будьте первым!</div>`;
+                productsGrid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-12">В этой категории пока нет объявлений</div>`;
                 return;
             }
 
-            renderPosts(posts);
-        }
-
-        // 3. Отрисовка карточек
-        function renderPosts(posts) {
             productsGrid.innerHTML = posts.map(post => {
                 const isFree = Number(post.price) === 0;
                 const priceTag = isFree 
@@ -166,22 +228,23 @@
                 const img = post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
 
                 return `
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-all duration-200">
                         <div>
-                            <div class="relative h-36 bg-gray-100">
+                            <div class="relative h-44 bg-gray-100">
                                 <img src="${img}" class="w-full h-full object-cover" alt="${post.title}">
-                                <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-md backdrop-blur-md">${post.city}</span>
-                                ${isFree ? `<span class="absolute top-2 left-2 bg-emerald-500 text-white font-medium text-[10px] px-2 py-0.5 rounded-md">Даром</span>` : ''}
+                                <span class="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-lg backdrop-blur-md">${post.city}</span>
+                                ${isFree ? `<span class="absolute top-2 left-2 bg-emerald-500 text-white font-medium text-[10px] px-2 py-0.5 rounded-lg shadow-sm">Даром</span>` : ''}
                             </div>
                             <div class="p-3">
-                                <h3 class="font-semibold text-xs text-gray-900 line-clamp-1">${post.title}</h3>
-                                <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-2">${post.description || ''}</p>
+                                <div class="text-[10px] text-blue-600 font-semibold uppercase tracking-wider mb-1">${post.category || 'Разное'}</div>
+                                <h3 class="font-semibold text-sm text-gray-900 line-clamp-1">${post.title}</h3>
+                                <p class="text-xs text-gray-500 mt-1 line-clamp-2">${post.description || ''}</p>
                             </div>
                         </div>
                         <div class="p-3 pt-0 flex items-center justify-between mt-2">
                             ${priceTag}
-                            <a href="https://t.me/${post.telegram_handle.replace('@', '')}" target="_blank" class="bg-blue-50 text-blue-600 p-1.5 rounded-lg hover:bg-blue-100">
-                                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                            <a href="https://t.me/${post.telegram_handle.replace('@', '')}" target="_blank" class="bg-blue-50 text-blue-600 p-2 rounded-xl hover:bg-blue-100 transition-colors">
+                                <i data-lucide="send" class="w-4 h-4"></i>
                             </a>
                         </div>
                     </div>
@@ -190,7 +253,7 @@
             lucide.createIcons();
         }
 
-        // 4. Отправка новой формы
+        // Отправка формы
         addPostForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -217,10 +280,8 @@
             }
         });
 
-        // Запуск автозагрузки
         loadPosts();
 
-        // Инициализация Telegram WebApp
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
