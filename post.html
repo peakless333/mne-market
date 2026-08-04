@@ -82,7 +82,6 @@
             }
         };
 
-        // Берем сохраненный язык из localStorage
         let currentLang = localStorage.getItem('mne_lang') || 'ru';
         let currentPost = null;
         let similarPosts = [];
@@ -91,7 +90,6 @@
             currentLang = lang;
             localStorage.setItem('mne_lang', lang);
 
-            // Переводим статические элементы UI
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[lang][key]) el.innerText = dict[lang][key];
@@ -133,7 +131,7 @@
             
             const mainImg = (post.images && post.images.length > 0) ? post.images[0] : (post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
             
-            // Получаем никнейм из всех возможных названий колонок
+            // Считывание данных Telegram из любой имеющейся колонки
             const rawTg = post.telegram || post.telegram_username || post.tg || '';
             const tgUsername = rawTg.replace('@', '').trim();
             const dateStr = post.created_at ? new Date(post.created_at).toLocaleDateString() : '';
@@ -211,7 +209,7 @@
             }).join('');
         }
 
-        // Инициализация при загрузке
+        // Инициализация
         document.getElementById('langSelect').value = currentLang;
         changeLanguage(currentLang);
         fetchPost();
