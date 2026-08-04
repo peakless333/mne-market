@@ -109,7 +109,14 @@
 
                 <div>
                     <label class="block text-xs font-medium text-gray-700 mb-1" data-i18n="formPhotos">Фотографии (до 5 шт)</label>
-                    <input type="file" id="postFiles" multiple accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                    
+                    <!-- Кастомный блок выбора файлов для красивого перевода -->
+                    <label class="w-full border border-gray-300 rounded-xl p-2.5 text-sm flex items-center justify-between bg-white cursor-pointer hover:bg-gray-50 transition-all">
+                        <span id="fileChosenText" class="text-xs text-gray-500 truncate">Файлы не выбраны.</span>
+                        <span class="bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-lg shrink-0 ml-2" data-i18n="formBrowse">Обзор...</span>
+                        <input type="file" id="postFiles" multiple accept="image/*" class="hidden">
+                    </label>
+
                     <!-- Превью загруженных фото -->
                     <div id="imagePreviewContainer" class="grid grid-cols-5 gap-2 mt-3 hidden"></div>
                 </div>
@@ -139,6 +146,7 @@
                 catAll: "Всё", catFurniture: "🪑 Мебель", catTech: "💻 Техника", catAuto: "🚗 Авто", catClothes: "👕 Одежда", catOther: "📦 Разное",
                 loading: "Загрузка...", noPosts: "В этой категории пока нет объявлений", free: "Бесплатно",
                 modalTitle: "Новое объявление", formTitle: "Название товара", formPrice: "Цена (€)", formCity: "Город", formCat: "Категория", formTg: "Telegram Ник", formPhotos: "Фотографии (до 5 шт)", formDesc: "Описание", formSubmit: "Опубликовать",
+                formBrowse: "Обзор...", formNoFiles: "Файлы не выбраны",
                 cities: { ALL: "Все города", budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 categories: { furniture: "Мебель", tech: "Техника", auto: "Авто", clothes: "Одежда", other: "Разное" }
             },
@@ -147,6 +155,7 @@
                 catAll: "All", catFurniture: "🪑 Furniture", catTech: "💻 Tech", catAuto: "🚗 Auto", catClothes: "👕 Clothes", catOther: "📦 Other",
                 loading: "Loading...", noPosts: "No listings here yet", free: "Free",
                 modalTitle: "New Listing", formTitle: "Item Title", formPrice: "Price (€)", formCity: "City", formCat: "Category", formTg: "Telegram Handle", formPhotos: "Photos (up to 5)", formDesc: "Description", formSubmit: "Publish",
+                formBrowse: "Browse...", formNoFiles: "No files chosen",
                 cities: { ALL: "All cities", budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { furniture: "Furniture", tech: "Electronics", auto: "Vehicles", clothes: "Clothing", other: "Other" }
             },
@@ -155,6 +164,7 @@
                 catAll: "Sve", catFurniture: "🪑 Namještaj", catTech: "💻 Tehnika", catAuto: "🚗 Auto", catClothes: "👕 Odjeća", catOther: "📦 Razno",
                 loading: "Učitavanje...", noPosts: "Trenutno nema oglasa u ovoj kategoriji", free: "Besplatno",
                 modalTitle: "Novi oglas", formTitle: "Naziv artikla", formPrice: "Cijena (€)", formCity: "Grad", formCat: "Kategorija", formTg: "Telegram korisničko ime", formPhotos: "Fotografije (do 5)", formDesc: "Opis", formSubmit: "Objavi",
+                formBrowse: "Pregledaj...", formNoFiles: "Nema izabranih fajlova",
                 cities: { ALL: "Svi gradovi", budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { furniture: "Namještaj", tech: "Tehnika", auto: "Auto", clothes: "Odjeća", other: "Razno" }
             }
@@ -172,6 +182,7 @@
         const openModalBtn = document.getElementById('openModalBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const postFilesInput = document.getElementById('postFiles');
+        const fileChosenText = document.getElementById('fileChosenText');
         const imagePreviewContainer = document.getElementById('imagePreviewContainer');
         const addPostForm = document.getElementById('addPostForm');
         const submitBtn = document.getElementById('submitBtn');
@@ -180,14 +191,21 @@
         openModalBtn.addEventListener('click', () => addModal.classList.remove('hidden'));
         closeModalBtn.addEventListener('click', () => addModal.classList.add('hidden'));
 
-        // Превью фото
+        // Обработка выбора файлов и превью
         postFilesInput.addEventListener('change', function () {
             const files = Array.from(this.files).slice(0, 5);
             imagePreviewContainer.innerHTML = '';
 
             if (files.length === 0) {
+                fileChosenText.innerText = dict[currentLang].formNoFiles;
                 imagePreviewContainer.classList.add('hidden');
                 return;
+            }
+
+            if (files.length === 1) {
+                fileChosenText.innerText = files[0].name;
+            } else {
+                fileChosenText.innerText = `${files.length} files selected`;
             }
 
             imagePreviewContainer.classList.remove('hidden');
@@ -254,6 +272,7 @@
                     alert('Ошибка при публикации: ' + insertError.message);
                 } else {
                     addPostForm.reset();
+                    fileChosenText.innerText = dict[currentLang].formNoFiles;
                     imagePreviewContainer.innerHTML = '';
                     imagePreviewContainer.classList.add('hidden');
                     addModal.classList.add('hidden');
@@ -276,6 +295,11 @@
                 const key = el.getAttribute('data-i18n');
                 if (dict[lang][key]) el.innerText = dict[lang][key];
             });
+
+            // Обновляем текст "Файлы не выбраны" если файлы не выбраны
+            if (postFilesInput.files.length === 0) {
+                fileChosenText.innerText = dict[lang].formNoFiles;
+            }
 
             const currentSelectedCity = cityFilter.value || 'ALL';
             cityFilter.innerHTML = Object.entries(dict[lang].cities).map(([val, label]) => 
