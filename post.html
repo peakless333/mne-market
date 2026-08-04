@@ -8,10 +8,11 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-12">
+<body class="bg-gray-50 text-gray-800 pb-16">
 
+    <!-- Шапка -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
                 <span>Назад к объявлениям</span>
@@ -20,11 +21,56 @@
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 pt-6">
-        <div id="postContainer" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="p-8 text-center text-gray-400">Загрузка информации...</div>
+    <!-- Основной контент: 2 колонки на ПК -->
+    <main class="max-w-6xl mx-auto px-4 pt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Левая колонка (2/3 ширины): Карточка товара -->
+            <div class="lg:col-span-2">
+                <div id="postContainer" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-6">
+                    <div class="text-center text-gray-400 py-12">Загрузка информации...</div>
+                </div>
+            </div>
+
+            <!-- Правая колонка (1/3 ширины): Похожие объявления -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sticky top-20">
+                    <h3 class="font-bold text-gray-900 text-base mb-4 flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
+                        Похожие объявления
+                    </h3>
+                    <div id="similarPostsContainer" class="space-y-3">
+                        <div class="text-center text-gray-400 py-6 text-xs">Загрузка...</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
+
+    <!-- Модальное окно просмотра фото во весь экран -->
+    <div id="imageLightbox" class="fixed inset-0 bg-black/90 z-50 hidden flex flex-col items-center justify-between p-4 backdrop-blur-md transition-all">
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white/70 hover:text-white p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all z-10">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+
+        <div class="relative flex-1 w-full max-w-4xl flex items-center justify-center my-auto">
+            <!-- Стрелка влево -->
+            <button id="prevImgBtn" onclick="changeLightboxImage(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/70 p-3 rounded-full transition-all">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Текущая увеличенная картинка -->
+            <img id="lightboxImg" src="" class="max-h-[80vh] max-w-full object-contain rounded-lg shadow-2xl transition-all duration-200">
+
+            <!-- Стрелка вправо -->
+            <button id="nextImgBtn" onclick="changeLightboxImage(1)" class="absolute right-2 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/70 p-3 rounded-full transition-all">
+                <i data-lucide="chevron-right" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <div id="lightboxCounter" class="text-white/80 text-xs font-semibold py-2"></div>
+    </div>
 
     <script>
         lucide.createIcons();
@@ -36,28 +82,25 @@
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
         const postContainer = document.getElementById('postContainer');
+        const similarPostsContainer = document.getElementById('similarPostsContainer');
+
+        let currentPostImages = [];
+        let currentImageIndex = 0;
 
         async function loadSinglePost() {
             if (!postId) {
-                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">ID объявления не указан в ссылке</div>`;
+                postContainer.innerHTML = `<div class="text-center text-red-500 py-8">ID объявления не указан</div>`;
                 return;
             }
 
-            // Запрос к базе данных
             const { data: post, error } = await supabaseClient
                 .from('posts')
                 .select('*')
                 .eq('id', postId)
                 .maybeSingle();
 
-            if (error) {
-                console.error('Ошибка Supabase:', error);
-                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">Ошибка базы данных: ${error.message}</div>`;
-                return;
-            }
-
-            if (!post) {
-                postContainer.innerHTML = `<div class="p-8 text-center text-red-500">Объявление с ID "${postId}" не найдено в базе</div>`;
+            if (error || !post) {
+                postContainer.innerHTML = `<div class="text-center text-red-500 py-8">Объявление не найдено или было удалено</div>`;
                 return;
             }
 
@@ -66,26 +109,31 @@
             const isFree = Number(post.price) === 0;
             const priceTag = isFree ? `<span class="text-2xl font-bold text-emerald-600">Бесплатно</span>` : `<span class="text-2xl font-bold text-blue-600">${post.price} €</span>`;
             
-            // Получаем изображения
-            let images = [];
+            // Собираем массив изображений
             if (Array.isArray(post.images) && post.images.length > 0) {
-                images = post.images;
+                currentPostImages = post.images;
             } else if (post.image_url) {
-                images = [post.image_url];
+                currentPostImages = [post.image_url];
             } else {
-                images = ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500'];
+                currentPostImages = ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500'];
             }
 
             postContainer.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <div class="h-80 rounded-xl bg-gray-100 overflow-hidden mb-3 border border-gray-100">
-                            <img id="mainImg" src="${images[0]}" class="w-full h-full object-cover" alt="${post.title}">
+                        <!-- Главное фото с плашкой "Увеличить" при наведении -->
+                        <div class="relative h-80 rounded-xl bg-gray-100 overflow-hidden mb-3 border border-gray-100 group cursor-pointer" onclick="openLightbox(${0})">
+                            <img id="mainImg" src="${currentPostImages[0]}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="${post.title}">
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold gap-1.5">
+                                <i data-lucide="maximize-2" class="w-4 h-4"></i> Нажмите, чтобы открыть во весь экран
+                            </div>
                         </div>
-                        ${images.length > 1 ? `
+
+                        <!-- Сетка миниатюр -->
+                        ${currentPostImages.length > 1 ? `
                             <div class="grid grid-cols-5 gap-2">
-                                ${images.map((img) => `
-                                    <button onclick="document.getElementById('mainImg').src='${img}'" class="h-16 rounded-lg overflow-hidden border border-gray-200 focus:ring-2 focus:ring-blue-500">
+                                ${currentPostImages.map((img, idx) => `
+                                    <button onclick="setMainImage(${idx})" class="h-14 rounded-lg overflow-hidden border border-gray-200 focus:ring-2 focus:ring-blue-500 hover:opacity-90 transition-all">
                                         <img src="${img}" class="w-full h-full object-cover">
                                     </button>
                                 `).join('')}
@@ -121,6 +169,94 @@
                 </div>
             `;
             lucide.createIcons();
+
+            // Загружаем похожие объявления
+            loadSimilarPosts(post.category, post.id);
+        }
+
+        // Переключение главной картинки при клике на превью
+        function setMainImage(index) {
+            currentImageIndex = index;
+            document.getElementById('mainImg').src = currentPostImages[index];
+        }
+
+        // --- ЛАЙТБОКС (ФОТО ВО ВЕСЬ ЭКРАН) ---
+        function openLightbox(index) {
+            currentImageIndex = index;
+            const lightbox = document.getElementById('imageLightbox');
+            lightbox.classList.remove('hidden');
+            updateLightbox();
+        }
+
+        function closeLightbox() {
+            document.getElementById('imageLightbox').classList.add('hidden');
+        }
+
+        function changeLightboxImage(direction) {
+            currentImageIndex += direction;
+            if (currentImageIndex < 0) currentImageIndex = currentPostImages.length - 1;
+            if (currentImageIndex >= currentPostImages.length) currentImageIndex = 0;
+            updateLightbox();
+        }
+
+        function updateLightbox() {
+            document.getElementById('lightboxImg').src = currentPostImages[currentImageIndex];
+            document.getElementById('lightboxCounter').innerText = `${currentImageIndex + 1} из ${currentPostImages.length}`;
+            
+            // Скрываем стрелки, если фото всего одно
+            const showArrows = currentPostImages.length > 1;
+            document.getElementById('prevImgBtn').style.display = showArrows ? 'block' : 'none';
+            document.getElementById('nextImgBtn').style.display = showArrows ? 'block' : 'none';
+        }
+
+        // Закрытие по клавише ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') changeLightboxImage(-1);
+            if (e.key === 'ArrowRight') changeLightboxImage(1);
+        });
+
+
+        // --- ЗАГРУЗКА ПОХОЖИХ ОБЪЯВЛЕНИЙ ---
+        async function loadSimilarPosts(category, currentId) {
+            let { data: posts, error } = await supabaseClient
+                .from('posts')
+                .select('*')
+                .eq('category', category)
+                .neq('id', currentId)
+                .limit(5);
+
+            // Если в этой категории больше нет постов, подтягиваем просто свежие
+            if (!posts || posts.length === 0) {
+                const { data: recentPosts } = await supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .neq('id', currentId)
+                    .limit(5);
+                posts = recentPosts || [];
+            }
+
+            if (posts.length === 0) {
+                similarPostsContainer.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">Нет других объявлений</div>`;
+                return;
+            }
+
+            similarPostsContainer.innerHTML = posts.map(item => {
+                const isFree = Number(item.price) === 0;
+                const price = isFree ? 'Бесплатно' : `${item.price} €`;
+                const img = (item.images && item.images.length > 0) ? item.images[0] : (item.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+
+                return `
+                    <a href="post.html?id=${item.id}" class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group">
+                        <img src="${img}" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-gray-100 group-hover:scale-105 transition-transform">
+                        <div class="overflow-hidden">
+                            <h4 class="text-xs font-semibold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">${item.title}</h4>
+                            <div class="text-[10px] text-gray-400 mt-0.5">${item.city}</div>
+                            <div class="text-xs font-bold ${isFree ? 'text-emerald-600' : 'text-blue-600'} mt-1">${price}</div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
         }
 
         loadSinglePost();
