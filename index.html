@@ -12,40 +12,64 @@
     <style>
         .scrollbar-none::-webkit-scrollbar { display: none; }
         .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-24 selection:bg-blue-500 selection:text-white">
+<body class="bg-gray-50/70 text-gray-800 pb-28 selection:bg-blue-500 selection:text-white antialiased">
 
     <!-- Toast уведомление -->
     <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900/95 backdrop-blur-md text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-2xl z-50 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none flex items-center gap-2">
         <span id="toastText">Уведомление</span>
     </div>
 
+    <!-- Модалка подтверждения удаления -->
+    <div id="deleteModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 animate-fade-in">
+            <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto">
+                <i data-lucide="trash-2" class="w-6 h-6"></i>
+            </div>
+            <div class="text-center space-y-1">
+                <h3 class="font-bold text-gray-950 text-base" data-i18n="modalDeleteTitle">Удалить объявление?</h3>
+                <p class="text-xs text-gray-500" data-i18n="modalDeleteDesc">Это действие нельзя будет отменить. Объявление исчезнет навсегда.</p>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="cancelBtn">Отмена</button>
+                <button id="confirmDeleteBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm shadow-rose-500/20 cursor-pointer" data-i18n="deleteBtn">Удалить</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Шапка сайта -->
-    <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30 transition-all">
+    <header class="bg-white/85 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30 transition-all">
         <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-            <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 shrink-0 tracking-tight">
-                <span class="text-xl">🇲🇪</span> MNE Market
+            <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 shrink-0 tracking-tight group">
+                <span class="text-xl group-hover:scale-110 transition-transform">🇲🇪</span> 
+                <span class="hidden sm:inline">MNE Market</span>
             </a>
 
             <!-- Поиск -->
             <div class="flex-1 max-w-md relative">
                 <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-                <input type="text" id="searchInput" oninput="handleSearchInput(event)" placeholder="Поиск товаров..." class="w-full bg-gray-100/80 border border-transparent focus:border-blue-500 focus:bg-white rounded-xl pl-10 pr-4 py-2 text-sm outline-none transition-all">
+                <input type="text" id="searchInput" oninput="handleSearchInput(event)" placeholder="Поиск товаров..." class="w-full bg-gray-100/80 border border-transparent focus:border-blue-500 focus:bg-white rounded-2xl pl-10 pr-9 py-2 text-sm outline-none transition-all">
+                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
             </div>
 
-            <!-- Правая часть: Мои объявления, Избранное, Язык, Создать -->
+            <!-- Правая часть: Мои объявления, Избранное, Язык, Кнопка создания -->
             <div class="flex items-center gap-2 shrink-0">
-                <!-- Кнопка "Мои объявления" -->
                 <button onclick="toggleMyPostsFilter()" id="myPostsHeaderBtn" title="Мои объявления" class="relative flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
-                    <i data-lucide="user" class="w-4 h-4 text-gray-700"></i>
-                    <span id="myPostsCountBadge" class="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm">0</span>
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                    <span id="myPostsCountBadge" class="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
                 </button>
 
-                <!-- Избранное -->
                 <button onclick="toggleFavoritesFilter()" id="favoritesHeaderBtn" title="Избранное" class="relative flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
                     <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
-                    <span id="favoritesCountBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm">0</span>
+                    <span id="favoritesCountBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
                 </button>
 
                 <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2 py-2 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
@@ -64,20 +88,24 @@
     <!-- Основной контент -->
     <main class="max-w-5xl mx-auto px-4 pt-5 space-y-4">
 
-        <!-- Режим "Мои объявления" (Баннер-подсказка при активном фильтре) -->
-        <div id="myPostsBanner" class="hidden bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-center justify-between text-blue-900">
-            <div class="flex items-center gap-2.5">
-                <i data-lucide="shield-check" class="w-5 h-5 text-blue-600 shrink-0"></i>
+        <!-- Баннер режима "Мои объявления" -->
+        <div id="myPostsBanner" class="hidden bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/80 rounded-2xl p-4 items-center justify-between text-blue-950 shadow-sm animate-fade-in">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/30">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                </div>
                 <div>
                     <h4 class="text-xs font-bold" data-i18n="myPostsModeTitle">Управление вашими объявлениями</h4>
-                    <p class="text-[11px] text-blue-700" data-i18n="myPostsModeDesc">Здесь отображаются только созданные вами товары с этого устройства/Telegram аккаунта.</p>
+                    <p class="text-[11px] text-blue-700 mt-0.5" data-i18n="myPostsModeDesc">Здесь отображаются только созданные вами товары с этого устройства.</p>
                 </div>
             </div>
-            <button onclick="toggleMyPostsFilter()" class="text-xs font-bold text-blue-600 hover:text-blue-800 underline cursor-pointer shrink-0" data-i18n="closeMode">Закрыть</button>
+            <button onclick="toggleMyPostsFilter()" class="bg-white hover:bg-blue-50 text-blue-700 text-xs font-bold px-3.5 py-2 rounded-xl border border-blue-200/60 shadow-xs transition-all cursor-pointer" data-i18n="closeMode">Закрыть</button>
         </div>
 
         <!-- Фильтры (Города и Категории) -->
         <div class="bg-white rounded-2xl p-4 border border-gray-100/80 shadow-sm space-y-3.5">
+            
+            <!-- Города -->
             <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" id="citiesContainer">
                 <button onclick="setCity('all')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-blue-600 text-white shadow-sm shadow-blue-500/20" data-city="all" data-i18n="allCities">Все города</button>
                 <button onclick="setCity('budva')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-city="budva">Будва</button>
@@ -90,7 +118,10 @@
 
             <hr class="border-gray-100">
 
+            <!-- Категории и Сортировка -->
             <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                
+                <!-- Категории -->
                 <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none" id="categoriesContainer">
                     <button onclick="setCategory('all')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-900 text-white shadow-sm" data-cat="all" data-i18n="cat_all">Все</button>
                     <button onclick="setCategory('furniture')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-cat="furniture" data-i18n="cat_furniture">Мебель</button>
@@ -100,12 +131,13 @@
                     <button onclick="setCategory('other')" class="cat-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-600" data-cat="other" data-i18n="cat_other">Разное</button>
                 </div>
 
+                <!-- Доп. фильтры, счетчик и сортировка -->
                 <div class="flex items-center justify-between md:justify-end gap-2 shrink-0">
                     <button id="freeFilterBtn" onclick="toggleFreeFilter()" class="text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1">
                         <i data-lucide="gift" class="w-3.5 h-3.5 text-emerald-600"></i> <span data-i18n="freeOnly">Бесплатно</span>
                     </button>
 
-                    <button id="resetFiltersBtn" onclick="resetAllFilters()" class="hidden text-xs font-semibold text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1">
+                    <button id="resetFiltersBtn" onclick="resetAllFilters()" class="hidden text-xs font-semibold text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1 animate-fade-in">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="resetFilters">Сбросить</span>
                     </button>
                     
@@ -115,18 +147,38 @@
                         <option value="expensive" data-i18n="sort_expensive">Сначала дороже</option>
                     </select>
                 </div>
+
             </div>
         </div>
 
+        <!-- Строка со счетчиком результатов -->
         <div class="flex items-center justify-between px-1">
             <span id="resultsCountText" class="text-xs font-medium text-gray-400"></span>
         </div>
 
-        <!-- Список объявлений -->
-        <div id="postsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
+        <!-- Скелетон загрузки -->
+        <div id="loadingSkeleton" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <script>
+                document.write(Array(8).fill(0).map(() => `
+                    <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm animate-pulse flex flex-col">
+                        <div class="aspect-square bg-gray-200"></div>
+                        <div class="p-3.5 space-y-2 flex-1 flex flex-col justify-between">
+                            <div class="space-y-1.5">
+                                <div class="h-4 bg-gray-200 rounded-lg w-4/5"></div>
+                                <div class="h-3 bg-gray-100 rounded-lg w-2/5"></div>
+                            </div>
+                            <div class="h-5 bg-gray-200 rounded-lg w-1/3"></div>
+                        </div>
+                    </div>
+                `).join(''));
+            </script>
+        </div>
 
-        <!-- Заглушка -->
-        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-center space-y-3">
+        <!-- Список объявлений -->
+        <div id="postsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 hidden"></div>
+
+        <!-- Заглушка, если ничего не найдено -->
+        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-center space-y-3 animate-fade-in">
             <div class="bg-gray-100 p-4 rounded-full text-gray-400">
                 <i data-lucide="search-x" class="w-8 h-8"></i>
             </div>
@@ -136,6 +188,7 @@
                 <span data-i18n="resetFilters">Сбросить фильтры</span>
             </button>
         </div>
+
     </main>
 
     <!-- Скрипты приложения -->
@@ -148,14 +201,12 @@
             tg.expand();
         }
 
-        // Инициализация идентификатора пользователя (user_token или telegram_id)
         let userToken = localStorage.getItem('mne_user_token');
         if (!userToken) {
             userToken = 'user_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
             localStorage.setItem('mne_user_token', userToken);
         }
 
-        // Если открыто в Telegram, приоритет отдаем реальному telegram_id
         const tgUserId = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null;
 
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
@@ -168,9 +219,11 @@
                 cat_all: "Все", cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_other: "Разное",
                 sort_newest: "Сначала новые", sort_cheap: "Сначала дешевле", sort_expensive: "Сначала дороже",
                 resetFilters: "Сбросить", freeOnly: "Бесплатно", emptyTitle: "Ничего не найдено", emptyDesc: "Попробуйте изменить параметры поиска или сбросить фильтры.",
-                free: "Бесплатно", newBadge: "NEW", deletePost: "Удалить", confirmDelete: "Только что удалено",
+                free: "Бесплатно", newBadge: "NEW", deletePost: "Удалить", confirmDelete: "Объявление успешно удалено",
                 addedToFav: "Добавлено в избранное ❤️", removedFromFav: "Удалено из избранного",
                 myPostsModeTitle: "Управление вашими объявлениями", myPostsModeDesc: "Здесь отображаются только созданные вами товары.", closeMode: "Закрыть",
+                modalDeleteTitle: "Удалить объявление?", modalDeleteDesc: "Это действие нельзя будет отменить. Объявление исчезнет навсегда.",
+                cancelBtn: "Отмена", deleteBtn: "Удалить", myBadgeText: "Мое",
                 foundCount: (n) => `Найдено объявлений: ${n}`,
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
@@ -179,9 +232,11 @@
                 cat_all: "All", cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_other: "Other",
                 sort_newest: "Newest first", sort_cheap: "Cheapest first", sort_expensive: "Most expensive",
                 resetFilters: "Reset", freeOnly: "Free", emptyTitle: "No items found", emptyDesc: "Try changing your search parameters or reset filters.",
-                free: "Free", newBadge: "NEW", deletePost: "Delete", confirmDelete: "Deleted",
+                free: "Free", newBadge: "NEW", deletePost: "Delete", confirmDelete: "Listing successfully deleted",
                 addedToFav: "Added to favorites ❤️", removedFromFav: "Removed from favorites",
                 myPostsModeTitle: "Manage your listings", myPostsModeDesc: "Only listings created by you are displayed here.", closeMode: "Close",
+                modalDeleteTitle: "Delete listing?", modalDeleteDesc: "This action cannot be undone. The listing will be permanently removed.",
+                cancelBtn: "Cancel", deleteBtn: "Delete", myBadgeText: "My",
                 foundCount: (n) => `Items found: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
@@ -190,9 +245,11 @@
                 cat_all: "Sve", cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_other: "Razno",
                 sort_newest: "Najnovije", sort_cheap: "Najjeftinije", sort_expensive: "Najskuplje",
                 resetFilters: "Resetuj", freeOnly: "Besplatno", emptyTitle: "Nema rezultata", emptyDesc: "Pokušajte da promijenite parametre pretrage ili resetujte filtere.",
-                free: "Besplatno", newBadge: "NOVO", deletePost: "Obriši", confirmDelete: "Obrisano",
+                free: "Besplatno", newBadge: "NOVO", deletePost: "Obriši", confirmDelete: "Oglas je uspješno obrisan",
                 addedToFav: "Dodato u omiljene ❤️", removedFromFav: "Uklonjeno iz omiljenih",
                 myPostsModeTitle: "Upravljanje vašim oglasima", myPostsModeDesc: "Ovdje se prikazuju samo vaši oglasi.", closeMode: "Zatvori",
+                modalDeleteTitle: "Obrisati oglas?", modalDeleteDesc: "Ova akcija se ne može opozvati. Oglas će biti trajno obrisan.",
+                cancelBtn: "Otkaži", deleteBtn: "Obriši", myBadgeText: "Moj",
                 foundCount: (n) => `Pronađeno oglasa: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
@@ -206,12 +263,12 @@
         let showOnlyFavorites = false;
         let showOnlyMyPosts = false;
         let showOnlyFree = false;
+        let postToDeleteId = null;
         
         let rawFavorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
         let favorites = [...new Set(rawFavorites.map(id => String(id)))];
         localStorage.setItem('mne_favorites', JSON.stringify(favorites));
 
-        // Локальный список созданных пользователем ID объявлений (на случай отсутствия колонки user_id в базе)
         let myLocalPostIds = JSON.parse(localStorage.getItem('mne_my_posts') || '[]');
 
         let searchTimeout = null;
@@ -226,7 +283,7 @@
             clearTimeout(toastTimeout);
             toastTimeout = setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
-            }, 1500);
+            }, 2000);
         }
 
         function changeLanguage(lang) {
@@ -342,9 +399,25 @@
             renderPosts();
         }
 
-        async function deletePost(e, id) {
+        function openDeleteModal(e, id) {
             e.stopPropagation();
-            if (!confirm(dict[currentLang].deletePost + '?')) return;
+            postToDeleteId = id;
+            const modal = document.getElementById('deleteModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDeleteModal() {
+            postToDeleteId = null;
+            const modal = document.getElementById('deleteModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            if (!postToDeleteId) return;
+            const id = postToDeleteId;
+            closeDeleteModal();
 
             try {
                 const { error } = await supabaseClient.from('posts').delete().eq('id', id);
@@ -361,7 +434,7 @@
                 console.error('Ошибка удаления:', err);
                 showToast('Ошибка удаления');
             }
-        }
+        });
 
         function setCity(city) {
             selectedCity = city;
@@ -390,12 +463,29 @@
         }
 
         function handleSearchInput(e) {
+            const val = e.target.value;
+            searchQuery = val.toLowerCase().trim();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (val.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                searchQuery = e.target.value.toLowerCase().trim();
                 checkResetButtonVisibility();
                 renderPosts();
-            }, 250);
+            }, 200);
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            searchQuery = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            checkResetButtonVisibility();
+            renderPosts();
         }
 
         function checkResetButtonVisibility() {
@@ -416,7 +506,9 @@
             showOnlyFavorites = false;
             showOnlyMyPosts = false;
             showOnlyFree = false;
-            document.getElementById('searchInput').value = '';
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
             document.getElementById('favoritesHeaderBtn').classList.remove('bg-rose-50', 'border', 'border-rose-200');
             document.getElementById('myPostsHeaderBtn').classList.remove('bg-blue-50', 'border', 'border-blue-200');
             document.getElementById('myPostsBanner').classList.add('hidden');
@@ -436,10 +528,17 @@
 
                 if (error) throw error;
                 posts = data || [];
+                
+                document.getElementById('loadingSkeleton').classList.add('hidden');
+                const container = document.getElementById('postsContainer');
+                container.classList.remove('hidden');
+                container.classList.add('grid');
+
                 updateBadges();
                 renderPosts();
             } catch (err) {
                 console.error('Ошибка загрузки объявлений:', err);
+                document.getElementById('loadingSkeleton').innerHTML = '<div class="col-span-full text-center text-xs text-rose-500 py-10">Ошибка загрузки данных из базы.</div>';
             }
         }
 
@@ -470,11 +569,13 @@
 
             if (filtered.length === 0) {
                 container.innerHTML = '';
+                container.classList.add('hidden');
                 emptyState.classList.remove('hidden');
                 return;
             }
 
             emptyState.classList.add('hidden');
+            container.classList.remove('hidden');
 
             const citiesMap = dict[currentLang].cities;
             const now = new Date();
@@ -489,21 +590,21 @@
                 const isNew = post.created_at && (now - new Date(post.created_at) < 48 * 3600 * 1000);
 
                 return `
-                    <div onclick="window.location.href='post.html?id=${post.id}'" class="bg-white rounded-2xl border border-gray-100 hover:border-gray-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col group relative">
+                    <div onclick="window.location.href='post.html?id=${post.id}'" class="bg-white rounded-2xl border border-gray-100 hover:border-gray-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col group relative animate-fade-in">
                         <div class="relative aspect-square bg-gray-100 overflow-hidden">
-                            <img src="${imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${post.title}">
+                            <img src="${imageUrl}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${post.title}">
                             
-                            <div class="absolute top-2.5 left-2.5 flex flex-col gap-1">
+                            <div class="absolute top-2.5 left-2.5 flex flex-col gap-1 pointer-events-none">
                                 <span class="bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
                                     ${dict[currentLang]['cat_' + post.category] || post.category}
                                 </span>
                                 ${isNew ? `<span class="bg-blue-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-md shadow-sm w-fit">${dict[currentLang].newBadge}</span>` : ''}
-                                ${isMine ? `<span class="bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-sm w-fit">Мое</span>` : ''}
+                                ${isMine ? `<span class="bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-sm w-fit">${dict[currentLang].myBadgeText}</span>` : ''}
                             </div>
 
                             <div class="absolute top-2.5 right-2.5 flex items-center gap-1.5">
                                 ${isMine ? `
-                                    <button onclick="deletePost(event, '${post.id}')" title="${dict[currentLang].deletePost}" class="bg-white/90 hover:bg-rose-600 hover:text-white text-rose-600 p-2 rounded-full backdrop-blur-sm transition-all cursor-pointer shadow-sm active:scale-90">
+                                    <button onclick="openDeleteModal(event, '${post.id}')" title="${dict[currentLang].deletePost}" class="bg-white/90 hover:bg-rose-600 hover:text-white text-rose-600 p-2 rounded-full backdrop-blur-sm transition-all cursor-pointer shadow-sm active:scale-90">
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
                                 ` : ''}
