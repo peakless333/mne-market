@@ -18,22 +18,15 @@
             <a href="index.html" class="flex items-center gap-2 font-bold text-lg tracking-tight text-gray-950">
                 <span class="text-xl">🇲🇪</span> MNE<span class="text-blue-600">Market</span>
             </a>
-            <div class="flex items-center gap-3">
-                <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
-                    <option value="ru">RU</option>
-                    <option value="en">EN</option>
-                    <option value="cnr">CNR</option>
-                </select>
-                <a href="index.html" class="text-xs font-semibold text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-1">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="back">На главную</span>
-                </a>
-            </div>
+            <a href="index.html" class="text-xs font-semibold text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-1">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> На главную
+            </a>
         </div>
     </header>
 
     <!-- Основной контент -->
     <main class="max-w-2xl mx-auto px-4 pt-6" id="postContainer">
-        <div class="text-center py-20 text-gray-400 text-sm" data-i18n="loading">Загрузка объявления...</div>
+        <div class="text-center py-20 text-gray-400 text-sm">Загрузка объявления...</div>
     </main>
 
     <script>
@@ -49,52 +42,32 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const dict = {
-            ru: {
-                back: "На главную", loading: "Загрузка объявления...", not_found: "Объявление не найдено",
-                error_load: "Ошибка загрузки объявления", desc_title: "Описание",
-                cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
-                categories: { auto: "Авто", realestate: "Недвижимость", furniture: "Мебель", tech: "Электроника", clothes: "Одежда", other: "Разное" }
-            },
-            en: {
-                back: "Home", loading: "Loading listing...", not_found: "Listing not found",
-                error_load: "Error loading listing", desc_title: "Description",
-                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
-                categories: { auto: "Vehicles", realestate: "Real Estate", furniture: "Furniture", tech: "Electronics", clothes: "Clothing", other: "Other" }
-            },
-            cnr: {
-                back: "Početna", loading: "Učitavanje oglasa...", not_found: "Oglas nije pronađen",
-                error_load: "Greška pri učitavanju", desc_title: "Opis",
-                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
-                categories: { auto: "Auto", realestate: "Nekretnine", furniture: "Namještaj", tech: "Tehnika", clothes: "Odjeća", razno: "Razno" }
-            }
+        const citiesMap = {
+            budva: { ru: "Будва", en: "Budva", cnr: "Budva" },
+            bar: { ru: "Бар", en: "Bar", cnr: "Bar" },
+            tivat: { ru: "Тиват", en: "Tivat", cnr: "Tivat" },
+            podgorica: { ru: "Подгорица", en: "Podgorica", cnr: "Podgorica" },
+            kotor: { ru: "Котор", en: "Kotor", cnr: "Kotor" },
+            herceg_novi: { ru: "Херцег-Нови", en: "Herceg Novi", cnr: "Herceg Novi" }
         };
 
-        let currentLang = localStorage.getItem('mne_lang') || 'ru';
-        let currentPostData = null;
+        const categoriesMap = {
+            auto: { ru: "Авто", en: "Vehicles", cnr: "Auto" },
+            realestate: { ru: "Недвижимость", en: "Real Estate", cnr: "Nekretnine" },
+            furniture: { ru: "Мебель", en: "Furniture", cnr: "Namještaj" },
+            tech: { ru: "Электроника", en: "Electronics", cnr: "Tehnika" },
+            clothes: { ru: "Одежда", en: "Clothing", cnr: "Odjeća" },
+            other: { ru: "Разное", en: "Other", cnr: "Razno" }
+        };
 
-        function changeLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('mne_lang', lang);
-            
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (dict[lang][key]) el.innerText = dict[lang][key];
-            });
-
-            if (currentPostData) {
-                renderPost(currentPostData);
-            }
-        }
-
-        document.getElementById('langSelect').value = currentLang;
+        const currentLang = localStorage.getItem('mne_lang') || 'ru';
 
         async function fetchPost() {
             const urlParams = new URLSearchParams(window.location.search);
             const postId = urlParams.get('id');
 
             if (!postId) {
-                document.getElementById('postContainer').innerHTML = `<div class="text-center py-20 text-gray-400 text-sm">${dict[currentLang].not_found}</div>`;
+                document.getElementById('postContainer').innerHTML = `<div class="text-center py-20 text-gray-400 text-sm">Объявление не найдено</div>`;
                 return;
             }
 
@@ -108,18 +81,17 @@
                 if (error) throw error;
                 if (!data) throw new Error('Not found');
 
-                currentPostData = data;
                 renderPost(data);
             } catch (err) {
                 console.error(err);
-                document.getElementById('postContainer').innerHTML = `<div class="text-center py-20 text-gray-400 text-sm">${dict[currentLang].error_load}</div>`;
+                document.getElementById('postContainer').innerHTML = `<div class="text-center py-20 text-gray-400 text-sm">Ошибка загрузки объявления</div>`;
             }
         }
 
         function renderPost(post) {
             const imageUrl = post.image_url || (post.images && post.images[0]) || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
-            const cityName = dict[currentLang].cities[post.city?.toLowerCase()] || post.city;
-            const categoryName = dict[currentLang].categories[post.category?.toLowerCase()] || post.category;
+            const cityName = citiesMap[post.city]?.[currentLang] || post.city;
+            const categoryName = categoriesMap[post.category]?.[currentLang] || post.category;
 
             document.getElementById('postContainer').innerHTML = `
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden space-y-6 pb-6">
@@ -144,8 +116,8 @@
                         <hr class="border-gray-100">
 
                         <div>
-                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">${dict[currentLang].desc_title}</h3>
-                            <p class="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">${post.description || '—'}</p>
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Описание</h3>
+                            <p class="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">${post.description || 'Без описания'}</p>
                         </div>
                     </div>
                 </div>
