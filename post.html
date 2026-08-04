@@ -12,6 +12,11 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
+    <!-- Уведомление о копировании ссылки -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none z-50">
+        Ссылка скопирована в буфер обмена!
+    </div>
+
     <!-- Шапка сайта -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -20,7 +25,6 @@
             </a>
             
             <div class="flex items-center gap-2">
-                <!-- Переключатель языка -->
                 <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
                     <option value="ru">🇷🇺 RU</option>
                     <option value="en">🇬🇧 EN</option>
@@ -37,11 +41,16 @@
         <div id="postContent" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden">
             <!-- Левая колонка: Картинки -->
             <div class="md:col-span-2 space-y-3">
-                <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm p-3">
+                <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm p-3 relative">
+                    <!-- Кнопка Избранного на фото -->
+                    <button onclick="toggleCurrentFavorite()" class="absolute top-6 right-6 bg-white/90 hover:bg-white p-2.5 rounded-full transition-all text-gray-600 shadow-md z-20 cursor-pointer">
+                        <i id="favIcon" data-lucide="heart" class="w-5 h-5"></i>
+                    </button>
+
                     <div id="mainImageWrapper" onclick="openFullscreen()" class="relative h-[380px] bg-gray-100 rounded-xl overflow-hidden cursor-zoom-in group">
                         <img id="mainProductImage" src="" class="w-full h-full object-contain" alt="Product">
                         <div class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-1.5 shadow-md">
-                            <i data-lucide="maximize-2" class="w-4 h-4"></i> Нажмите для увеличения
+                            <i data-lucide="maximize-2" class="w-4 h-4"></i> <span data-i18n="zoomText">Нажмите для увеличения</span>
                         </div>
                     </div>
                     <div id="thumbnailsContainer" class="grid grid-cols-5 gap-2 mt-3"></div>
@@ -53,7 +62,10 @@
                 <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
                     <div class="flex items-center justify-between text-xs text-gray-400">
                         <span id="postCategoryBadge" class="bg-blue-50 text-blue-600 font-semibold px-2.5 py-1 rounded-lg uppercase tracking-wider"></span>
-                        <span id="postDate"></span>
+                        <div class="flex items-center gap-3">
+                            <span id="postViews" class="flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i> <span id="viewsCount">0</span></span>
+                            <span id="postDate"></span>
+                        </div>
                     </div>
 
                     <h1 id="postTitle" class="text-xl font-bold text-gray-900"></h1>
@@ -70,7 +82,7 @@
                     </div>
 
                     <div class="space-y-2 pt-2">
-                        <!-- Кнопка связи с продавцом (без юзернейма) -->
+                        <!-- Кнопка связи с продавцом -->
                         <a id="postTelegramBtn" href="#" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
                             <i data-lucide="send" class="w-4 h-4"></i> <span data-i18n="contactBtn">Написать продавцу</span>
                         </a>
@@ -78,6 +90,11 @@
                         <!-- Кнопка Поделиться в Telegram -->
                         <button onclick="shareToTelegram()" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-600 font-medium py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs cursor-pointer">
                             <i data-lucide="share-2" class="w-4 h-4"></i> <span data-i18n="shareBtn">Поделиться в Telegram</span>
+                        </button>
+
+                        <!-- Кнопка Копировать ссылку -->
+                        <button onclick="copyLink()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs cursor-pointer">
+                            <i data-lucide="copy" class="w-4 h-4"></i> <span data-i18n="copyBtn">Скопировать ссылку</span>
                         </button>
                     </div>
                 </div>
@@ -117,7 +134,6 @@
     <script>
         lucide.createIcons();
 
-        // Инициализация Telegram WebApp, если запущено внутри бота
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
@@ -132,7 +148,8 @@
             ru: {
                 back: "Назад к объявлениям", loading: "Загрузка...", free: "Бесплатно",
                 price: "Цена", city: "Город", desc: "ОПИСАНИЕ", contactBtn: "Написать продавцу",
-                shareBtn: "Поделиться в Telegram",
+                shareBtn: "Поделиться в Telegram", copyBtn: "Скопировать ссылку",
+                zoomText: "Нажмите для увеличения",
                 similarTitle: "Похожие объявления", noSimilar: "Нет похожих объявлений",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 categories: { furniture: "Мебель", tech: "Техника", auto: "Авто", clothes: "Одежда", other: "Разное" }
@@ -140,7 +157,8 @@
             en: {
                 back: "Back to listings", loading: "Loading...", free: "Free",
                 price: "Price", city: "City", desc: "DESCRIPTION", contactBtn: "Contact seller",
-                shareBtn: "Share to Telegram",
+                shareBtn: "Share to Telegram", copyBtn: "Copy link",
+                zoomText: "Click to zoom",
                 similarTitle: "Related listings", noSimilar: "No related listings",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { furniture: "Furniture", tech: "Electronics", auto: "Vehicles", clothes: "Clothing", other: "Other" }
@@ -148,7 +166,8 @@
             cnr: {
                 back: "Nazad na oglase", loading: "Učitavanje...", free: "Besplatno",
                 price: "Cijena", city: "Grad", desc: "OPIS", contactBtn: "Kontaktiraj prodavca",
-                shareBtn: "Podijeli na Telegram",
+                shareBtn: "Podijeli na Telegram", copyBtn: "Kopiraj link",
+                zoomText: "Klikni za uvećanje",
                 similarTitle: "Slični oglasi", noSimilar: "Nema sličnih oglasa",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { furniture: "Namještaj", tech: "Tehnika", auto: "Auto", clothes: "Odjeća", other: "Razno" }
@@ -160,6 +179,7 @@
         let allPosts = [];
         let postImages = [];
         let currentImageIndex = 0;
+        let favorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
 
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
@@ -177,6 +197,11 @@
 
             currentPost = postData;
             allPosts = allData || [];
+
+            // Увеличиваем счетчик просмотров на +1
+            const newViews = (currentPost.views || 0) + 1;
+            await supabaseClient.from('posts').update({ views: newViews }).eq('id', postId);
+            currentPost.views = newViews;
 
             postImages = currentPost.images && currentPost.images.length > 0 ? currentPost.images : [];
             if (postImages.length === 0 && currentPost.image_url) postImages.push(currentPost.image_url);
@@ -198,6 +223,42 @@
             });
 
             if (currentPost) renderPost();
+        }
+
+        function formatPrice(val) {
+            const num = Number(val);
+            if (num === 0) return dict[currentLang].free;
+            return num.toLocaleString('ru-RU') + ' €';
+        }
+
+        function toggleCurrentFavorite() {
+            if (!currentPost) return;
+            if (favorites.includes(currentPost.id)) {
+                favorites = favorites.filter(id => id !== currentPost.id);
+            } else {
+                favorites.push(currentPost.id);
+            }
+            localStorage.setItem('mne_favorites', JSON.stringify(favorites));
+            updateFavIcon();
+        }
+
+        function updateFavIcon() {
+            const favIcon = document.getElementById('favIcon');
+            if (favorites.includes(currentPost.id)) {
+                favIcon.classList.add('fill-red-500', 'text-red-500');
+            } else {
+                favIcon.classList.remove('fill-red-500', 'text-red-500');
+            }
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.remove('opacity-0', 'pointer-events-none');
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'pointer-events-none');
+                }, 2000);
+            });
         }
 
         function switchMainImage(index) {
@@ -249,13 +310,11 @@
             document.getElementById('imageCounter').innerText = `${currentImageIndex + 1} / ${postImages.length}`;
         }
 
-        // Исправленная функция шеринга в Telegram
         function shareToTelegram() {
             if (!currentPost) return;
-            const priceText = Number(currentPost.price) === 0 ? (currentLang === 'en' ? 'Free' : 'Бесплатно') : `${currentPost.price} €`;
+            const priceText = formatPrice(currentPost.price);
             const shareText = `🔥 ${currentPost.title}\n💰 ${priceText}\n📍 ${dict[currentLang].cities[currentPost.city] || currentPost.city}\n\nСмотреть объявление: ${window.location.href}`;
             
-            // Проверяем, открыт ли сайт как Telegram WebApp
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
                 window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(shareText)}`);
             } else {
@@ -280,10 +339,10 @@
         function renderPost() {
             if (!currentPost) return;
 
-            const isFree = Number(currentPost.price) === 0;
-            document.getElementById('postPrice').innerText = isFree ? dict[currentLang].free : `${currentPost.price} €`;
+            document.getElementById('postPrice').innerText = formatPrice(currentPost.price);
             document.getElementById('postCity').innerText = dict[currentLang].cities[currentPost.city] || currentPost.city;
             document.getElementById('postCategoryBadge').innerText = dict[currentLang].categories[currentPost.category] || currentPost.category || 'Other';
+            document.getElementById('viewsCount').innerText = currentPost.views || 0;
             document.getElementById('postDate').innerText = new Date(currentPost.created_at).toLocaleDateString();
             document.getElementById('postTitle').innerText = currentPost.title;
             document.getElementById('postDesc').innerText = currentPost.description || '-';
@@ -291,6 +350,7 @@
             const tgClean = currentPost.telegram.replace('@', '');
             document.getElementById('postTelegramBtn').href = `https://t.me/${tgClean}`;
 
+            updateFavIcon();
             document.getElementById('mainProductImage').src = postImages[0];
 
             const thumbsContainer = document.getElementById('thumbnailsContainer');
@@ -311,7 +371,7 @@
             if (similar.length > 0) {
                 similarContainer.innerHTML = similar.map(p => {
                     const sImg = (p.images && p.images.length > 0) ? p.images[0] : (p.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
-                    const sPrice = Number(p.price) === 0 ? dict[currentLang].free : `${p.price} €`;
+                    const sPrice = formatPrice(p.price);
                     return `
                         <a href="post.html?id=${p.id}" class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
                             <img src="${sImg}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="Similar">
