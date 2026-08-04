@@ -3,74 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Объявление — MNE Market</title>
+    <title>MNE Market — Объявление</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇲🇪</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 pb-16">
 
-    <!-- Шапка -->
+    <!-- Header -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm transition-colors">
-                <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                <span>Назад к объявлениям</span>
+            <a href="index.html" class="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span data-i18n="backBtn">Назад к объявлениям</span>
             </a>
-            <span class="text-xl">🇲🇪</span>
+
+            <!-- Переключатель языка -->
+            <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
+                <option value="ru">🇷🇺 RU</option>
+                <option value="en">🇬🇧 EN</option>
+                <option value="cnr">🇲🇪 CNR</option>
+            </select>
         </div>
     </header>
 
-    <!-- Основной контент: 2 колонки на ПК -->
+    <!-- Основной контент страницы -->
     <main class="max-w-6xl mx-auto px-4 pt-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <!-- Левая колонка (2/3 ширины): Карточка товара -->
-            <div class="lg:col-span-2">
-                <div id="postContainer" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-6">
-                    <div class="text-center text-gray-400 py-12">Загрузка информации...</div>
-                </div>
+            <!-- Левая колонка: Карточка объявления -->
+            <div id="postContainer" class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                <div class="text-center text-gray-400 py-12" data-i18n="loading">Загрузка...</div>
             </div>
 
-            <!-- Правая колонка (1/3 ширины): Похожие объявления -->
-            <div class="lg:col-span-1">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sticky top-20">
-                    <h3 class="font-bold text-gray-900 text-base mb-4 flex items-center gap-2">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
-                        Похожие объявления
-                    </h3>
-                    <div id="similarPostsContainer" class="space-y-3">
-                        <div class="text-center text-gray-400 py-6 text-xs">Загрузка...</div>
-                    </div>
+            <!-- Правая колонка: Похожие объявления -->
+            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm h-fit">
+                <div class="flex items-center gap-2 font-bold text-gray-900 mb-4">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-blue-600"></i>
+                    <span data-i18n="similarTitle">Похожие объявления</span>
+                </div>
+                <div id="similarGrid" class="space-y-3">
+                    <div class="text-xs text-gray-400 text-center py-4" data-i18n="loading">Загрузка...</div>
                 </div>
             </div>
 
         </div>
     </main>
-
-    <!-- Модальное окно просмотра фото во весь экран -->
-    <div id="imageLightbox" class="fixed inset-0 bg-black/90 z-50 hidden flex flex-col items-center justify-between p-4 backdrop-blur-md transition-all">
-        <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white/70 hover:text-white p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all z-10">
-            <i data-lucide="x" class="w-6 h-6"></i>
-        </button>
-
-        <div class="relative flex-1 w-full max-w-4xl flex items-center justify-center my-auto">
-            <!-- Стрелка влево -->
-            <button id="prevImgBtn" onclick="changeLightboxImage(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/70 p-3 rounded-full transition-all">
-                <i data-lucide="chevron-left" class="w-6 h-6"></i>
-            </button>
-
-            <!-- Текущая увеличенная картинка -->
-            <img id="lightboxImg" src="" class="max-h-[80vh] max-w-full object-contain rounded-lg shadow-2xl transition-all duration-200">
-
-            <!-- Стрелка вправо -->
-            <button id="nextImgBtn" onclick="changeLightboxImage(1)" class="absolute right-2 top-1/2 -translate-y-1/2 text-white bg-black/40 hover:bg-black/70 p-3 rounded-full transition-all">
-                <i data-lucide="chevron-right" class="w-6 h-6"></i>
-            </button>
-        </div>
-
-        <div id="lightboxCounter" class="text-white/80 text-xs font-semibold py-2"></div>
-    </div>
 
     <script>
         lucide.createIcons();
@@ -79,187 +58,157 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const postId = urlParams.get('id');
-        const postContainer = document.getElementById('postContainer');
-        const similarPostsContainer = document.getElementById('similarPostsContainer');
+        const dict = {
+            ru: {
+                backBtn: "Назад к объявлениям", loading: "Загрузка...", free: "Бесплатно",
+                description: "ОПИСАНИЕ", contactSeller: "Написать продавцу", similarTitle: "Похожие объявления",
+                notFound: "Объявление не найдено", noSimilar: "Нет похожих объявлений",
+                cities: { Будва: "Будва", Бар: "Бар", Тиват: "Тиват", Подгорица: "Подгорица", Котор: "Котор", "Херцег-Нови": "Херцег-Нови" },
+                categories: { Мебель: "Мебель", Техника: "Техника", Авто: "Авто", Одежда: "Одежда", Разное: "Разное" }
+            },
+            en: {
+                backBtn: "Back to listings", loading: "Loading...", free: "Free",
+                description: "DESCRIPTION", contactSeller: "Contact seller", similarTitle: "Similar listings",
+                notFound: "Listing not found", noSimilar: "No similar listings found",
+                cities: { Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" },
+                categories: { Мебель: "Furniture", Техника: "Electronics", Авто: "Vehicles", Одежда: "Clothing", Разное: "Other" }
+            },
+            cnr: {
+                backBtn: "Nazad na oglase", loading: "Učitavanje...", free: "Besplatno",
+                description: "OPIS", contactSeller: "Kontaktiraj prodavca", similarTitle: "Slični oglasi",
+                notFound: "Oglas nije pronađen", noSimilar: "Nema sličnih oglasa",
+                cities: { Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" },
+                categories: { Мебель: "Namještaj", Техника: "Tehnika", Авто: "Auto", Одежда: "Odjeća", Разное: "Razno" }
+            }
+        };
 
-        let currentPostImages = [];
-        let currentImageIndex = 0;
+        // Берем язык из памяти браузера (по умолчанию 'ru')
+        let currentLang = localStorage.getItem('mne_lang') || 'ru';
+        let currentPost = null;
+        let similarPosts = [];
 
-        async function loadSinglePost() {
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('mne_lang', lang);
+
+            // Перевод элементов UI
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[lang][key]) el.innerText = dict[lang][key];
+            });
+
+            if (currentPost) renderPostDetails(currentPost);
+            if (similarPosts.length > 0) renderSimilarPosts(similarPosts);
+        }
+
+        async function fetchPost() {
+            const params = new URLSearchParams(window.location.search);
+            const postId = params.get('id');
+
             if (!postId) {
-                postContainer.innerHTML = `<div class="text-center text-red-500 py-8">ID объявления не указан</div>`;
+                document.getElementById('postContainer').innerHTML = `<div class="text-center text-red-500 py-12">${dict[currentLang].notFound}</div>`;
                 return;
             }
 
-            const { data: post, error } = await supabaseClient
-                .from('posts')
-                .select('*')
-                .eq('id', postId)
-                .maybeSingle();
+            // Получаем объявление
+            const { data: post, error } = await supabaseClient.from('posts').select('*').eq('id', postId).single();
 
             if (error || !post) {
-                postContainer.innerHTML = `<div class="text-center text-red-500 py-8">Объявление не найдено или было удалено</div>`;
+                document.getElementById('postContainer').innerHTML = `<div class="text-center text-red-500 py-12">${dict[currentLang].notFound}</div>`;
                 return;
             }
 
-            document.title = `${post.title} — MNE Market`;
+            currentPost = post;
+            renderPostDetails(post);
+            fetchSimilarPosts(post.category, post.id);
+        }
 
+        function renderPostDetails(post) {
             const isFree = Number(post.price) === 0;
-            const priceTag = isFree ? `<span class="text-2xl font-bold text-emerald-600">Бесплатно</span>` : `<span class="text-2xl font-bold text-blue-600">${post.price} €</span>`;
+            const priceTag = isFree 
+                ? `<span class="font-bold text-2xl text-emerald-600">${dict[currentLang].free}</span>` 
+                : `<span class="font-bold text-2xl text-blue-600">${post.price} €</span>`;
             
-            // Собираем массив изображений
-            if (Array.isArray(post.images) && post.images.length > 0) {
-                currentPostImages = post.images;
-            } else if (post.image_url) {
-                currentPostImages = [post.image_url];
-            } else {
-                currentPostImages = ['https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500'];
-            }
+            const cityName = dict[currentLang].cities[post.city] || post.city;
+            const categoryName = dict[currentLang].categories[post.category] || post.category || 'Razno';
+            
+            const mainImg = (post.images && post.images.length > 0) ? post.images[0] : (post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+            const tgUsername = post.telegram_username ? post.telegram_username.replace('@', '') : '';
+            const dateStr = post.created_at ? new Date(post.created_at).toLocaleDateString() : '';
 
-            postContainer.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <!-- Главное фото с плашкой "Увеличить" при наведении -->
-                        <div class="relative h-80 rounded-xl bg-gray-100 overflow-hidden mb-3 border border-gray-100 group cursor-pointer" onclick="openLightbox(${0})">
-                            <img id="mainImg" src="${currentPostImages[0]}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="${post.title}">
-                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold gap-1.5">
-                                <i data-lucide="maximize-2" class="w-4 h-4"></i> Нажмите, чтобы открыть во весь экран
-                            </div>
-                        </div>
-
-                        <!-- Сетка миниатюр -->
-                        ${currentPostImages.length > 1 ? `
-                            <div class="grid grid-cols-5 gap-2">
-                                ${currentPostImages.map((img, idx) => `
-                                    <button onclick="setMainImage(${idx})" class="h-14 rounded-lg overflow-hidden border border-gray-200 focus:ring-2 focus:ring-blue-500 hover:opacity-90 transition-all">
-                                        <img src="${img}" class="w-full h-full object-cover">
-                                    </button>
-                                `).join('')}
-                            </div>
-                        ` : ''}
+            document.getElementById('postContainer').innerHTML = `
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/2 h-72 md:h-96 bg-gray-100 rounded-2xl overflow-hidden">
+                        <img src="${mainImg}" class="w-full h-full object-cover" alt="${post.title}">
                     </div>
-
-                    <div class="flex flex-col justify-between">
+                    <div class="w-full md:w-1/2 flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-1 rounded-lg">${post.category || 'Разное'}</span>
-                                <span class="text-xs text-gray-400">${post.created_at ? new Date(post.created_at).toLocaleDateString('ru-RU') : ''}</span>
+                                <span class="bg-blue-50 text-blue-600 text-xs font-semibold px-2.5 py-1 rounded-lg">${categoryName}</span>
+                                <span class="text-xs text-gray-400">${dateStr}</span>
                             </div>
                             <h1 class="text-2xl font-bold text-gray-900 mb-2">${post.title}</h1>
                             <div class="flex items-center gap-1 text-gray-500 text-xs mb-4">
-                                <i data-lucide="map-pin" class="w-4 h-4"></i>
-                                <span>${post.city}</span>
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                                <span>${cityName}</span>
                             </div>
-                            
                             <div class="mb-6">${priceTag}</div>
-
-                            <div class="border-t border-gray-100 pt-4 mb-6">
-                                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Описание</h3>
-                                <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">${post.description || 'Описание отсутствует'}</p>
+                            
+                            <hr class="border-gray-100 my-4">
+                            
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-400 tracking-wider uppercase mb-2">${dict[currentLang].description}</h4>
+                                <p class="text-sm text-gray-600 whitespace-pre-line">${post.description || ''}</p>
                             </div>
                         </div>
 
-                        <a href="https://t.me/${post.telegram_handle}" target="_blank" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors">
-                            <i data-lucide="send" class="w-4 h-4"></i>
-                            <span>Написать продавцу (@${post.telegram_handle})</span>
-                        </a>
+                        ${tgUsername ? `
+                            <a href="https://t.me/${tgUsername}" target="_blank" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                <span>${dict[currentLang].contactSeller} (@${tgUsername})</span>
+                            </a>
+                        ` : ''}
                     </div>
                 </div>
             `;
             lucide.createIcons();
-
-            // Загружаем похожие объявления
-            loadSimilarPosts(post.category, post.id);
         }
 
-        // Переключение главной картинки при клике на превью
-        function setMainImage(index) {
-            currentImageIndex = index;
-            document.getElementById('mainImg').src = currentPostImages[index];
+        async function fetchSimilarPosts(category, currentId) {
+            const { data: posts } = await supabaseClient.from('posts').select('*').eq('category', category).neq('id', currentId).limit(4);
+            similarPosts = posts || [];
+            renderSimilarPosts(similarPosts);
         }
 
-        // --- ЛАЙТБОКС (ФОТО ВО ВЕСЬ ЭКРАН) ---
-        function openLightbox(index) {
-            currentImageIndex = index;
-            const lightbox = document.getElementById('imageLightbox');
-            lightbox.classList.remove('hidden');
-            updateLightbox();
-        }
-
-        function closeLightbox() {
-            document.getElementById('imageLightbox').classList.add('hidden');
-        }
-
-        function changeLightboxImage(direction) {
-            currentImageIndex += direction;
-            if (currentImageIndex < 0) currentImageIndex = currentPostImages.length - 1;
-            if (currentImageIndex >= currentPostImages.length) currentImageIndex = 0;
-            updateLightbox();
-        }
-
-        function updateLightbox() {
-            document.getElementById('lightboxImg').src = currentPostImages[currentImageIndex];
-            document.getElementById('lightboxCounter').innerText = `${currentImageIndex + 1} из ${currentPostImages.length}`;
-            
-            // Скрываем стрелки, если фото всего одно
-            const showArrows = currentPostImages.length > 1;
-            document.getElementById('prevImgBtn').style.display = showArrows ? 'block' : 'none';
-            document.getElementById('nextImgBtn').style.display = showArrows ? 'block' : 'none';
-        }
-
-        // Закрытие по клавише ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowLeft') changeLightboxImage(-1);
-            if (e.key === 'ArrowRight') changeLightboxImage(1);
-        });
-
-
-        // --- ЗАГРУЗКА ПОХОЖИХ ОБЪЯВЛЕНИЙ ---
-        async function loadSimilarPosts(category, currentId) {
-            let { data: posts, error } = await supabaseClient
-                .from('posts')
-                .select('*')
-                .eq('category', category)
-                .neq('id', currentId)
-                .limit(5);
-
-            // Если в этой категории больше нет постов, подтягиваем просто свежие
-            if (!posts || posts.length === 0) {
-                const { data: recentPosts } = await supabaseClient
-                    .from('posts')
-                    .select('*')
-                    .neq('id', currentId)
-                    .limit(5);
-                posts = recentPosts || [];
-            }
-
+        function renderSimilarPosts(posts) {
+            const grid = document.getElementById('similarGrid');
             if (posts.length === 0) {
-                similarPostsContainer.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">Нет других объявлений</div>`;
+                grid.innerHTML = `<div class="text-xs text-gray-400 text-center py-4">${dict[currentLang].noSimilar}</div>`;
                 return;
             }
 
-            similarPostsContainer.innerHTML = posts.map(item => {
-                const isFree = Number(item.price) === 0;
-                const price = isFree ? 'Бесплатно' : `${item.price} €`;
-                const img = (item.images && item.images.length > 0) ? item.images[0] : (item.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+            grid.innerHTML = posts.map(post => {
+                const img = (post.images && post.images.length > 0) ? post.images[0] : (post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+                const cityName = dict[currentLang].cities[post.city] || post.city;
+                const isFree = Number(post.price) === 0;
 
                 return `
-                    <a href="post.html?id=${item.id}" class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group">
-                        <img src="${img}" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-gray-100 group-hover:scale-105 transition-transform">
-                        <div class="overflow-hidden">
-                            <h4 class="text-xs font-semibold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition-colors">${item.title}</h4>
-                            <div class="text-[10px] text-gray-400 mt-0.5">${item.city}</div>
-                            <div class="text-xs font-bold ${isFree ? 'text-emerald-600' : 'text-blue-600'} mt-1">${price}</div>
+                    <a href="post.html?id=${post.id}" class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors border border-gray-100 group">
+                        <img src="${img}" class="w-14 h-14 rounded-lg object-cover" alt="${post.title}">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-xs font-semibold text-gray-900 truncate group-hover:text-blue-600">${post.title}</h4>
+                            <div class="text-[10px] text-gray-400 mt-0.5">${cityName}</div>
+                            <div class="text-xs font-bold text-blue-600 mt-1">${isFree ? dict[currentLang].free : post.price + ' €'}</div>
                         </div>
                     </a>
                 `;
             }).join('');
         }
 
-        loadSinglePost();
+        // Инициализация при открытии
+        document.getElementById('langSelect').value = currentLang;
+        changeLanguage(currentLang);
+        fetchPost();
     </script>
 </body>
 </html>
