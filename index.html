@@ -62,10 +62,10 @@
                 <button onclick="setCity('herceg_novi')" data-city="herceg_novi" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Херцег-Нови</button>
             </div>
 
-            <!-- Категории и Сортировка -->
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-gray-100">
+            <!-- Категории, тип цены и сортировка -->
+            <div class="flex flex-col md:flex-row items-center justify-between gap-3 pt-2 border-t border-gray-100">
                 <!-- Категории -->
-                <div class="flex items-center gap-1.5 overflow-x-auto w-full pb-1" id="categoryFilters">
+                <div class="flex items-center gap-1.5 overflow-x-auto w-full pb-1">
                     <button onclick="setCategory('all')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-900 text-white transition-all shrink-0 cursor-pointer" data-i18n="allCategories">Все</button>
                     <button onclick="setCategory('furniture')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer" data-i18n="catFurniture">Мебель</button>
                     <button onclick="setCategory('tech')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer" data-i18n="catTech">Техника</button>
@@ -74,12 +74,21 @@
                     <button onclick="setCategory('other')" class="cat-btn px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer" data-i18n="catOther">Разное</button>
                 </div>
 
-                <!-- Сортировка -->
-                <select id="sortSelect" onchange="filterPosts()" class="bg-gray-100 border-none rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer shrink-0 w-full sm:w-auto">
-                    <option value="newest" data-i18n="sortNew">Сначала новые</option>
-                    <option value="cheap" data-i18n="sortCheap">Сначала дешевле</option>
-                    <option value="expensive" data-i18n="sortExpensive">Сначала дороже</option>
-                </select>
+                <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                    <!-- Фильтр по типу цены -->
+                    <select id="priceTypeSelect" onchange="filterPosts()" class="bg-gray-100 border-none rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
+                        <option value="all" data-i18n="priceAll">Все цены</option>
+                        <option value="paid" data-i18n="pricePaid">Платные</option>
+                        <option value="free" data-i18n="priceFree">Бесплатные</option>
+                    </select>
+
+                    <!-- Сортировка -->
+                    <select id="sortSelect" onchange="filterPosts()" class="bg-gray-100 border-none rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
+                        <option value="newest" data-i18n="sortNew">Сначала новые</option>
+                        <option value="cheap" data-i18n="sortCheap">Сначала дешевле</option>
+                        <option value="expensive" data-i18n="sortExpensive">Сначала дороже</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -101,6 +110,7 @@
                 createBtn: "Подать объявление", loading: "Загрузка...", free: "Бесплатно",
                 allCities: "Все города", allCategories: "Все",
                 catFurniture: "Мебель", catTech: "Техника", catAuto: "Авто", catClothes: "Одежда", catOther: "Разное",
+                priceAll: "Все цены", pricePaid: "Платные", priceFree: "Бесплатные",
                 sortNew: "Сначала новые", sortCheap: "Сначала дешевле", sortExpensive: "Сначала дороже",
                 noPosts: "Объявлений пока нет",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
@@ -110,6 +120,7 @@
                 createBtn: "Post ad", loading: "Loading...", free: "Free",
                 allCities: "All cities", allCategories: "All",
                 catFurniture: "Furniture", catTech: "Electronics", catAuto: "Vehicles", catClothes: "Clothing", catOther: "Other",
+                priceAll: "All prices", pricePaid: "Paid", priceFree: "Free",
                 sortNew: "Newest first", sortCheap: "Lowest price", sortExpensive: "Highest price",
                 noPosts: "No listings found",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
@@ -119,6 +130,7 @@
                 createBtn: "Postavi oglas", loading: "Učitavanje...", free: "Besplatno",
                 allCities: "Svi gradovi", allCategories: "Sve",
                 catFurniture: "Namještaj", catTech: "Tehnika", catAuto: "Auto", catClothes: "Odjeća", catOther: "Razno",
+                priceAll: "Sve cijene", pricePaid: "Se plaća", priceFree: "Besplatno",
                 sortNew: "Najnovije", sortCheap: "Najjeftinije", sortExpensive: "Najskuplje",
                 noPosts: "Nema oglasa",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
@@ -130,6 +142,7 @@
         let allPosts = [];
         let selectedCity = 'all';
         let selectedCategory = 'all';
+        let favorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
 
         async function initPage() {
             document.getElementById('langSelect').value = currentLang;
@@ -189,18 +202,43 @@
             filterPosts();
         }
 
+        function toggleFavorite(event, postId) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            if (favorites.includes(postId)) {
+                favorites = favorites.filter(id => id !== postId);
+            } else {
+                favorites.push(postId);
+            }
+            localStorage.setItem('mne_favorites', JSON.stringify(favorites));
+            filterPosts();
+        }
+
+        function formatPrice(val) {
+            const num = Number(val);
+            if (num === 0) return dict[currentLang].free;
+            return num.toLocaleString('ru-RU') + ' €';
+        }
+
         function filterPosts() {
             const searchQuery = (document.getElementById('searchInput').value || document.getElementById('searchInputMob').value).toLowerCase();
             const sortType = document.getElementById('sortSelect').value;
+            const priceType = document.getElementById('priceTypeSelect').value;
 
             let filtered = allPosts.filter(p => {
                 const matchCity = selectedCity === 'all' || p.city === selectedCity;
                 const matchCategory = selectedCategory === 'all' || p.category === selectedCategory;
                 const matchSearch = !searchQuery || p.title.toLowerCase().includes(searchQuery) || (p.description && p.description.toLowerCase().includes(searchQuery));
-                return matchCity && matchCategory && matchSearch;
+                
+                let matchPrice = true;
+                const pNum = Number(p.price);
+                if (priceType === 'paid') matchPrice = pNum > 0;
+                if (priceType === 'free') matchPrice = pNum === 0;
+
+                return matchCity && matchCategory && matchSearch && matchPrice;
             });
 
-            // Сортировка
             filtered.sort((a, b) => {
                 if (sortType === 'newest') return new Date(b.created_at) - new Date(a.created_at);
                 if (sortType === 'cheap') return Number(a.price) - Number(b.price);
@@ -220,16 +258,19 @@
 
             container.innerHTML = posts.map(p => {
                 const img = (p.images && p.images.length > 0) ? p.images[0] : (p.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
-                const isFree = Number(p.price) === 0;
-                const priceText = isFree ? dict[currentLang].free : `${p.price} €`;
+                const priceText = formatPrice(p.price);
                 const cityName = dict[currentLang].cities[p.city] || p.city;
                 const categoryName = dict[currentLang].categories[p.category] || p.category || 'Other';
+                const isFav = favorites.includes(p.id);
 
                 return `
-                    <a href="post.html?id=${p.id}" class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col group">
+                    <a href="post.html?id=${p.id}" class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col group relative">
                         <div class="relative h-44 bg-gray-100 overflow-hidden">
                             <img src="${img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="${p.title}">
                             <span class="absolute top-2 left-2 bg-black/60 text-white text-[10px] font-medium px-2 py-0.5 rounded-lg backdrop-blur-md uppercase tracking-wider">${categoryName}</span>
+                            <button onclick="toggleFavorite(event, '${p.id}')" class="absolute top-2 right-2 bg-white/80 hover:bg-white p-2 rounded-full transition-all text-gray-600 shadow-sm cursor-pointer">
+                                <i data-lucide="heart" class="w-4 h-4 ${isFav ? 'fill-red-500 text-red-500' : ''}"></i>
+                            </button>
                         </div>
                         <div class="p-3.5 flex flex-col flex-1 justify-between gap-2">
                             <div>
@@ -238,8 +279,9 @@
                                     <i data-lucide="map-pin" class="w-3 h-3"></i> ${cityName}
                                 </p>
                             </div>
-                            <div class="font-black text-sm text-blue-600 pt-1 border-t border-gray-50">
-                                ${priceText}
+                            <div class="font-black text-sm text-blue-600 pt-1 border-t border-gray-50 flex items-center justify-between">
+                                <span>${priceText}</span>
+                                <span class="text-[10px] text-gray-300 font-normal flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3"></i> ${p.views || 0}</span>
                             </div>
                         </div>
                     </a>
