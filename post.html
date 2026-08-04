@@ -55,34 +55,34 @@
         lucide.createIcons();
 
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjcxNzMsImV4cCI6MjA3MTQ0NDM3M30.17Gx37ZpxkJPNICCISTZHOdbf1bmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const dict = {
             ru: {
                 backBtn: "Назад к объявлениям", loading: "Загрузка...", free: "Бесплатно",
                 description: "ОПИСАНИЕ", contactSeller: "Написать продавцу", similarTitle: "Похожие объявления",
-                notFound: "Объявление не найдено", noSimilar: "Нет похожих объявлений",
+                notFound: "Объявление не найдено", noSimilar: "Нет похожих объявлений", noContacts: "Контакты не указаны",
                 cities: { Будва: "Будва", Бар: "Бар", Тиват: "Тиват", Подгорица: "Подгорица", Котор: "Котор", "Херцег-Нови": "Херцег-Нови" },
                 categories: { Мебель: "Мебель", Техника: "Техника", Авто: "Авто", Одежда: "Одежда", Разное: "Разное" }
             },
             en: {
                 backBtn: "Back to listings", loading: "Loading...", free: "Free",
                 description: "DESCRIPTION", contactSeller: "Contact seller", similarTitle: "Similar listings",
-                notFound: "Listing not found", noSimilar: "No similar listings found",
+                notFound: "Listing not found", noSimilar: "No similar listings found", noContacts: "No contact info",
                 cities: { Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" },
                 categories: { Мебель: "Furniture", Техника: "Electronics", Авто: "Vehicles", Одежда: "Clothing", Разное: "Other" }
             },
             cnr: {
                 backBtn: "Nazad na oglase", loading: "Učitavanje...", free: "Besplatno",
                 description: "OPIS", contactSeller: "Kontaktiraj prodavca", similarTitle: "Slični oglasi",
-                notFound: "Oglas nije pronađen", noSimilar: "Nema sličnih oglasa",
+                notFound: "Oglas nije pronađen", noSimilar: "Nema sličnih oglasa", noContacts: "Kontakt nije naveden",
                 cities: { Будва: "Budva", Бар: "Bar", Тиват: "Tivat", Подгорица: "Podgorica", Котор: "Kotor", "Херцег-Нови": "Herceg Novi" },
                 categories: { Мебель: "Namještaj", Техника: "Tehnika", Авто: "Auto", Одежда: "Odjeća", Разное: "Razno" }
             }
         };
 
-        // Берем язык из памяти браузера (по умолчанию 'ru')
+        // Берем сохраненный язык из localStorage
         let currentLang = localStorage.getItem('mne_lang') || 'ru';
         let currentPost = null;
         let similarPosts = [];
@@ -91,7 +91,7 @@
             currentLang = lang;
             localStorage.setItem('mne_lang', lang);
 
-            // Перевод элементов UI
+            // Переводим статические элементы UI
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[lang][key]) el.innerText = dict[lang][key];
@@ -110,7 +110,6 @@
                 return;
             }
 
-            // Получаем объявление
             const { data: post, error } = await supabaseClient.from('posts').select('*').eq('id', postId).single();
 
             if (error || !post) {
@@ -133,7 +132,10 @@
             const categoryName = dict[currentLang].categories[post.category] || post.category || 'Razno';
             
             const mainImg = (post.images && post.images.length > 0) ? post.images[0] : (post.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
-            const tgUsername = post.telegram_username ? post.telegram_username.replace('@', '') : '';
+            
+            // Получаем никнейм из всех возможных названий колонок
+            const rawTg = post.telegram || post.telegram_username || post.tg || '';
+            const tgUsername = rawTg.replace('@', '').trim();
             const dateStr = post.created_at ? new Date(post.created_at).toLocaleDateString() : '';
 
             document.getElementById('postContainer').innerHTML = `
@@ -167,7 +169,11 @@
                                 <i data-lucide="send" class="w-4 h-4"></i>
                                 <span>${dict[currentLang].contactSeller} (@${tgUsername})</span>
                             </a>
-                        ` : ''}
+                        ` : `
+                            <div class="mt-6 w-full bg-gray-100 text-gray-500 font-medium py-3 rounded-xl text-center text-sm">
+                                ${dict[currentLang].noContacts}
+                            </div>
+                        `}
                     </div>
                 </div>
             `;
@@ -205,7 +211,7 @@
             }).join('');
         }
 
-        // Инициализация при открытии
+        // Инициализация при загрузке
         document.getElementById('langSelect').value = currentLang;
         changeLanguage(currentLang);
         fetchPost();
