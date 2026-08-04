@@ -70,9 +70,9 @@
                     </div>
 
                     <div class="space-y-2 pt-2">
-                        <!-- Кнопка связи с продавцом -->
+                        <!-- Кнопка связи с продавцом (без юзернейма) -->
                         <a id="postTelegramBtn" href="#" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
-                            <i data-lucide="send" class="w-4 h-4"></i> <span data-i18n="contactBtn">Написать продавцу</span> (<span id="postTelegramText"></span>)
+                            <i data-lucide="send" class="w-4 h-4"></i> <span data-i18n="contactBtn">Написать продавцу</span>
                         </a>
 
                         <!-- Кнопка Поделиться в Telegram -->
@@ -116,6 +116,13 @@
 
     <script>
         lucide.createIcons();
+
+        // Инициализация Telegram WebApp, если запущено внутри бота
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
 
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
@@ -242,12 +249,18 @@
             document.getElementById('imageCounter').innerText = `${currentImageIndex + 1} / ${postImages.length}`;
         }
 
-        // Функция шеринга в Telegram
+        // Исправленная функция шеринга в Telegram
         function shareToTelegram() {
             if (!currentPost) return;
             const priceText = Number(currentPost.price) === 0 ? (currentLang === 'en' ? 'Free' : 'Бесплатно') : `${currentPost.price} €`;
-            const text = encodeURIComponent(`🔥 ${currentPost.title}\n💰 ${priceText}\n📍 ${dict[currentLang].cities[currentPost.city] || currentPost.city}\n\nСмотреть объявление: ${window.location.href}`);
-            window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${text}`, '_blank');
+            const shareText = `🔥 ${currentPost.title}\n💰 ${priceText}\n📍 ${dict[currentLang].cities[currentPost.city] || currentPost.city}\n\nСмотреть объявление: ${window.location.href}`;
+            
+            // Проверяем, открыт ли сайт как Telegram WebApp
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
+                window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(shareText)}`);
+            } else {
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(shareText)}`, '_blank');
+            }
         }
 
         let touchStartX = 0;
@@ -277,7 +290,6 @@
             
             const tgClean = currentPost.telegram.replace('@', '');
             document.getElementById('postTelegramBtn').href = `https://t.me/${tgClean}`;
-            document.getElementById('postTelegramText').innerText = `@${tgClean}`;
 
             document.getElementById('mainProductImage').src = postImages[0];
 
