@@ -54,12 +54,12 @@
             <!-- Города -->
             <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" id="cityFilters">
                 <button onclick="setCity('all')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-blue-600 text-white transition-all shrink-0 cursor-pointer" data-i18n="allCities">Все города</button>
-                <button onclick="setCity('budva')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Будва</button>
-                <button onclick="setCity('bar')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Бар</button>
-                <button onclick="setCity('tivat')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Тиват</button>
-                <button onclick="setCity('podgorica')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Подгорица</button>
-                <button onclick="setCity('kotor')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Котор</button>
-                <button onclick="setCity('herceg_novi')" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Херцег-Нови</button>
+                <button onclick="setCity('budva')" data-city="budva" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Будва</button>
+                <button onclick="setCity('bar')" data-city="bar" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Бар</button>
+                <button onclick="setCity('tivat')" data-city="tivat" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Тиват</button>
+                <button onclick="setCity('podgorica')" data-city="podgorica" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Подгорица</button>
+                <button onclick="setCity('kotor')" data-city="kotor" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Котор</button>
+                <button onclick="setCity('herceg_novi')" data-city="herceg_novi" class="city-btn px-3.5 py-1.5 rounded-xl text-xs font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all shrink-0 cursor-pointer">Херцег-Нови</button>
             </div>
 
             <!-- Категории и Сортировка -->
@@ -93,7 +93,7 @@
         lucide.createIcons();
 
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjcxNzMsImV4cCI6MjA3MTQ0NDM3M30.17Gx37ZpxkJPNICCISTZHOdbf1bmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const dict = {
@@ -133,6 +133,7 @@
 
         async function initPage() {
             document.getElementById('langSelect').value = currentLang;
+            updateCityButtonLabels();
             
             const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
             if (error) {
@@ -153,7 +154,17 @@
                 if (dict[lang][key]) el.innerText = dict[lang][key];
             });
 
+            updateCityButtonLabels();
             filterPosts();
+        }
+
+        function updateCityButtonLabels() {
+            document.querySelectorAll('.city-btn[data-city]').forEach(btn => {
+                const cityKey = btn.getAttribute('data-city');
+                if (dict[currentLang].cities[cityKey]) {
+                    btn.innerText = dict[currentLang].cities[cityKey];
+                }
+            });
         }
 
         function setCity(city) {
