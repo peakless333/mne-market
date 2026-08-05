@@ -37,7 +37,6 @@
                     
                     <div id="imagePreviewsContainer" class="grid grid-cols-5 gap-2 mb-2 hidden"></div>
 
-                    <!-- Зона Drag-and-Drop -->
                     <div id="dropZone" 
                          onclick="document.getElementById('imageInput').click()" 
                          class="w-full border-2 border-dashed border-gray-200 hover:border-blue-500 bg-gray-50 hover:bg-blue-50/50 rounded-2xl p-6 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 group">
@@ -226,7 +225,6 @@
             }
         }
 
-        // Настройка Drag-and-Drop
         const dropZone = document.getElementById('dropZone');
 
         ['dragenter', 'dragover'].forEach(eventName => {
@@ -245,9 +243,43 @@
             }, false);
         });
 
-        dropZone.addEventListener('drop', (e) => {
-            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-            processFiles(files);
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+                processFiles(files);
+                return;
+            }
+
+            const htmlData = e.dataTransfer.getData('text/html');
+            const uriData = e.dataTransfer.getData('text/uri-list');
+            
+            let imageUrl = '';
+            if (htmlData) {
+                const match = htmlData.match(/src="([^"]+)"/);
+                if (match && match[1]) {
+                    imageUrl = match[1];
+                }
+            } else if (uriData) {
+                imageUrl = uriData;
+            }
+
+            if (imageUrl) {
+                try {
+                    const response = await fetch(imageUrl);
+                    const blob = await response.blob();
+                    if (blob.type.startsWith('image/')) {
+                        const fileName = `tg_image_${Date.now()}.${blob.type.split('/')[1] || 'jpg'}`;
+                        const file = new File([blob], fileName, { type: blob.type });
+                        processFiles([file]);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Не удалось загрузить эту картинку напрямую. Попробуйте сохранить её или выбрать через проводник.");
+                }
+            }
         }, false);
 
         function handleImageSelection(e) {
