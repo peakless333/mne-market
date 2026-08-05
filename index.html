@@ -42,28 +42,24 @@
         </div>
     </div>
 
-    <!-- Модалка авторизации / регистрации -->
-    <div id="authModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
+    <!-- Модалка авторизации / регистрации (Строгая проверка) -->
+    <div id="authModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 animate-fade-in">
             <div class="flex items-center justify-between pb-2 border-b border-gray-100">
                 <div class="flex items-center gap-2">
                     <span class="text-xl">🇲🇪</span>
-                    <h3 class="font-bold text-gray-950 text-base" data-i18n="authModalTitle">Вход / Регистрация</h3>
+                    <h3 class="font-bold text-gray-950 text-base" data-i18n="authModalTitle">Требуется регистрация</h3>
                 </div>
-                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-xl cursor-pointer">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
             </div>
             <div class="space-y-3">
-                <p class="text-xs text-gray-500" data-i18n="authModalDesc">Введите ваш Email или Telegram, чтобы привязать профиль и управлять объявлениями на любых устройствах.</p>
+                <p class="text-xs text-gray-500 leading-relaxed" data-i18n="authModalDesc">Чтобы разместить объявление и управлять им, пожалуйста, укажите ваш Email или Telegram.</p>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="authIdentifierLabel">Email или @telegram</label>
                     <input type="text" id="authInput" placeholder="user@example.com или @username" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all">
                 </div>
             </div>
-            <div class="flex gap-2 pt-2">
-                <button onclick="closeAuthModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="cancelBtn">Отмена</button>
-                <button onclick="submitAuth()" class="flex-1 bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm cursor-pointer" data-i18n="authSubmitBtn">Войти</button>
+            <div class="pt-2">
+                <button onclick="submitAuth()" class="w-full bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3.5 rounded-2xl text-xs transition-all shadow-sm cursor-pointer" data-i18n="authSubmitBtn">Продолжить</button>
             </div>
         </div>
     </div>
@@ -94,8 +90,8 @@
                         <span id="profileTokenShort" class="font-mono text-[10px] text-gray-600 bg-gray-200/60 px-2 py-0.5 rounded"></span>
                     </div>
                 </div>
-                <button onclick="openAuthModal(); closeProfileModal();" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> <span data-i18n="changeAccountBtn">Сменить аккаунт / Войти по другому</span>
+                <button onclick="logoutAccount()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> <span data-i18n="logoutBtn">Выйти из аккаунта</span>
                 </button>
             </div>
             <div class="pt-2">
@@ -204,9 +200,9 @@
                     <option value="en">EN</option>
                     <option value="cnr">CNR</option>
                 </select>
-                <a href="create.html" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0">
-                    <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> <span data-i18n="postAd"></span>
-                </a>
+                <button onclick="checkAuthBeforeCreate(event)" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0 cursor-pointer">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> <span data-i18n="postAd">Разместить</span>
+                </button>
             </div>
         </div>
     </header>
@@ -336,7 +332,9 @@
             tg.expand();
         }
 
+        let userEmail = localStorage.getItem('mne_user_email');
         let userToken = localStorage.getItem('mne_user_token');
+        
         if (!userToken) {
             userToken = 'user_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
             localStorage.setItem('mne_user_token', userToken);
@@ -363,10 +361,10 @@
                 modalEditTitle: "Редактировать объявление", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
                 myBadgeText: "Мое", noPhoto: "Без фото", nameLabel: "Название", categoryLabel: "Категория", cityLabel: "Город",
                 priceLabel: "Цена (€)", descLabel: "Описание", tgLabel: "Telegram для связи", photosLabel: "Фотографии", addPhotoBtn: "Добавить",
-                authModalTitle: "Вход / Регистрация", authModalDesc: "Введите ваш Email или Telegram, чтобы привязать профиль и управлять объявлениями на любых устройствах.",
-                authIdentifierLabel: "Email или @telegram", authSubmitBtn: "Продолжить", authSuccess: "Вы успешно вошли!",
+                authModalTitle: "Требуется регистрация", authModalDesc: "Чтобы разместить объявление и управлять им, пожалуйста, укажите ваш Email или Telegram.",
+                authIdentifierLabel: "Email или @telegram", authSubmitBtn: "Продолжить", authSuccess: "Регистрация успешна!",
                 profileModalTitle: "Личный кабинет", profileActiveAds: "Ваших объявлений:", profileTokenLabel: "Ваш ключ:",
-                changeAccountBtn: "Сменить аккаунт", closeBtn: "Закрыть",
+                changeAccountBtn: "Сменить аккаунт", logoutBtn: "Выйти из аккаунта", closeBtn: "Закрыть",
                 foundCount: (n) => `Найдено: ${n}`,
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
@@ -384,10 +382,10 @@
                 modalEditTitle: "Edit listing", cancelBtn: "Cancel", deleteBtn: "Delete", saveBtn: "Save",
                 myBadgeText: "My", noPhoto: "No photo", nameLabel: "Title", categoryLabel: "Category", cityLabel: "City",
                 priceLabel: "Price (€)", descLabel: "Description", tgLabel: "Telegram username", photosLabel: "Photos", addPhotoBtn: "Add",
-                authModalTitle: "Sign in / Register", authModalDesc: "Enter your Email or Telegram to link your profile and manage listings across devices.",
-                authIdentifierLabel: "Email or @telegram", authSubmitBtn: "Continue", authSuccess: "Successfully signed in!",
+                authModalTitle: "Registration required", authModalDesc: "To post and manage your listing, please enter your Email or Telegram.",
+                authIdentifierLabel: "Email or @telegram", authSubmitBtn: "Continue", authSuccess: "Successfully registered!",
                 profileModalTitle: "Account", profileActiveAds: "Your listings:", profileTokenLabel: "Your ID:",
-                changeAccountBtn: "Switch account", closeBtn: "Close",
+                changeAccountBtn: "Switch account", logoutBtn: "Sign out", closeBtn: "Close",
                 foundCount: (n) => `Found: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
@@ -405,10 +403,10 @@
                 modalEditTitle: "Izmjena oglasa", cancelBtn: "Otkaži", deleteBtn: "Obriši", saveBtn: "Sačuvaj",
                 myBadgeText: "Moj", noPhoto: "Bez fotografije", nameLabel: "Naziv", categoryLabel: "Kategorija", cityLabel: "Grad",
                 priceLabel: "Cijena (€)", descLabel: "Opis", tgLabel: "Telegram za kontakt", photosLabel: "Fotografije", addPhotoBtn: "Dodaj",
-                authModalTitle: "Prijava / Registracija", authModalDesc: "Unesite Vaš Email ili Telegram da povežete profil i upravljate oglasima.",
-                authIdentifierLabel: "Email ili @telegram", authSubmitBtn: "Nastavi", authSuccess: "Uspješno ste prijavljeni!",
+                authModalTitle: "Obavezna registracija", authModalDesc: "Da biste objavili oglas, unesite Vaš Email ili Telegram.",
+                authIdentifierLabel: "Email ili @telegram", authSubmitBtn: "Nastavi", authSuccess: "Uspješna registracija!",
                 profileModalTitle: "Lični nalog", profileActiveAds: "Vaši oglasi:", profileTokenLabel: "Vaš ID:",
-                changeAccountBtn: "Promijeni nalog", closeBtn: "Zatvori",
+                changeAccountBtn: "Promijeni nalog", logoutBtn: "Odjavi se", closeBtn: "Zatvori",
                 foundCount: (n) => `Pronađeno: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
@@ -532,11 +530,22 @@
             const postIdStr = String(post.id);
             if (myLocalPostIds.includes(postIdStr)) return true;
             if (tgUserId && String(post.telegram_id) === tgUserId) return true;
+            if (userEmail && post.telegram && post.telegram.toLowerCase().includes(userEmail.toLowerCase())) return true;
             if (post.user_token && post.user_token === userToken) return true;
             return false;
         }
 
-        // Логика авторизации и профиля
+        // Проверка авторизации перед переходом на создание объявления
+        function checkAuthBeforeCreate(e) {
+            e.preventDefault();
+            userEmail = localStorage.getItem('mne_user_email');
+            if (!userEmail) {
+                openAuthModal();
+            } else {
+                window.location.href = 'create.html';
+            }
+        }
+
         function openAuthModal() {
             const modal = document.getElementById('authModal');
             document.getElementById('authInput').value = localStorage.getItem('mne_user_email') || '';
@@ -552,20 +561,23 @@
 
         function submitAuth() {
             const val = document.getElementById('authInput').value.trim();
-            if (!val) return;
-            localStorage.setItem('mne_user_email', val);
-            userToken = 'auth_' + val;
-            localStorage.setItem('mne_user_token', userToken);
+            if (!val) {
+                showToast("Введите Email или Telegram");
+                return;
+            }
+            userEmail = val;
+            localStorage.setItem('mne_user_email', userEmail);
             closeAuthModal();
             showToast(dict[currentLang].authSuccess);
             updateBadges();
             renderPosts();
+            // Перенаправляем на создание после успешного ввода
+            window.location.href = 'create.html';
         }
 
         function openProfileModal() {
             const modal = document.getElementById('profileModal');
-            const userEmail = localStorage.getItem('mne_user_email') || userToken;
-            document.getElementById('profileUserSub').innerText = userEmail;
+            document.getElementById('profileUserSub').innerText = userEmail || userToken;
             document.getElementById('profileTokenShort').innerText = userToken.substring(0, 16) + '...';
             document.getElementById('profileAdsCount').innerText = posts.filter(p => isMyPost(p)).length;
             modal.classList.remove('hidden');
@@ -579,11 +591,21 @@
         }
 
         function openProfileOrAuth() {
-            if (localStorage.getItem('mne_user_email')) {
+            userEmail = localStorage.getItem('mne_user_email');
+            if (userEmail) {
                 openProfileModal();
             } else {
                 openAuthModal();
             }
+        }
+
+        function logoutAccount() {
+            localStorage.removeItem('mne_user_email');
+            userEmail = null;
+            closeProfileModal();
+            showToast("Вы вышли из аккаунта");
+            updateBadges();
+            renderPosts();
         }
 
         function toggleFavorite(e, id) {
@@ -694,7 +716,7 @@
         function handleEditImageSelection(e) {
             const files = Array.from(e.target.files);
             if (existingEditImages.length + editImages.length + files.length > 5) {
-                alert(dict[currentLang].maxPhotos || 'Максимум 5 фотографий');
+                alert('Максимум 5 фотографий');
                 e.target.value = '';
                 return;
             }

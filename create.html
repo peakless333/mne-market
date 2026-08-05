@@ -12,6 +12,15 @@
 </head>
 <body class="bg-gray-50 text-gray-800 pb-20">
 
+    <script>
+        // Проверка авторизации: если нет email в localStorage, перенаправляем на главную
+        const currentAuthEmail = localStorage.getItem('mne_user_email');
+        if (!currentAuthEmail) {
+            alert('Для создания объявления необходимо авторизоваться!');
+            window.location.href = 'index.html';
+        }
+    </script>
+
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm">
