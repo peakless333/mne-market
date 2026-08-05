@@ -71,6 +71,10 @@
                 <a href="profile.html" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2 text-center block">
                     <i data-lucide="user-cog" class="w-4 h-4"></i> Настройки профиля
                 </a>
+                <!-- Кнопка выхода из аккаунта -->
+                <button onclick="logoutAccount()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Выйти из аккаунта
+                </button>
             </div>
             <div class="pt-2">
                 <button onclick="closeProfileModal()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="closeBtn">Закрыть</button>
@@ -543,6 +547,26 @@
             const modal = document.getElementById('profileModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+        }
+
+        // Функция выхода из аккаунта
+        function logoutAccount() {
+            if (!confirm("Вы уверены, что хотите выйти? Ваши локальные метки владельца объявлений на этом устройстве будут сброшены.")) {
+                return;
+            }
+
+            // Очищаем локальные данные сессии и токен устройства
+            localStorage.removeItem('mne_user_token');
+            localStorage.removeItem('mne_my_posts');
+            localStorage.removeItem('mne_user_profile');
+
+            showToast("Вы вышли из аккаунта");
+            closeProfileModal();
+
+            // Перезагружаем страницу через секунду для обновления состояния
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         }
 
         function toggleFavorite(e, id) {
