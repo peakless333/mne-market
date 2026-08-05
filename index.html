@@ -45,33 +45,16 @@
 
     <!-- Шапка сайта -->
     <header class="bg-white border-b border-gray-200/80 sticky top-0 z-35 transition-all shadow-xs">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
             
-            <!-- Мобильная строка: Логотип и иконки быстрого доступа -->
-            <div class="flex items-center justify-between w-full sm:w-auto gap-3">
-                <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 shrink-0 tracking-tight group">
-                    <span class="text-xl group-hover:scale-110 transition-transform">🇲🇪</span> 
-                    <span class="text-gray-900">MNE<span class="text-[#009cf0]">Market</span></span>
-                </a>
-
-                <!-- Кнопки справа для мобильной версии -->
-                <div class="flex items-center gap-2 sm:hidden shrink-0">
-                    <button onclick="toggleMyPostsFilter()" class="relative flex items-center justify-center w-9 h-9 bg-gray-100 text-gray-700 rounded-xl">
-                        <i data-lucide="user" class="w-4 h-4"></i>
-                    </button>
-                    <button onclick="toggleFavoritesFilter()" class="relative flex items-center justify-center w-9 h-9 bg-gray-100 text-gray-700 rounded-xl">
-                        <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
-                    </button>
-                    <select id="langSelectMobile" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2 py-2 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
-                        <option value="ru">RU</option>
-                        <option value="en">EN</option>
-                        <option value="cnr">CNR</option>
-                    </select>
-                </div>
-            </div>
+            <!-- Логотип -->
+            <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 shrink-0 tracking-tight group">
+                <span class="text-xl group-hover:scale-110 transition-transform">🇲🇪</span> 
+                <span class="hidden sm:inline text-gray-900">MNE<span class="text-[#009cf0]">Market</span></span>
+            </a>
 
             <!-- Поиск -->
-            <div class="flex-1 min-w-[240px] relative flex items-center">
+            <div class="flex-1 max-w-xl relative flex items-center">
                 <div class="relative w-full flex items-center bg-gray-100 hover:bg-gray-200/60 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#009cf0] border border-transparent rounded-xl transition-all">
                     <input type="text" id="searchInput" oninput="handleSearchInput(event)" placeholder="Поиск товаров..." class="w-full bg-transparent pl-4 pr-10 py-2 text-sm outline-none text-gray-900 placeholder:text-gray-400">
                     <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 text-gray-400 hover:text-gray-600 cursor-pointer">
@@ -83,8 +66,8 @@
                 </button>
             </div>
 
-            <!-- Кнопки справа (для ПК) -->
-            <div class="hidden sm:flex items-center gap-2 shrink-0">
+            <!-- Кнопки справа -->
+            <div class="flex items-center gap-2 shrink-0">
                 <button onclick="toggleMyPostsFilter()" id="myPostsHeaderBtn" title="Мои объявления" class="relative flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
                     <i data-lucide="user" class="w-4 h-4"></i>
                     <span id="myPostsCountBadge" class="absolute -top-1 -right-1 bg-[#009cf0] text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
@@ -154,35 +137,31 @@
         </div>
 
         <!-- Города и Сортировка -->
-        <div class="bg-white rounded-2xl p-4 border border-gray-200/85 shadow-xs space-y-3">
-            <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-                
-                <!-- Список городов с плавным скроллом -->
-                <div class="flex items-center gap-1.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none w-full" id="citiesContainer">
-                    <button onclick="setCity('all')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-900 text-white shadow-xs shrink-0" data-city="all" data-i18n="allCities">Все города</button>
-                    <button onclick="setCity('budva')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="budva">Будва</button>
-                    <button onclick="setCity('bar')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="bar">Бар</button>
-                    <button onclick="setCity('tivat')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="tivat">Тиват</button>
-                    <button onclick="setCity('podgorica')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="podgorica">Подгорица</button>
-                    <button onclick="setCity('kotor')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="kotor">Котор</button>
-                    <button onclick="setCity('herceg_novi')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="herceg_novi">Херцег-Нови</button>
+        <div class="bg-white rounded-2xl p-4 border border-gray-200/80 shadow-xs space-y-3">
+            <div class="flex items-center justify-between gap-2 overflow-x-auto pb-1 scrollbar-none" id="citiesContainer">
+                <div class="flex items-center gap-1.5 overflow-x-auto">
+                    <button onclick="setCity('all')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-900 text-white shadow-xs" data-city="all" data-i18n="allCities">Все города</button>
+                    <button onclick="setCity('budva')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700" data-city="budva">Будва</button>
+                    <button onclick="setCity('bar')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700" data-city="bar">Бар</button>
+                    <button onclick="setCity('tivat')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700" data-city="tivat">Тиват</button>
+                    <button onclick="setCity('podgorica')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700" data-city="podgorica">Подгорица</button>
+                    <button onclick="setCity('kotor')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700" data-city="kotor">Котор</button>
+                    <button onclick="setCity('herceg_novi')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700" data-city="herceg_novi">Херцег-Нови</button>
                 </div>
 
-                <!-- Фильтры и сортировка -->
-                <div class="flex items-center gap-2 shrink-0 justify-between md:justify-end">
-                    <button id="freeFilterBtn" onclick="toggleFreeFilter()" class="text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shrink-0">
+                <div class="flex items-center gap-2 shrink-0">
+                    <button id="freeFilterBtn" onclick="toggleFreeFilter()" class="text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5">
                         <i data-lucide="gift" class="w-3.5 h-3.5 text-emerald-600"></i> <span data-i18n="freeOnly">Бесплатно</span>
                     </button>
-                    <button id="resetFiltersBtn" onclick="resetAllFilters()" class="hidden text-xs font-semibold text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1 shrink-0 animate-fade-in">
+                    <button id="resetFiltersBtn" onclick="resetAllFilters()" class="hidden text-xs font-semibold text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1 animate-fade-in">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="resetFilters">Сбросить</span>
                     </button>
-                    <select id="sortSelect" onchange="renderPosts()" class="bg-gray-100 hover:bg-gray-200 border-none rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none cursor-pointer shrink-0">
+                    <select id="sortSelect" onchange="renderPosts()" class="bg-gray-100 hover:bg-gray-200 border-none rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
                         <option value="newest" data-i18n="sort_newest">Сначала новые</option>
                         <option value="cheap" data-i18n="sort_cheap">Сначала дешевле</option>
                         <option value="expensive" data-i18n="sort_expensive">Сначала дороже</option>
                     </select>
                 </div>
-
             </div>
         </div>
 
@@ -347,8 +326,6 @@
         }
 
         document.getElementById('langSelect').value = currentLang;
-        const langMobile = document.getElementById('langSelectMobile');
-        if (langMobile) langMobile.value = currentLang;
         changeLanguage(currentLang);
 
         function updateBadges() {
@@ -404,11 +381,11 @@
             const banner = document.getElementById('myPostsBanner');
 
             if (showOnlyMyPosts) {
-                if(btn) btn.classList.add('bg-blue-50', 'border', 'border-blue-200');
+                btn.classList.add('bg-blue-50', 'border', 'border-blue-200');
                 banner.classList.remove('hidden');
                 banner.classList.add('flex');
             } else {
-                if(btn) btn.classList.remove('bg-blue-50', 'border', 'border-blue-200');
+                btn.classList.remove('bg-blue-50', 'border', 'border-blue-200');
                 banner.classList.add('hidden');
                 banner.classList.remove('flex');
             }
@@ -420,9 +397,9 @@
             showOnlyFavorites = !showOnlyFavorites;
             const btn = document.getElementById('favoritesHeaderBtn');
             if (showOnlyFavorites) {
-                if(btn) btn.classList.add('bg-rose-50', 'border', 'border-rose-200');
+                btn.classList.add('bg-rose-50', 'border', 'border-rose-200');
             } else {
-                if(btn) btn.classList.remove('bg-rose-50', 'border', 'border-rose-200');
+                btn.classList.remove('bg-rose-50', 'border', 'border-rose-200');
             }
             checkResetButtonVisibility();
             renderPosts();
@@ -481,9 +458,9 @@
             selectedCity = city;
             document.querySelectorAll('.city-btn').forEach(btn => {
                 if (btn.getAttribute('data-city') === city) {
-                    btn.className = "city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-900 text-white shadow-xs shrink-0";
+                    btn.className = "city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-900 text-white shadow-xs";
                 } else {
-                    btn.className = "city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0";
+                    btn.className = "city-btn px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700";
                 }
             });
             checkResetButtonVisibility();
@@ -561,10 +538,8 @@
             const input = document.getElementById('searchInput');
             input.value = '';
             document.getElementById('clearSearchBtn').classList.add('hidden');
-            const favBtn = document.getElementById('favoritesHeaderBtn');
-            if(favBtn) favBtn.classList.remove('bg-rose-50', 'border', 'border-rose-200');
-            const myBtn = document.getElementById('myPostsHeaderBtn');
-            if(myBtn) myBtn.classList.remove('bg-blue-50', 'border', 'border-blue-200');
+            document.getElementById('favoritesHeaderBtn').classList.remove('bg-rose-50', 'border', 'border-rose-200');
+            document.getElementById('myPostsHeaderBtn').classList.remove('bg-blue-50', 'border', 'border-blue-200');
             document.getElementById('myPostsBanner').classList.add('hidden');
             document.getElementById('freeFilterBtn').classList.remove('bg-emerald-50', 'border', 'border-emerald-200', 'text-emerald-700');
             
@@ -700,6 +675,25 @@
         }
 
         fetchPosts();
-    </script>
+    <script>
+    let lastScrollTop = 0;
+    const header = document.querySelector('header');
+    const scrollThreshold = 50; // Минимальный отступ для срабатывания
+
+    window.addEventListener('scroll', function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+            // Свайп вниз — скрываем шапку
+            header.style.transform = 'translateY(-100%)';
+            header.style.transition = 'transform 0.3s ease-in-out';
+        } else {
+            // Свайп вверх — показываем шапку
+            header.style.transform = 'translateY(0)';
+            header.style.transition = 'transform 0.3s ease-in-out';
+        }
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    }, { passive: true });
+</script>
 </body>
 </html>
