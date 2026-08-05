@@ -257,9 +257,7 @@
                     imageUrls.push(publicUrlData.publicUrl);
                 }
 
-                if (imageUrls.length === 0) {
-                    imageUrls.push('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
-                }
+                // Стул удален! Если картинок нет, массив останется пустым ([]), как и положено.
 
                 const newPost = {
                     title: document.getElementById('postTitle').value.trim(),
@@ -269,7 +267,7 @@
                     description: document.getElementById('postDesc').value.trim(),
                     telegram: document.getElementById('postTelegram').value.trim(),
                     images: imageUrls,
-                    image_url: imageUrls[0],
+                    image_url: imageUrls.length > 0 ? imageUrls[0] : null,
                     user_token: userToken,
                     telegram_id: tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null,
                     views: 0
