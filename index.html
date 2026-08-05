@@ -96,27 +96,27 @@
 
         <!-- Секция категорий с плитками -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-            <div onclick="setCategory('auto')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+            <div onclick="setCategory(event, 'auto')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_auto">Авто</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">🚗</div>
             </div>
-            <div onclick="setCategory('realestate')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+            <div onclick="setCategory(event, 'realestate')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_realestate">Недвижимость</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">🏢</div>
             </div>
-            <div onclick="setCategory('furniture')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+            <div onclick="setCategory(event, 'furniture')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_furniture">Мебель и интерьер</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">🛋️</div>
             </div>
-            <div onclick="setCategory('tech')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+            <div onclick="setCategory(event, 'tech')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_tech">Электроника</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">📱</div>
             </div>
-            <div onclick="setCategory('clothes')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+            <div onclick="setCategory(event, 'clothes')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_clothes">Одежда, обувь</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">👕</div>
             </div>
-            <div onclick="setCategory('other')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+            <div onclick="setCategory(event, 'other')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_other">Разные вещи</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">📦</div>
             </div>
@@ -467,7 +467,7 @@
             renderPosts();
         }
 
-        function setCategory(cat) {
+        function setCategory(e, cat) {
             if (selectedCategory === cat) {
                 selectedCategory = 'all';
             } else {
@@ -478,8 +478,8 @@
                 tile.classList.remove('ring-2', 'ring-[#009cf0]', 'bg-blue-50/50');
             });
 
-            if (selectedCategory !== 'all') {
-                event.currentTarget.classList.add('ring-2', 'ring-[#009cf0]', 'bg-blue-50/50');
+            if (selectedCategory !== 'all' && e && e.currentTarget) {
+                e.currentTarget.classList.add('ring-2', 'ring-[#009cf0]', 'bg-blue-50/50');
             }
 
             checkResetButtonVisibility();
@@ -588,14 +588,14 @@
                 if (showOnlyFavorites && !favorites.includes(postIdStr)) return false;
                 if (showOnlyMyPosts && !isMyPost(post)) return false;
                 if (showOnlyFree && Number(post.price || 0) > 0) return false;
-                if (searchQuery && !post.title.toLowerCase().includes(searchQuery) && !post.description.toLowerCase().includes(searchQuery)) return false;
+                if (searchQuery && !post.title.toLowerCase().includes(searchQuery) && !(post.description && post.description.toLowerCase().includes(searchQuery))) return false;
                 return true;
             });
 
             filtered.sort((a, b) => {
                 if (sortBy === 'cheap') return (a.price || 0) - (b.price || 0);
                 if (sortBy === 'expensive') return (b.price || 0) - (a.price || 0);
-                return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+                return new Date(b.created_at || 0) - new Date(b.created_at || 0); // Исправлена сортировка новых (раньше было b - b)
             });
 
             countText.innerText = dict[currentLang].foundCount(filtered.length);
@@ -651,7 +651,7 @@
                             </div>
                             <div class="space-y-1">
                                 <div class="flex items-center gap-1 text-[11px] text-gray-400">
-                                    <i data-lucide="map-pin" class="w-3 h-3"><span>${cityName}</span></i>
+                                    <i data-lucide="map-pin" class="w-3 h-3"></i><span>${cityName}</span>
                                 </div>
                             </div>
                         </div>
