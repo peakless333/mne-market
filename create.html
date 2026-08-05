@@ -19,7 +19,7 @@
 </head>
 <body class="bg-[#f5f6f8] text-gray-900 pb-28 selection:bg-[#009cf0] selection:text-white antialiased">
 
-    <!-- Шапка сайта -->
+    <!-- Шапка -->
     <header class="bg-white border-b border-gray-200/80 sticky top-0 z-30 shadow-xs">
         <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-semibold text-xs transition-colors">
@@ -33,14 +33,14 @@
         </div>
     </header>
 
-    <!-- Основная форма -->
+    <!-- Форма -->
     <main class="max-w-2xl mx-auto px-4 pt-6 animate-fade-in">
         <div class="bg-white rounded-2xl p-6 md:p-8 border border-gray-200/80 shadow-xs space-y-6">
             <h1 class="text-xl font-extrabold text-gray-950 tracking-tight" data-i18n="title">Новое объявление</h1>
 
             <form id="createForm" onsubmit="submitPost(event)" class="space-y-5">
                 
-                <!-- Загрузка картинок -->
+                <!-- Фото -->
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2" data-i18n="photosLabel">Фотографии (до 5 шт.)</label>
                     <input type="file" id="imageInput" accept="image/*" multiple class="hidden" onchange="handleImageSelection(event)">
@@ -89,16 +89,43 @@
                     <input type="number" id="postPrice" required placeholder="0 (если бесплатно)" min="0" class="w-full bg-gray-50 border border-gray-200/80 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all text-gray-900 placeholder:text-gray-400">
                 </div>
 
+                <!-- Бэджи (Срочно / Торг) -->
+                <div class="flex items-center gap-6 pt-2">
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input type="checkbox" id="isUrgent" class="w-4 h-4 rounded text-[#009cf0] focus:ring-[#009cf0] border-gray-300">
+                        <span class="text-xs font-bold text-gray-700" data-i18n="badgeUrgent">🔥 Срочно</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer select-none">
+                        <input type="checkbox" id="isBargain" class="w-4 h-4 rounded text-[#009cf0] focus:ring-[#009cf0] border-gray-300">
+                        <span class="text-xs font-bold text-gray-700" data-i18n="badgeBargain">💬 Торг уместен</span>
+                    </label>
+                </div>
+
                 <!-- Описание -->
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5" data-i18n="descLabel">Описание</label>
                     <textarea id="postDesc" rows="4" required placeholder="Опишите состояние, комплектацию и детали..." class="w-full bg-gray-50 border border-gray-200/80 rounded-xl p-4 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all resize-none text-gray-900 placeholder:text-gray-400"></textarea>
                 </div>
 
-                <!-- Telegram для связи -->
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5" data-i18n="tgLabel">Telegram для связи</label>
-                    <input type="text" id="postTelegram" required placeholder="@username" class="w-full bg-gray-50 border border-gray-200/80 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all text-gray-900 placeholder:text-gray-400">
+                <!-- Контакты и мессенджеры для Черногории -->
+                <div class="space-y-4 pt-2 border-t border-gray-100">
+                    <h3 class="text-xs font-extrabold text-gray-950 uppercase tracking-wider" data-i18n="contactsHeader">Контакты для связи</h3>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Telegram (@username)</label>
+                        <input type="text" id="postTelegram" required placeholder="@username" class="w-full bg-gray-50 border border-gray-200/80 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all text-gray-900 placeholder:text-gray-400">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">WhatsApp (номер)</label>
+                            <input type="text" id="postWhatsapp" placeholder="+38269123456" class="w-full bg-gray-50 border border-gray-200/80 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all text-gray-900 placeholder:text-gray-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">Viber (номер)</label>
+                            <input type="text" id="postViber" placeholder="+38269123456" class="w-full bg-gray-50 border border-gray-200/80 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all text-gray-900 placeholder:text-gray-400">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Кнопка отправки -->
@@ -136,36 +163,36 @@
                 back: "Назад", title: "Новое объявление", photosLabel: "Фотографии (до 5 шт.)",
                 addPhotoBtn: "Нажмите, чтобы добавить фото", nameLabel: "Название",
                 categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
-                descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление",
+                descLabel: "Описание", contactsHeader: "Контакты для связи в Черногории",
+                badgeUrgent: "🔥 Срочно", badgeBargain: "💬 Торг уместен",
+                publishBtn: "Опубликовать объявление",
                 cat_auto: "Авто", cat_realestate: "Недвижимость", cat_furniture: "Мебель", cat_tech: "Электроника", cat_clothes: "Одежда", cat_other: "Разное",
                 publishing: "Публикация...", maxPhotos: "Максимально можно загрузить 5 фотографий",
-                ph_title: "Например: iPhone 13 Pro 128GB",
-                ph_price: "0 (если бесплатно)",
-                ph_desc: "Опишите состояние, комплектацию и детали...",
+                ph_title: "Например: iPhone 13 Pro 128GB", ph_price: "0 (если бесплатно)", ph_desc: "Опишите состояние, комплектацию и детали...",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
             en: {
                 back: "Back", title: "New Listing", photosLabel: "Photos (up to 5)",
                 addPhotoBtn: "Click to add photos", nameLabel: "Title",
                 categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
-                descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing",
+                descLabel: "Description", contactsHeader: "Contact details",
+                badgeUrgent: "🔥 Urgent", badgeBargain: "💬 Negotiable",
+                publishBtn: "Publish listing",
                 cat_auto: "Vehicles", cat_realestate: "Real estate", cat_furniture: "Furniture", cat_tech: "Electronics", cat_clothes: "Clothing", cat_other: "Other",
                 publishing: "Publishing...", maxPhotos: "Maximum 5 photos allowed",
-                ph_title: "e.g. iPhone 13 Pro 128GB",
-                ph_price: "0 (if free)",
-                ph_desc: "Describe condition, package and details...",
+                ph_title: "e.g. iPhone 13 Pro 128GB", ph_price: "0 (if free)", ph_desc: "Describe condition, package and details...",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
             cnr: {
                 back: "Nazad", title: "Novi oglas", photosLabel: "Fotografije (do 5)",
                 addPhotoBtn: "Kliknite da dodate fotografije", nameLabel: "Naziv",
                 categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
-                descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas",
+                descLabel: "Opis", contactsHeader: "Kontak informacije u Crnoj Gori",
+                badgeUrgent: "🔥 Hitno", badgeBargain: "💬 Dogovor",
+                publishBtn: "Objavi oglas",
                 cat_auto: "Auto", cat_realestate: "Nekretnine", cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_clothes: "Odjeća", cat_other: "Razno",
                 publishing: "Objavljivanje...", maxPhotos: "Možete otpremiti najviše 5 fotografija",
-                ph_title: "npr. iPhone 13 Pro 128GB",
-                ph_price: "0 (ako je besplatno)",
-                ph_desc: "Opišite stanje, opremu i detalje...",
+                ph_title: "npr. iPhone 13 Pro 128GB", ph_price: "0 (ako je besplatno)", ph_desc: "Opišite stanje, opremu i detalje...",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
         };
@@ -204,7 +231,6 @@
                 alert(dict[currentLang].maxPhotos);
                 return;
             }
-            
             selectedFiles = selectedFiles.concat(files);
             renderPreviews();
             e.target.value = '';
@@ -276,6 +302,10 @@
                     description: document.getElementById('postDesc').value.trim(),
                     telegram: document.getElementById('postTelegram').value.trim(),
                     contact: document.getElementById('postTelegram').value.trim(),
+                    whatsapp: document.getElementById('postWhatsapp').value.trim(),
+                    viber: document.getElementById('postViber').value.trim(),
+                    is_urgent: document.getElementById('isUrgent').checked,
+                    is_bargain: document.getElementById('isBargain').checked,
                     images: imageUrls,
                     image_url: imageUrls[0],
                     user_token: userToken,
