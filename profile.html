@@ -37,7 +37,7 @@
                 <!-- Блок Аватара с поддержкой Drag & Drop -->
                 <div class="space-y-2">
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider" data-i18n="avatarLabel">Ваша фотография / Аватарка</label>
-                    <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="handleAvatarSelection(event)">
+                    <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="handleImageSelection(event)">
 
                     <div class="flex items-center gap-4">
                         <div id="currentAvatarPreview" class="w-20 h-20 rounded-full bg-blue-100 border-2 border-blue-500 overflow-hidden flex items-center justify-center text-blue-700 font-bold text-2xl shrink-0 shadow-inner">
@@ -87,6 +87,13 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // Автоматическая привязка уникального ключа устройства / аккаунта
+        let userToken = localStorage.getItem('mne_user_token');
+        if (!userToken) {
+            userToken = 'user_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('mne_user_token', userToken);
+        }
+
         const dict = {
             ru: {
                 back: "На главную", titleProfile: "Личный кабинет", avatarLabel: "Фотография профиля",
@@ -113,7 +120,6 @@
         let tempAvatarFile = null;
         let tempAvatarUrl = profileData.avatarUrl || '';
 
-        // Автозаполнение из Telegram WebApp, если пусто
         if (tg?.initDataUnsafe?.user) {
             if (!profileData.name && tg.initDataUnsafe.user.first_name) {
                 profileData.name = tg.initDataUnsafe.user.first_name;
@@ -147,9 +153,7 @@
         document.getElementById('langSelect').value = currentLang;
         changeLanguage(currentLang);
 
-        // Настройка Drag & Drop для аватара
         const avatarDropZone = document.getElementById('avatarDropZone');
-
         ['dragenter', 'dragover'].forEach(eventName => {
             avatarDropZone.addEventListener(eventName, (e) => {
                 e.preventDefault();
@@ -211,10 +215,13 @@
                 const updatedProfile = {
                     name: document.getElementById('profileName').value.trim(),
                     username: document.getElementById('profileTelegram').value.trim(),
-                    avatarUrl: finalAvatarUrl
+                    avatarUrl: finalAvatarUrl,
+                    token: userToken
                 };
 
                 localStorage.setItem('mne_user_profile', JSON.stringify(updatedProfile));
+                localStorage.setItem('mne_user_email', updatedProfile.username);
+                
                 alert(dict[currentLang].savedAlert);
                 window.location.href = 'index.html';
 
