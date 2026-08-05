@@ -330,9 +330,8 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Управление аккаунтом по логину/паролю
         let currentUser = JSON.parse(localStorage.getItem('mne_logged_user') || 'null');
-        let authMode = 'login'; // 'login' или 'register'
+        let authMode = 'login';
 
         const dict = {
             ru: {
@@ -532,9 +531,19 @@
             }
         }
 
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ПРОВЕРКИ АВТОРСТВА
         function isMyPost(post) {
             if (!currentUser) return false;
-            return post.username === currentUser.username || post.user_token === currentUser.username;
+            const currentName = String(currentUser.username || '').toLowerCase().trim();
+            const postUser = String(post.username || '').toLowerCase().trim();
+            const postToken = String(post.user_token || '').toLowerCase().trim();
+            const postContact = String(post.contact || post.telegram || '').toLowerCase().trim();
+
+            return (
+                (postUser && postUser === currentName) ||
+                (postToken && postToken === currentName) ||
+                (postContact && postContact.includes(currentName))
+            );
         }
 
         function switchAuthTab(tab) {
@@ -1128,7 +1137,6 @@
 
         fetchPosts();
 
-        // Исправленная логика шапки: прячется при скролле вниз, но появляется ТОЛЬКО в самом верху (scrollTop <= 10)
         const header = document.querySelector('header');
         const scrollThreshold = 50;
 
@@ -1136,10 +1144,8 @@
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             
             if (scrollTop <= 10) {
-                // Если дошли до самого верха — всегда показываем шапку
                 header.style.transform = 'translateY(0)';
             } else if (scrollTop > scrollThreshold) {
-                // Если прокрутили ниже порога и скроллим вниз — прячем
                 header.style.transform = 'translateY(-100%)';
             }
         }, { passive: true });
