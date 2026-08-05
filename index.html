@@ -502,7 +502,6 @@
                 if (btn) btn.innerText = name;
             }
 
-            // Обновляем текст кнопки отправки в модалке логина/регистрации в зависимости от активной вкладки
             const submitBtn = document.getElementById('authSubmitBtn');
             if (submitBtn) {
                 submitBtn.innerText = (authMode === 'login') ? dict[lang].loginBtn : dict[lang].registerBtn;
@@ -594,7 +593,6 @@
             window.location.href = 'create.html';
         }
 
-        // Логика строгой проверки существующих аккаунтов через таблицу accounts в Supabase
         async function handleAuthSubmit(event) {
             event.preventDefault();
             const username = document.getElementById('authUsername').value.trim().toLowerCase();
@@ -604,7 +602,6 @@
 
             try {
                 if (authMode === 'register') {
-                    // Проверяем, существует ли пользователь в таблице accounts
                     const { data: existing, error: checkError } = await supabaseClient
                         .from('accounts')
                         .select('*')
@@ -620,7 +617,6 @@
                         return;
                     }
 
-                    // Регистрация нового аккаунта в базе данных
                     const { error: regError } = await supabaseClient
                         .from('accounts')
                         .insert([{ username, password }]);
@@ -633,7 +629,6 @@
                     localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
                     showToast(dict[currentLang].toastRegSuccess);
                 } else {
-                    // Режим входа: строго проверяем, существует ли аккаунт и совпадает ли пароль
                     const { data: found, error: loginError } = await supabaseClient
                         .from('accounts')
                         .select('*')
@@ -1132,18 +1127,20 @@
 
         fetchPosts();
 
-        let lastScrollTop = 0;
+        // Исправленная логика шапки: прячется при скролле вниз, но появляется ТОЛЬКО в самом верху (scrollTop <= 10)
         const header = document.querySelector('header');
         const scrollThreshold = 50;
 
         window.addEventListener('scroll', function() {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-                header.style.transform = 'translateY(-100%)';
-            } else {
+            
+            if (scrollTop <= 10) {
+                // Если дошли до самого верха — всегда показываем шапку
                 header.style.transform = 'translateY(0)';
+            } else if (scrollTop > scrollThreshold) {
+                // Если прокрутили ниже порога и скроллим вниз — прячем
+                header.style.transform = 'translateY(-100%)';
             }
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
         }, { passive: true });
     </script>
 </body>
