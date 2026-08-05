@@ -3,59 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MNE Market — Объявление</title>
+    <title>Объявление — MNE Market</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇲🇪</text></svg>">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    </style>
 </head>
-<body class="bg-[#f5f6f8] text-gray-900 pb-28 selection:bg-[#009cf0] selection:text-white antialiased">
+<body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- Уведомление -->
-    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900/95 backdrop-blur-md text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-2xl z-50 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none flex items-center gap-2">
+    <!-- Уведомление о копировании ссылки -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg transition-all duration-300 opacity-0 pointer-events-none z-50">
         Ссылка скопирована в буфер обмена!
     </div>
 
     <!-- Шапка сайта -->
-    <header class="bg-white border-b border-gray-200/80 sticky top-0 z-30 shadow-xs">
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-semibold text-xs transition-colors">
+            <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="back">Назад к объявлениям</span>
             </a>
             
-            <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
-                <option value="ru">RU</option>
-                <option value="en">EN</option>
-                <option value="cnr">CNR</option>
-            </select>
+            <div class="flex items-center gap-2">
+                <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
+                    <option value="ru">🇷🇺 RU</option>
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="cnr">🇲🇪 CNR</option>
+                </select>
+            </div>
         </div>
     </header>
 
     <!-- Основной контент товара -->
-    <main class="max-w-6xl mx-auto px-4 pt-6 animate-fade-in">
-        <div id="loadingState" class="text-center text-gray-400 py-20 text-sm font-medium" data-i18n="loading">Загрузка объявления...</div>
+    <main class="max-w-6xl mx-auto px-4 pt-6">
+        <div id="loadingState" class="text-center text-gray-400 py-12" data-i18n="loading">Загрузка объявления...</div>
         
         <div id="postContent" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden">
             <!-- Левая колонка: Картинки -->
             <div class="md:col-span-2 space-y-3">
-                <div class="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-xs p-3.5 relative">
+                <div class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm p-3 relative">
                     <!-- Кнопка Избранного на фото -->
-                    <button onclick="toggleCurrentFavorite()" class="absolute top-6 right-6 bg-white/90 hover:bg-white p-2.5 rounded-full transition-all text-gray-700 shadow-sm z-20 cursor-pointer active:scale-90">
+                    <button onclick="toggleCurrentFavorite()" class="absolute top-6 right-6 bg-white/90 hover:bg-white p-2.5 rounded-full transition-all text-gray-600 shadow-md z-20 cursor-pointer">
                         <i id="favIcon" data-lucide="heart" class="w-5 h-5"></i>
                     </button>
 
-                    <div id="mainImageWrapper" onclick="openFullscreen()" class="relative h-[380px] sm:h-[440px] bg-gray-50 rounded-xl overflow-hidden cursor-zoom-in group flex items-center justify-center">
-                        <img id="mainProductImage" src="" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" alt="Product">
-                        <div class="absolute bottom-3 right-3 bg-black/70 text-white text-[11px] font-medium px-3 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-1.5 shadow-sm">
-                            <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> <span data-i18n="zoomText">Нажмите для увеличения</span>
+                    <div id="mainImageWrapper" onclick="openFullscreen()" class="relative h-[380px] bg-gray-100 rounded-xl overflow-hidden cursor-zoom-in group">
+                        <img id="mainProductImage" src="" class="w-full h-full object-contain" alt="Product">
+                        <div class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-1.5 shadow-md">
+                            <i data-lucide="maximize-2" class="w-4 h-4"></i> <span data-i18n="zoomText">Нажмите для увеличения</span>
                         </div>
                     </div>
                     <div id="thumbnailsContainer" class="grid grid-cols-5 gap-2 mt-3"></div>
@@ -64,62 +59,62 @@
 
             <!-- Правая колонка: Информация и контакты -->
             <div class="space-y-4">
-                <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-xs space-y-4">
-                    <div class="flex items-center justify-between text-xs text-gray-400 font-medium">
-                        <span id="postCategoryBadge" class="bg-blue-50 text-[#009cf0] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider"></span>
+                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between text-xs text-gray-400">
+                        <span id="postCategoryBadge" class="bg-blue-50 text-blue-600 font-semibold px-2.5 py-1 rounded-lg uppercase tracking-wider"></span>
                         <div class="flex items-center gap-3">
                             <span id="postViews" class="flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i> <span id="viewsCount">0</span></span>
                             <span id="postDate"></span>
                         </div>
                     </div>
 
-                    <h1 id="postTitle" class="text-xl font-extrabold text-gray-950 tracking-tight"></h1>
+                    <h1 id="postTitle" class="text-xl font-bold text-gray-900"></h1>
                     
-                    <div class="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+                    <div class="flex items-center gap-1.5 text-xs text-gray-500">
                         <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i> <span id="postCity"></span>
                     </div>
 
-                    <div id="postPrice" class="text-2xl font-black text-gray-950 pt-2 border-t border-gray-100"></div>
+                    <div id="postPrice" class="text-2xl font-black text-blue-600 pt-2 border-t border-gray-100"></div>
 
-                    <div class="space-y-1 pt-1">
-                        <h3 class="text-[11px] font-bold text-gray-400 tracking-wider uppercase" data-i18n="desc">ОПИСАНИЕ</h3>
-                        <p id="postDesc" class="text-xs sm:text-sm text-gray-600 whitespace-pre-line leading-relaxed"></p>
+                    <div>
+                        <h3 class="text-[11px] font-bold text-gray-400 tracking-wider mb-1" data-i18n="desc">ОПИСАНИЕ</h3>
+                        <p id="postDesc" class="text-sm text-gray-600 whitespace-pre-line leading-relaxed"></p>
                     </div>
 
-                    <div class="space-y-2 pt-3">
+                    <div class="space-y-2 pt-2">
                         <!-- Кнопка связи с продавцом -->
-                        <a id="postTelegramBtn" href="#" target="_blank" class="w-full bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium py-3.5 rounded-xl transition-all shadow-sm shadow-blue-500/20 flex items-center justify-center gap-2 text-sm">
+                        <a id="postTelegramBtn" href="#" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
                             <i data-lucide="send" class="w-4 h-4"></i> <span data-i18n="contactBtn">Написать продавцу</span>
                         </a>
 
                         <!-- Кнопка Поделиться в Telegram -->
-                        <button onclick="shareToTelegram()" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-700 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-95">
+                        <button onclick="shareToTelegram()" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-600 font-medium py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs cursor-pointer">
                             <i data-lucide="share-2" class="w-4 h-4"></i> <span data-i18n="shareBtn">Поделиться в Telegram</span>
                         </button>
 
                         <!-- Кнопка Копировать ссылку -->
-                        <button onclick="copyLink()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-95">
+                        <button onclick="copyLink()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs cursor-pointer">
                             <i data-lucide="copy" class="w-4 h-4"></i> <span data-i18n="copyBtn">Скопировать ссылку</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Похожие -->
-                <div class="bg-white rounded-2xl p-5 border border-gray-200/80 shadow-xs space-y-3">
-                    <h3 class="font-bold text-sm text-gray-950" data-i18n="similarTitle">Похожие объявления</h3>
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
+                    <h3 class="font-bold text-sm text-gray-900" data-i18n="similarTitle">Похожие объявления</h3>
                     <div id="similarContainer" class="space-y-2"></div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Полноэкранная галерея -->
+    <!-- Полноэкранная галерея (Модальное окно) -->
     <div id="imageModal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center backdrop-blur-md select-none">
         <button onclick="closeFullscreen()" class="absolute top-4 right-4 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition-all z-50 cursor-pointer">
             <i data-lucide="x" class="w-6 h-6"></i>
         </button>
 
-        <div id="imageCounter" class="absolute top-5 left-1/2 -translate-x-1/2 text-white/90 text-xs font-semibold bg-black/40 px-3.5 py-1.5 rounded-full z-50 backdrop-blur-sm">
+        <div id="imageCounter" class="absolute top-5 left-1/2 -translate-x-1/2 text-white/80 text-sm font-medium bg-black/40 px-3 py-1 rounded-full z-50">
             1 / 1
         </div>
 
@@ -151,31 +146,31 @@
 
         const dict = {
             ru: {
-                back: "Назад к объявлениям", loading: "Загрузка объявления...", free: "Бесплатно",
+                back: "Назад к объявлениям", loading: "Загрузка...", free: "Бесплатно",
                 price: "Цена", city: "Город", desc: "ОПИСАНИЕ", contactBtn: "Написать продавцу",
                 shareBtn: "Поделиться в Telegram", copyBtn: "Скопировать ссылку",
                 zoomText: "Нажмите для увеличения",
                 similarTitle: "Похожие объявления", noSimilar: "Нет похожих объявлений",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
-                categories: { auto: "Авто", realestate: "Недвижимость", furniture: "Мебель", tech: "Электроника", clothes: "Одежда", other: "Разное" }
+                categories: { furniture: "Мебель", tech: "Техника", auto: "Авто", clothes: "Одежда", other: "Разное", realestate: "Недвижимость" }
             },
             en: {
-                back: "Back to listings", loading: "Loading listing...", free: "Free",
+                back: "Back to listings", loading: "Loading...", free: "Free",
                 price: "Price", city: "City", desc: "DESCRIPTION", contactBtn: "Contact seller",
                 shareBtn: "Share to Telegram", copyBtn: "Copy link",
                 zoomText: "Click to zoom",
                 similarTitle: "Related listings", noSimilar: "No related listings",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
-                categories: { auto: "Vehicles", realestate: "Real estate", furniture: "Furniture", tech: "Electronics", clothes: "Clothing", other: "Other" }
+                categories: { furniture: "Furniture", tech: "Electronics", auto: "Vehicles", clothes: "Clothing", other: "Other", realestate: "Real estate" }
             },
             cnr: {
-                back: "Nazad na oglase", loading: "Učitavanje oglasa...", free: "Besplatno",
+                back: "Nazad na oglase", loading: "Učitavanje...", free: "Besplatno",
                 price: "Cijena", city: "Grad", desc: "OPIS", contactBtn: "Kontaktiraj prodavca",
                 shareBtn: "Podijeli na Telegram", copyBtn: "Kopiraj link",
                 zoomText: "Klikni za uvećanje",
                 similarTitle: "Slični oglasi", noSimilar: "Nema sličnih oglasa",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
-                categories: { auto: "Auto", realestate: "Nekretnine", furniture: "Namještaj", tech: "Tehnika", clothes: "Odjeća", other: "Razno" }
+                categories: { furniture: "Namještaj", tech: "Tehnika", auto: "Auto", clothes: "Odjeća", other: "Razno", realestate: "Nekretnine" }
             }
         };
 
@@ -196,13 +191,14 @@
             const { data: allData } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
 
             if (error || !postData) {
-                document.getElementById('loadingState').innerHTML = `<div class="text-rose-500 font-semibold">Объявление не найдено</div>`;
+                document.getElementById('loadingState').innerHTML = `<div class="text-red-500">Объявление не найдено</div>`;
                 return;
             }
 
             currentPost = postData;
             allPosts = allData || [];
 
+            // Увеличиваем счетчик просмотров на +1
             const newViews = (currentPost.views || 0) + 1;
             await supabaseClient.from('posts').update({ views: newViews }).eq('id', postId);
             currentPost.views = newViews;
@@ -237,33 +233,30 @@
 
         function toggleCurrentFavorite() {
             if (!currentPost) return;
-            const stringId = String(currentPost.id);
-            if (favorites.includes(stringId)) {
-                favorites = favorites.filter(id => id !== stringId);
+            if (favorites.includes(currentPost.id)) {
+                favorites = favorites.filter(id => id !== currentPost.id);
             } else {
-                favorites.push(stringId);
+                favorites.push(currentPost.id);
             }
-            favorites = [...new Set(favorites)];
             localStorage.setItem('mne_favorites', JSON.stringify(favorites));
             updateFavIcon();
         }
 
         function updateFavIcon() {
             const favIcon = document.getElementById('favIcon');
-            const stringId = String(currentPost.id);
-            if (favorites.includes(stringId)) {
-                favIcon.classList.add('fill-rose-500', 'text-rose-500');
+            if (favorites.includes(currentPost.id)) {
+                favIcon.classList.add('fill-red-500', 'text-red-500');
             } else {
-                favIcon.classList.remove('fill-rose-500', 'text-rose-500');
+                favIcon.classList.remove('fill-red-500', 'text-red-500');
             }
         }
 
         function copyLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
                 const toast = document.getElementById('toast');
-                toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+                toast.classList.remove('opacity-0', 'pointer-events-none');
                 setTimeout(() => {
-                    toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+                    toast.classList.add('opacity-0', 'pointer-events-none');
                 }, 2000);
             });
         }
@@ -276,9 +269,9 @@
             thumbs.forEach((btn, idx) => {
                 if (idx === currentImageIndex) {
                     btn.classList.remove('border-gray-200');
-                    btn.classList.add('border-[#009cf0]', 'ring-2', 'ring-blue-400');
+                    btn.classList.add('border-blue-600', 'ring-2', 'ring-blue-500');
                 } else {
-                    btn.classList.remove('border-[#009cf0]', 'ring-2', 'ring-blue-400');
+                    btn.classList.remove('border-blue-600', 'ring-2', 'ring-blue-500');
                     btn.classList.add('border-gray-200');
                 }
             });
@@ -354,8 +347,7 @@
             document.getElementById('postTitle').innerText = currentPost.title;
             document.getElementById('postDesc').innerText = currentPost.description || '-';
             
-            const rawTg = currentPost.telegram || currentPost.contact || '';
-            const tgClean = rawTg.replace('@', '');
+            const tgClean = currentPost.telegram ? currentPost.telegram.replace('@', '') : '';
             document.getElementById('postTelegramBtn').href = `https://t.me/${tgClean}`;
 
             updateFavIcon();
@@ -364,7 +356,7 @@
             const thumbsContainer = document.getElementById('thumbnailsContainer');
             if (postImages.length > 1) {
                 thumbsContainer.innerHTML = postImages.map((img, idx) => `
-                    <button onclick="switchMainImage(${idx})" class="thumb-btn relative h-16 rounded-xl overflow-hidden border-2 ${idx === 0 ? 'border-[#009cf0] ring-2 ring-blue-400' : 'border-gray-200'} bg-gray-50 transition-all cursor-pointer">
+                    <button onclick="switchMainImage(${idx})" class="thumb-btn relative h-16 rounded-xl overflow-hidden border-2 ${idx === 0 ? 'border-blue-600 ring-2 ring-blue-500' : 'border-gray-200'} bg-gray-100 transition-all cursor-pointer">
                         <img src="${img}" class="w-full h-full object-cover" alt="Thumb">
                     </button>
                 `).join('');
@@ -381,18 +373,18 @@
                     const sImg = (p.images && p.images.length > 0) ? p.images[0] : (p.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
                     const sPrice = formatPrice(p.price);
                     return `
-                        <a href="post.html?id=${p.id}" class="bg-white rounded-xl p-2.5 border border-gray-100 hover:border-gray-300 shadow-xs hover:shadow-md transition-all flex items-center gap-3 group">
-                            <img src="${sImg}" class="w-14 h-14 rounded-xl object-cover shrink-0 bg-gray-50" alt="Similar">
+                        <a href="post.html?id=${p.id}" class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
+                            <img src="${sImg}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="Similar">
                             <div class="min-w-0 flex-1">
-                                <h4 class="font-semibold text-xs text-gray-900 truncate group-hover:text-[#009cf0] transition-colors">${p.title}</h4>
+                                <h4 class="font-semibold text-xs text-gray-900 truncate group-hover:text-blue-600 transition-colors">${p.title}</h4>
                                 <p class="text-[11px] text-gray-400 mt-0.5">${dict[currentLang].cities[p.city] || p.city}</p>
-                                <p class="font-bold text-xs text-gray-950 mt-0.5">${sPrice}</p>
+                                <p class="font-bold text-xs text-blue-600 mt-1">${sPrice}</p>
                             </div>
                         </a>
                     `;
                 }).join('');
             } else {
-                similarContainer.innerHTML = `<p class="text-xs text-gray-400 py-1">${dict[currentLang].noSimilar}</p>`;
+                similarContainer.innerHTML = `<p class="text-xs text-gray-400">${dict[currentLang].noSimilar}</p>`;
             }
             lucide.createIcons();
         }
