@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Просмотр объявления</title>
+  <title>MNE Market — Просмотр товара</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -11,9 +11,9 @@
 
   <header>
     <div class="header-container">
-      <a href="index.html" class="logo">AvitoClone</a>
+      <a href="index.html" class="logo">MNE Market</a>
       <div class="header-actions">
-        <a href="index.html" class="btn-primary" style="background: #707579;">На главную</a>
+        <a href="index.html" class="btn-secondary">На главную</a>
       </div>
     </div>
   </header>
@@ -42,19 +42,19 @@
       }
 
       container.innerHTML = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;" id="postLayoutGrid">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
           <div>
-            <img src="${data.image_url || 'https://via.placeholder.com/400x300?text=No+Photo'}" style="width: 100%; border-radius: var(--radius); object-fit: cover;" alt="">
+            <img src="${data.image_url || 'https://via.placeholder.com/400x300?text=MNE+Market'}" style="width: 100%; border-radius: var(--radius); object-fit: cover; max-height: 400px;" alt="">
           </div>
           <div style="display: flex; flex-direction: column; gap: 16px;">
-            <h1 style="font-size: 26px;">${data.title}</h1>
-            <div style="font-size: 32px; font-weight: 800; color: var(--text-main);">${Number(data.price).toLocaleString()} ₽</div>
+            <h1 style="font-size: 26px; line-height: 1.2;">${data.title}</h1>
+            <div style="font-size: 32px; font-weight: 800; color: var(--primary);">€${Number(data.price).toLocaleString()}</div>
+            <p style="color: var(--text-secondary); font-size: 14px;"><strong>Город:</strong> ${data.location || 'Не указан'}</p>
             <hr style="border: none; border-top: 1px solid var(--border-color);">
             <h3>Описание</h3>
-            <p style="white-space: pre-line; color: var(--text-secondary);">${data.description || 'Описание отсутствует'}</p>
-            <div style="margin-top: auto; background: #f0f8ff; padding: 16px; border-radius: var(--radius);">
-              <strong>Контактное лицо:</strong> ${data.contact_name || 'Продавец'}<br>
-              <strong>Телефон / Связь:</strong> ${data.phone || 'Не указан'}
+            <p style="white-space: pre-line; color: var(--text-main); font-size: 15px;">${data.description || 'Описание отсутствует'}</p>
+            <div style="margin-top: auto; background: #f0f6ff; padding: 16px; border-radius: var(--radius);">
+              <strong>Продавец:</strong> ${data.contact_name || 'Частное лицо'}<br>
             </div>
           </div>
         </div>

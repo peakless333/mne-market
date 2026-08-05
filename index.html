@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Доска объявлений — Авито клон</title>
+  <title>MNE Market — Доска объявлений</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -11,13 +11,13 @@
 
   <header>
     <div class="header-container">
-      <a href="index.html" class="logo">AvitoClone</a>
+      <a href="index.html" class="logo">MNE Market</a>
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="Поиск по объявлениям...">
         <button id="searchBtn">Найти</button>
       </div>
       <div class="header-actions">
-        <a href="create.html" class="btn-primary">+ Разместить объявление</a>
+        <a href="create.html" class="btn-primary">+ Разместить</a>
       </div>
     </div>
   </header>
@@ -65,7 +65,7 @@
 
       if (error) {
         console.error(error);
-        grid.innerHTML = '<p>Ошибка при загрузке данных.</p>';
+        grid.innerHTML = '<p>Ошибка при загрузке данных из базы.</p>';
         return;
       }
 
@@ -81,10 +81,10 @@
         card.className = 'product-card';
         card.innerHTML = `
           <div class="product-img-wrap">
-            <img src="${ad.image_url || 'https://via.placeholder.com/220x180?text=No+Photo'}" alt="${ad.title}">
+            <img src="${ad.image_url || 'https://via.placeholder.com/220x180?text=MNE+Market'}" alt="${ad.title}">
           </div>
           <div class="product-info">
-            <div class="product-price">${Number(ad.price).toLocaleString()} ₽</div>
+            <div class="product-price">€${Number(ad.price).toLocaleString()}</div>
             <div class="product-title">${ad.title}</div>
             <div class="product-location">${ad.location || 'Город не указан'}</div>
           </div>
@@ -93,7 +93,6 @@
       });
     }
 
-    // Фильтрация по категориям
     document.querySelectorAll('.category-item').forEach(item => {
       item.addEventListener('click', (e) => {
         document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
@@ -104,15 +103,14 @@
       });
     });
 
-    // Поиск по кнопке и Enter
     document.getElementById('searchBtn').addEventListener('click', () => {
       fetchAds(document.getElementById('searchInput').value);
     });
+
     document.getElementById('searchInput').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') fetchAds(e.target.value);
     });
 
-    // Первичная загрузка
     fetchAds();
   </script>
 </body>

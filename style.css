@@ -1,12 +1,12 @@
 :root {
-  --primary: #00aaef;
-  --primary-hover: #0088cc;
-  --bg-color: #f5f6f8;
-  --text-main: #222222;
+  --primary: #0066ff;
+  --primary-hover: #0052cc;
+  --bg-color: #f4f5f7;
+  --text-main: #1a1a1a;
   --text-secondary: #707579;
-  --border-color: #e0e0e0;
+  --border-color: #dfe1e5;
   --white: #ffffff;
-  --radius: 10px;
+  --radius: 12px;
 }
 
 * {
@@ -30,6 +30,7 @@ header {
   top: 0;
   z-index: 1000;
   padding: 12px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .header-container {
@@ -43,7 +44,7 @@ header {
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--primary);
   text-decoration: none;
@@ -62,7 +63,7 @@ header {
 
 .search-box input {
   flex: 1;
-  padding: 10px 14px;
+  padding: 10px 16px;
   border: none;
   background: transparent;
   outline: none;
@@ -107,7 +108,22 @@ header {
   background: var(--primary-hover);
 }
 
-/* Главный макет с сайдбаром */
+.btn-secondary {
+  background: #e4e6eb;
+  color: var(--text-main);
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #d8dadf;
+}
+
+/* Макет главной страницы */
 .main-layout {
   max-width: 1200px;
   margin: 24px auto;
@@ -117,13 +133,13 @@ header {
   gap: 24px;
 }
 
-/* Сайдбар категорий */
 .sidebar {
   background: var(--white);
   border-radius: var(--radius);
   padding: 16px;
   height: fit-content;
   border: 1px solid var(--border-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .sidebar h3 {
@@ -141,28 +157,28 @@ header {
 
 .category-item {
   padding: 10px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
   transition: background 0.15s, color 0.15s;
 }
 
 .category-item:hover, .category-item.active {
-  background: #e6f7ff;
+  background: #e6f0ff;
   color: var(--primary);
 }
 
-/* Сетка товаров */
 .content-area {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+/* Сетка карточек товаров */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  gap: 18px;
 }
 
 .product-card {
@@ -175,18 +191,18 @@ header {
   display: flex;
   flex-direction: column;
   transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .product-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
 }
 
 .product-img-wrap {
   width: 100%;
   height: 180px;
-  background: #eee;
-  position: relative;
+  background: #f0f0f0;
 }
 
 .product-card img {
@@ -196,7 +212,7 @@ header {
 }
 
 .product-info {
-  padding: 12px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -205,8 +221,8 @@ header {
 
 .product-price {
   font-size: 18px;
-  font-weight: 750;
-  color: var(--text-main);
+  font-weight: 800;
+  color: var(--primary);
 }
 
 .product-title {
@@ -224,7 +240,7 @@ header {
   margin-top: auto;
 }
 
-/* Страницы формы и товара */
+/* Стили для страниц создания и товара */
 .container-form, .container-post {
   max-width: 800px;
   margin: 30px auto;
@@ -232,16 +248,17 @@ header {
   padding: 30px;
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .form-group label {
   display: block;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-size: 14px;
 }
 
@@ -252,28 +269,29 @@ header {
   border-radius: var(--radius);
   font-size: 14px;
   outline: none;
+  transition: border-color 0.2s;
 }
 
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
   border-color: var(--primary);
 }
 
-/* Адаптивность для телефонов */
+/* Адаптивность */
 @media (max-width: 768px) {
   .main-layout {
     grid-template-columns: 1fr;
   }
-  
   .sidebar {
-    display: none; /* Можно заменить на горизонтальный скролл категорий при желании */
+    display: none;
   }
-
   .header-container {
     flex-wrap: wrap;
   }
-
   .search-box {
     order: 3;
     flex-basis: 100%;
+  }
+  .container-post > div {
+    grid-template-columns: 1fr !important;
   }
 }
