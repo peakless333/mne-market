@@ -139,9 +139,16 @@
         <!-- Панель фильтров -->
         <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200/80 shadow-xs space-y-3">
             
-            <!-- Строка городов с кликабельной кнопкой прокрутки вправо -->
+            <!-- Строка городов с двумя стрелками управления -->
             <div class="relative flex items-center">
-                <div id="citiesContainer" onscroll="checkCityScroll()" class="flex items-center gap-1.5 overflow-x-auto scrollbar-none pr-10 w-full py-0.5 scroll-smooth">
+                <!-- Левая стрелка прокрутки -->
+                <button id="scrollLeftBtn" onclick="scrollCitiesLeft()" class="absolute left-0 z-10 bg-gradient-to-r from-white via-white to-white/60 pr-5 pl-1.5 h-full flex items-center text-gray-600 hover:text-gray-900 cursor-pointer transition-opacity opacity-0 pointer-events-none">
+                    <div class="bg-gray-100 hover:bg-gray-200 shadow-sm rounded-full p-1.5 flex items-center justify-center">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    </div>
+                </button>
+
+                <div id="citiesContainer" onscroll="checkCityScroll()" class="flex items-center gap-1.5 overflow-x-auto scrollbar-none px-1 w-full py-0.5 scroll-smooth">
                     <button onclick="setCity('all')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-900 text-white shadow-xs shrink-0" data-city="all" data-i18n="allCities">Все города</button>
                     <button onclick="setCity('budva')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="budva">Будва</button>
                     <button onclick="setCity('bar')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="bar">Бар</button>
@@ -151,8 +158,8 @@
                     <button onclick="setCity('herceg_novi')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="herceg_novi">Херцег-Нови</button>
                 </div>
                 
-                <!-- Кликабельная кнопка прокрутки вправо -->
-                <button id="scrollRightBtn" onclick="scrollCitiesRight()" class="absolute right-0 bg-gradient-to-l from-white via-white to-white/60 pl-5 pr-1.5 h-full flex items-center text-gray-600 hover:text-gray-900 cursor-pointer transition-opacity">
+                <!-- Правая стрелка прокрутки -->
+                <button id="scrollRightBtn" onclick="scrollCitiesRight()" class="absolute right-0 z-10 bg-gradient-to-l from-white via-white to-white/60 pl-5 pr-1.5 h-full flex items-center text-gray-600 hover:text-gray-900 cursor-pointer transition-opacity">
                     <div class="bg-gray-100 hover:bg-gray-200 shadow-sm rounded-full p-1.5 flex items-center justify-center">
                         <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </div>
@@ -311,23 +318,37 @@
             container.scrollBy({ left: 160, behavior: 'smooth' });
         }
 
+        function scrollCitiesLeft() {
+            const container = document.getElementById('citiesContainer');
+            container.scrollBy({ left: -160, behavior: 'smooth' });
+        }
+
         function checkCityScroll() {
             const container = document.getElementById('citiesContainer');
-            const btn = document.getElementById('scrollRightBtn');
-            if (!container || !btn) return;
+            const leftBtn = document.getElementById('scrollLeftBtn');
+            const rightBtn = document.getElementById('scrollRightBtn');
+            if (!container || !leftBtn || !rightBtn) return;
             
-            // Если доскроллили почти до конца, скрываем стрелочку
+            // Проверка левой стрелки
+            if (container.scrollLeft > 10) {
+                leftBtn.style.opacity = '1';
+                leftBtn.style.pointerEvents = 'auto';
+            } else {
+                leftBtn.style.opacity = '0';
+                leftBtn.style.pointerEvents = 'none';
+            }
+
+            // Проверка правой стрелки
             const isEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 10;
             if (isEnd) {
-                btn.style.opacity = '0';
-                btn.style.pointerEvents = 'none';
+                rightBtn.style.opacity = '0';
+                rightBtn.style.pointerEvents = 'none';
             } else {
-                btn.style.opacity = '1';
-                btn.style.pointerEvents = 'auto';
+                rightBtn.style.opacity = '1';
+                rightBtn.style.pointerEvents = 'auto';
             }
         }
 
-        // Проверяем видимость стрелочки при загрузке
         window.addEventListener('DOMContentLoaded', () => {
             checkCityScroll();
         });
