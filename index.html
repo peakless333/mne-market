@@ -595,7 +595,7 @@
             filtered.sort((a, b) => {
                 if (sortBy === 'cheap') return (a.price || 0) - (b.price || 0);
                 if (sortBy === 'expensive') return (b.price || 0) - (a.price || 0);
-                return new Date(b.created_at || 0) - new Date(a.created_at || 0); // Исправлено сравнение дат
+                return new Date(b.created_at || 0) - new Date(a.created_at || 0);
             });
 
             countText.innerText = dict[currentLang].foundCount(filtered.length);
