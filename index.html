@@ -42,36 +42,14 @@
         </div>
     </div>
 
-    <!-- Модалка авторизации -->
-    <div id="authModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 animate-fade-in">
-            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">🇲🇪</span>
-                    <h3 class="font-bold text-gray-950 text-base" data-i18n="authModalTitle">Требуется регистрация</h3>
-                </div>
-            </div>
-            <div class="space-y-3">
-                <p class="text-xs text-gray-500 leading-relaxed" data-i18n="authModalDesc">Чтобы разместить объявление и управлять им, пожалуйста, укажите ваш Email или Telegram.</p>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="authIdentifierLabel">Email или @telegram</label>
-                    <input type="text" id="authInput" placeholder="user@example.com или @username" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all">
-                </div>
-            </div>
-            <div class="pt-2">
-                <button onclick="submitAuth()" class="w-full bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3.5 rounded-2xl text-xs transition-all shadow-sm cursor-pointer" data-i18n="authSubmitBtn">Продолжить</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Модалка личного кабинета -->
     <div id="profileModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 animate-fade-in">
             <div class="flex items-center justify-between pb-2 border-b border-gray-100">
                 <div class="flex items-center gap-2">
-                    <div class="w-9 h-9 bg-blue-50 text-[#009cf0] rounded-xl flex items-center justify-center font-bold">👤</div>
+                    <div id="profileAvatarBox" class="w-10 h-10 bg-blue-50 text-[#009cf0] rounded-xl flex items-center justify-center font-bold overflow-hidden">👤</div>
                     <div>
-                        <h3 class="font-bold text-gray-950 text-sm" data-i18n="profileModalTitle">Личный кабинет</h3>
+                        <h3 id="profileModalTitleText" class="font-bold text-gray-950 text-sm">Личный кабинет</h3>
                         <p id="profileUserSub" class="text-[11px] text-gray-400 truncate max-w-[180px]"></p>
                     </div>
                 </div>
@@ -86,16 +64,13 @@
                         <span id="profileAdsCount" class="font-bold text-gray-900">0</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-gray-500" data-i18n="profileTokenLabel">Идентификатор:</span>
+                        <span class="text-gray-500" data-i18n="profileTokenLabel">ID аккаунта:</span>
                         <span id="profileTokenShort" class="font-mono text-[10px] text-gray-600 bg-gray-200/60 px-2 py-0.5 rounded"></span>
                     </div>
                 </div>
                 <a href="profile.html" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2 text-center block">
-                    <i data-lucide="user-cog" class="w-4 h-4"></i> Изменить профиль и аватарку
+                    <i data-lucide="user-cog" class="w-4 h-4"></i> Настройки профиля
                 </a>
-                <button onclick="logoutAccount()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2">
-                    <i data-lucide="log-out" class="w-4 h-4"></i> <span data-i18n="logoutBtn">Выйти из аккаунта</span>
-                </button>
             </div>
             <div class="pt-2">
                 <button onclick="closeProfileModal()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="closeBtn">Закрыть</button>
@@ -195,7 +170,7 @@
                     <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
                     <span id="favoritesCountBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
                 </button>
-                <button onclick="openProfileOrAuth()" id="profileHeaderBtn" class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer" title="Личный кабинет">
+                <button onclick="openProfileModal()" id="profileHeaderBtn" class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer" title="Личный кабинет">
                     <i data-lucide="shield" class="w-4 h-4"></i>
                 </button>
                 <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-1.5 sm:px-2 py-2 text-[11px] sm:text-xs font-semibold text-gray-700 outline-none cursor-pointer">
@@ -203,7 +178,7 @@
                     <option value="en">EN</option>
                     <option value="cnr">CNR</option>
                 </select>
-                <button onclick="checkAuthBeforeCreate(event)" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0 cursor-pointer">
+                <button onclick="window.location.href='create.html'" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0 cursor-pointer">
                     <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> <span data-i18n="postAd">Разместить</span>
                 </button>
             </div>
@@ -335,15 +310,16 @@
             tg.expand();
         }
 
-        let userEmail = localStorage.getItem('mne_user_email');
+        // Авторизация по защищенному Telegram ID или уникальному токену устройства
+        const tgUser = tg?.initDataUnsafe?.user;
+        const tgUserId = tgUser?.id ? String(tgUser.id) : null;
+        const tgUsername = tgUser?.username ? `@${tgUser.username}` : null;
+
         let userToken = localStorage.getItem('mne_user_token');
-        
         if (!userToken) {
-            userToken = 'user_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            userToken = 'device_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
             localStorage.setItem('mne_user_token', userToken);
         }
-
-        const tgUserId = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null;
 
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
@@ -364,10 +340,7 @@
                 modalEditTitle: "Редактировать объявление", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
                 myBadgeText: "Мое", noPhoto: "Без фото", nameLabel: "Название", categoryLabel: "Категория", cityLabel: "Город",
                 priceLabel: "Цена (€)", descLabel: "Описание", tgLabel: "Telegram для связи", photosLabel: "Фотографии", addPhotoBtn: "Добавить",
-                authModalTitle: "Требуется регистрация", authModalDesc: "Чтобы разместить объявление и управлять им, пожалуйста, укажите ваш Email или Telegram.",
-                authIdentifierLabel: "Email или @telegram", authSubmitBtn: "Продолжить", authSuccess: "Регистрация успешна!",
-                profileModalTitle: "Личный кабинет", profileActiveAds: "Ваших объявлений:", profileTokenLabel: "Ваш ключ:",
-                changeAccountBtn: "Сменить аккаунт", logoutBtn: "Выйти из аккаунта", closeBtn: "Закрыть",
+                profileModalTitle: "Личный кабинет", profileActiveAds: "Ваших объявлений:", profileTokenLabel: "Ваш ID:", closeBtn: "Закрыть",
                 foundCount: (n) => `Найдено: ${n}`,
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
@@ -385,10 +358,7 @@
                 modalEditTitle: "Edit listing", cancelBtn: "Cancel", deleteBtn: "Delete", saveBtn: "Save",
                 myBadgeText: "My", noPhoto: "No photo", nameLabel: "Title", categoryLabel: "Category", cityLabel: "City",
                 priceLabel: "Price (€)", descLabel: "Description", tgLabel: "Telegram username", photosLabel: "Photos", addPhotoBtn: "Add",
-                authModalTitle: "Registration required", authModalDesc: "To post and manage your listing, please enter your Email or Telegram.",
-                authIdentifierLabel: "Email or @telegram", authSubmitBtn: "Continue", authSuccess: "Successfully registered!",
-                profileModalTitle: "Account", profileActiveAds: "Your listings:", profileTokenLabel: "Your ID:",
-                changeAccountBtn: "Switch account", logoutBtn: "Sign out", closeBtn: "Close",
+                profileModalTitle: "Account", profileActiveAds: "Your listings:", profileTokenLabel: "Your ID:", closeBtn: "Close",
                 foundCount: (n) => `Found: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
@@ -406,12 +376,9 @@
                 modalEditTitle: "Izmjena oglasa", cancelBtn: "Otkaži", deleteBtn: "Obriši", saveBtn: "Sačuvaj",
                 myBadgeText: "Moj", noPhoto: "Bez fotografije", nameLabel: "Naziv", categoryLabel: "Kategorija", cityLabel: "Grad",
                 priceLabel: "Cijena (€)", descLabel: "Opis", tgLabel: "Telegram za kontakt", photosLabel: "Fotografije", addPhotoBtn: "Dodaj",
-                authModalTitle: "Obavezna registracija", authModalDesc: "Da biste objavili oglas, unesite Vaš Email ili Telegram.",
-                authIdentifierLabel: "Email ili @telegram", authSubmitBtn: "Nastavi", authSuccess: "Uspješna registracija!",
-                profileModalTitle: "Lični nalog", profileActiveAds: "Vaši oglasi:", profileTokenLabel: "Vaš ID:",
-                changeAccountBtn: "Promijeni nalog", logoutBtn: "Odjavi se", closeBtn: "Zatvori",
+                profileModalTitle: "Lični nalog", profileActiveAds: "Vaši oglasi:", profileTokenLabel: "Vaš ID:", closeBtn: "Zatvori",
                 foundCount: (n) => `Pronađeno: ${n}`,
-                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
+                cities: { budva: "Budva", bar: "Бар", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
         };
 
@@ -529,87 +496,36 @@
             }
         }
 
+        // Ключевая проверка владельца: по реальному telegram_id или локальному токену устройства
         function isMyPost(post) {
             const postIdStr = String(post.id);
             if (myLocalPostIds.includes(postIdStr)) return true;
-            if (tgUserId && String(post.telegram_id) === tgUserId) return true;
-            if (userEmail && post.telegram && post.telegram.toLowerCase().includes(userEmail.toLowerCase())) return true;
+            if (tgUserId && post.telegram_id && String(post.telegram_id) === tgUserId) return true;
             if (post.user_token && post.user_token === userToken) return true;
             return false;
         }
 
-        function checkAuthBeforeCreate(e) {
-            e.preventDefault();
-            userEmail = localStorage.getItem('mne_user_email');
-            if (!userEmail) {
-                openAuthModal();
-            } else {
-                window.location.href = 'create.html';
-            }
-        }
-
-        function openAuthModal() {
-            const modal = document.getElementById('authModal');
-            document.getElementById('authInput').value = localStorage.getItem('mne_user_email') || '';
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeAuthModal() {
-            const modal = document.getElementById('authModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function submitAuth() {
-            const val = document.getElementById('authInput').value.trim();
-            if (!val) {
-                showToast("Введите Email или Telegram");
-                return;
-            }
-            userEmail = val;
-            localStorage.setItem('mne_user_email', userEmail);
-            closeAuthModal();
-            showToast(dict[currentLang].authSuccess);
-            updateBadges();
-            renderPosts();
-            window.location.href = 'create.html';
-        }
-
         function openProfileModal() {
             const modal = document.getElementById('profileModal');
-            
-            // Читаем актуальный профиль из localStorage
             const savedProfile = JSON.parse(localStorage.getItem('mne_user_profile') || '{}');
+            const avatarBox = document.getElementById('profileAvatarBox');
             
-            // Получаем элементы интерфейса внутри модалки
-            const subTitle = document.getElementById('profileUserSub');
-            const avatarContainer = modal.querySelector('.w-9.h-9'); // Ищем блок иконки/аватара в шапке модалки
-            
-            // Устанавливаем имя и телеграм/email
-            const displayName = savedProfile.name || userEmail || 'Личный кабинет';
-            const displayHandle = savedProfile.username || userEmail || userToken;
-            
-            // Меняем заголовок на имя пользователя, если оно задано
-            const titleEl = modal.querySelector('h3[data-i18n="profileModalTitle"]');
-            if (savedProfile.name) {
-                titleEl.innerText = savedProfile.name;
-                subTitle.innerText = savedProfile.username || userToken;
+            const displayName = savedProfile.name || tgUser?.first_name || (tgUsername ? tgUsername : 'Гость Telegram');
+            const displayHandle = tgUserId ? `ID: ${tgUserId}` : `Token: ${userToken.substring(0, 10)}...`;
+
+            document.getElementById('profileModalTitleText').innerText = displayName;
+            document.getElementById('profileUserSub').innerText = displayHandle;
+
+            if (savedProfile.avatarUrl || tgUser?.photo_url) {
+                const avUrl = savedProfile.avatarUrl || tgUser.photo_url;
+                avatarBox.innerHTML = `<img src="${avUrl}" class="w-full h-full object-cover rounded-xl" alt="Avatar">`;
+                avatarBox.classList.remove('bg-blue-50', 'text-[#009cf0]', 'flex', 'items-center', 'justify-center', 'font-bold');
             } else {
-                titleEl.innerText = dict[currentLang].profileModalTitle;
-                subTitle.innerText = displayHandle;
+                avatarBox.innerHTML = `👤`;
+                avatarBox.classList.add('bg-blue-50', 'text-[#009cf0]', 'flex', 'items-center', 'justify-center', 'font-bold');
             }
 
-            // Рендерим аватарку в шапке модалки, если она есть
-            if (savedProfile.avatarUrl) {
-                avatarContainer.innerHTML = `<img src="${savedProfile.avatarUrl}" class="w-full h-full object-cover rounded-xl" alt="Avatar">`;
-                avatarContainer.classList.remove('bg-blue-50', 'text-[#009cf0]', 'flex', 'items-center', 'justify-center', 'font-bold');
-            } else {
-                avatarContainer.innerHTML = `👤`;
-                avatarContainer.classList.add('bg-blue-50', 'text-[#009cf0]', 'flex', 'items-center', 'justify-center', 'font-bold');
-            }
-
-            document.getElementById('profileTokenShort').innerText = userToken.substring(0, 16) + '...';
+            document.getElementById('profileTokenShort').innerText = tgUserId ? `tg_${tgUserId}` : userToken.substring(0, 16) + '...';
             document.getElementById('profileAdsCount').innerText = posts.filter(p => isMyPost(p)).length;
             
             modal.classList.remove('hidden');
@@ -620,24 +536,6 @@
             const modal = document.getElementById('profileModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-        }
-
-        function openProfileOrAuth() {
-            userEmail = localStorage.getItem('mne_user_email');
-            if (userEmail) {
-                openProfileModal();
-            } else {
-                openAuthModal();
-            }
-        }
-
-        function logoutAccount() {
-            localStorage.removeItem('mne_user_email');
-            userEmail = null;
-            closeProfileModal();
-            showToast("Вы вышли из аккаунта");
-            updateBadges();
-            renderPosts();
         }
 
         function toggleFavorite(e, id) {
