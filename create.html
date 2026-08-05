@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Создать объявление — MNE Market</title>
+    <title>Объявление — MNE Market</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇲🇪</text></svg>">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,7 +27,7 @@
 
     <main class="max-w-2xl mx-auto px-4 pt-6">
         <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-6">
-            <h1 class="text-xl font-bold text-gray-900" data-i18n="title">Новое объявление</h1>
+            <h1 id="pageTitle" class="text-xl font-bold text-gray-900" data-i18n="titleNew">Новое объявление</h1>
 
             <form id="createForm" onsubmit="submitPost(event)" class="space-y-4">
                 
@@ -98,7 +98,7 @@
         if (tg) {
             tg.ready();
             tg.expand();
-            if (tg.initDataUnsafe?.user?.username) {
+            if (tg.initDataUnsafe?.user?.username && !window.location.search.includes('edit=')) {
                 document.getElementById('postTelegram').value = '@' + tg.initDataUnsafe.user.username;
             }
         }
@@ -113,38 +113,41 @@
             localStorage.setItem('mne_user_token', userToken);
         }
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const editPostId = urlParams.get('edit');
+
         const dict = {
             ru: {
-                back: "Назад", title: "Новое объявление", photosLabel: "Фотографии (до 5 шт.)",
+                back: "Назад", titleNew: "Новое объявление", titleEdit: "Редактировать объявление", photosLabel: "Фотографии (до 5 шт.)",
                 addPhotoBtn: "Нажмите, чтобы добавить фото", nameLabel: "Название",
                 categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
-                descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление",
+                descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
                 cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_other: "Разное",
-                publishing: "Публикация...", maxPhotos: "Максимально можно загрузить 5 фотографий",
+                publishing: "Сохранение...", maxPhotos: "Максимально можно загрузить 5 фотографий",
                 ph_title: "Например: iPhone 13 Pro 128GB",
                 ph_price: "0 (если бесплатно)",
                 ph_desc: "Опишите состояние, комплектацию и детали...",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
             en: {
-                back: "Back", title: "New Listing", photosLabel: "Photos (up to 5)",
+                back: "Back", titleNew: "New Listing", titleEdit: "Edit Listing", photosLabel: "Photos (up to 5)",
                 addPhotoBtn: "Click to add photos", nameLabel: "Title",
                 categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
-                descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing",
+                descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing", saveBtn: "Save changes",
                 cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_other: "Other",
-                publishing: "Publishing...", maxPhotos: "Maximum 5 photos allowed",
+                publishing: "Saving...", maxPhotos: "Maximum 5 photos allowed",
                 ph_title: "e.g. iPhone 13 Pro 128GB",
                 ph_price: "0 (if free)",
                 ph_desc: "Describe condition, package and details...",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
             cnr: {
-                back: "Nazad", title: "Novi oglas", photosLabel: "Fotografije (do 5)",
+                back: "Nazad", titleNew: "Novi oglas", titleEdit: "Izmjena oglasa", photosLabel: "Fotografije (do 5)",
                 addPhotoBtn: "Kliknite da dodate fotografije", nameLabel: "Naziv",
                 categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
-                descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas",
+                descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
                 cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_other: "Razno",
-                publishing: "Objavljivanje...", maxPhotos: "Možete otpremiti najviše 5 fotografija",
+                publishing: "Čuvanje...", maxPhotos: "Možete otpremiti najviše 5 fotografija",
                 ph_title: "npr. iPhone 13 Pro 128GB",
                 ph_price: "0 (ako je besplatno)",
                 ph_desc: "Opišite stanje, opremu i detalje...",
@@ -154,6 +157,15 @@
 
         let currentLang = localStorage.getItem('mne_lang') || 'ru';
         let selectedFiles = [];
+        let existingImages = [];
+
+        function initCitiesSelect(selectedCity = 'budva') {
+            const citySelect = document.getElementById('postCity');
+            const citiesObj = dict[currentLang].cities;
+            citySelect.innerHTML = Object.keys(citiesObj).map(code => `
+                <option value="${code}" ${code === selectedCity ? 'selected' : ''}>${citiesObj[code]}</option>
+            `).join('');
+        }
 
         function changeLanguage(lang) {
             currentLang = lang;
@@ -164,60 +176,110 @@
                 if (dict[lang][key]) el.innerText = dict[lang][key];
             });
 
+            if (editPostId) {
+                document.getElementById('pageTitle').innerText = dict[lang].titleEdit;
+                document.getElementById('submitBtn').querySelector('span').innerText = dict[lang].saveBtn;
+            } else {
+                document.getElementById('pageTitle').innerText = dict[lang].titleNew;
+                document.getElementById('submitBtn').querySelector('span').innerText = dict[lang].publishBtn;
+            }
+
             document.getElementById('postTitle').placeholder = dict[lang].ph_title;
             document.getElementById('postPrice').placeholder = dict[lang].ph_price;
             document.getElementById('postDesc').placeholder = dict[lang].ph_desc;
 
-            const citySelect = document.getElementById('postCity');
-            const currentCityValue = citySelect.value || 'budva';
-            const citiesObj = dict[lang].cities;
-            
-            citySelect.innerHTML = Object.keys(citiesObj).map(code => `
-                <option value="${code}" ${code === currentCityValue ? 'selected' : ''}>${citiesObj[code]}</option>
-            `).join('');
+            const currentCityValue = document.getElementById('postCity').value || 'budva';
+            initCitiesSelect(currentCityValue);
         }
 
         document.getElementById('langSelect').value = currentLang;
+        initCitiesSelect();
         changeLanguage(currentLang);
+
+        if (editPostId) {
+            document.getElementById('pageTitle').innerText = dict[currentLang].titleEdit;
+            document.getElementById('submitBtn').innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> <span>${dict[currentLang].saveBtn}</span>`;
+            loadPostForEditing(editPostId);
+        }
+
+        async function loadPostForEditing(id) {
+            try {
+                const { data, error } = await supabaseClient.from('posts').select('*').eq('id', id).single();
+                if (error) throw error;
+                if (!data) return;
+
+                document.getElementById('postTitle').value = data.title || '';
+                document.getElementById('postCategory').value = data.category || 'other';
+                initCitiesSelect(data.city || 'budva');
+                document.getElementById('postPrice').value = data.price || 0;
+                document.getElementById('postDesc').value = data.description || '';
+                document.getElementById('postTelegram').value = data.telegram || data.contact || '';
+
+                existingImages = data.images && Array.isArray(data.images) ? [...data.images] : (data.image_url ? [data.image_url] : []);
+                renderPreviews();
+            } catch (err) {
+                console.error(err);
+                alert('Не удалось загрузить объявление для редактирования');
+            }
+        }
 
         function handleImageSelection(e) {
             const files = Array.from(e.target.files);
-            if (selectedFiles.length + files.length > 5) {
+            if (existingImages.length + selectedFiles.length + files.length > 5) {
                 alert(dict[currentLang].maxPhotos);
                 e.target.value = '';
                 return;
             }
-            
             selectedFiles = selectedFiles.concat(files);
             renderPreviews();
             e.target.value = '';
         }
 
-        function removeImage(index) {
+        function removeExistingImage(index) {
+            existingImages.splice(index, 1);
+            renderPreviews();
+        }
+
+        function removeNewImage(index) {
             selectedFiles.splice(index, 1);
             renderPreviews();
         }
 
         function renderPreviews() {
             const container = document.getElementById('imagePreviewsContainer');
-            if (selectedFiles.length === 0) {
+            if (existingImages.length === 0 && selectedFiles.length === 0) {
                 container.classList.add('hidden');
                 container.innerHTML = '';
                 return;
             }
 
             container.classList.remove('hidden');
-            container.innerHTML = selectedFiles.map((file, idx) => {
-                const url = URL.createObjectURL(file);
-                return `
-                    <div class="relative h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-100 group">
+            let html = '';
+
+            existingImages.forEach((url, idx) => {
+                html += `
+                    <div class="relative h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-100">
                         <img src="${url}" class="w-full h-full object-cover" alt="Preview">
-                        <button type="button" onclick="removeImage(${idx})" class="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white p-1 rounded-full transition-all cursor-pointer">
+                        <button type="button" onclick="removeExistingImage(${idx})" class="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white p-1 rounded-full transition-all cursor-pointer">
                             <i data-lucide="x" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
                 `;
-            }).join('');
+            });
+
+            selectedFiles.forEach((file, idx) => {
+                const url = URL.createObjectURL(file);
+                html += `
+                    <div class="relative h-20 rounded-xl overflow-hidden border border-blue-200 bg-blue-50">
+                        <img src="${url}" class="w-full h-full object-cover" alt="Preview">
+                        <button type="button" onclick="removeNewImage(${idx})" class="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white p-1 rounded-full transition-all cursor-pointer">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
             lucide.createIcons();
         }
 
@@ -228,22 +290,16 @@
             submitBtn.innerText = dict[currentLang].publishing;
 
             try {
-                let imageUrls = [];
+                let imageUrls = [...existingImages];
 
                 for (const file of selectedFiles) {
                     const fileExt = file.name.split('.').pop();
                     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
                     
-                    const { data, error } = await supabaseClient.storage
-                        .from('post-images')
-                        .upload(fileName, file);
-                    
+                    const { error } = await supabaseClient.storage.from('post-images').upload(fileName, file);
                     if (error) throw error;
 
-                    const { data: publicUrlData } = supabaseClient.storage
-                        .from('post-images')
-                        .getPublicUrl(fileName);
-                        
+                    const { data: publicUrlData } = supabaseClient.storage.from('post-images').getPublicUrl(fileName);
                     imageUrls.push(publicUrlData.publicUrl);
                 }
 
@@ -251,7 +307,7 @@
                     imageUrls.push('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
                 }
 
-                const newPost = {
+                const postData = {
                     title: document.getElementById('postTitle').value.trim(),
                     category: document.getElementById('postCategory').value,
                     city: document.getElementById('postCity').value,
@@ -260,32 +316,34 @@
                     telegram: document.getElementById('postTelegram').value.trim(),
                     contact: document.getElementById('postTelegram').value.trim(),
                     images: imageUrls,
-                    image_url: imageUrls[0],
-                    user_token: userToken,
-                    telegram_id: tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null,
-                    views: 0
+                    image_url: imageUrls[0]
                 };
 
-                const { data, error: insertError } = await supabaseClient
-                    .from('posts')
-                    .insert([newPost])
-                    .select();
+                if (editPostId) {
+                    const { error: updateError } = await supabaseClient.from('posts').update(postData).eq('id', editPostId);
+                    if (updateError) throw updateError;
+                } else {
+                    postData.user_token = userToken;
+                    postData.telegram_id = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null;
+                    postData.views = 0;
 
-                if (insertError) throw insertError;
+                    const { data, error: insertError } = await supabaseClient.from('posts').insert([postData]).select();
+                    if (insertError) throw insertError;
 
-                if (data && data[0]) {
-                    let myPosts = JSON.parse(localStorage.getItem('mne_my_posts') || '[]');
-                    myPosts.push(String(data[0].id));
-                    localStorage.setItem('mne_my_posts', JSON.stringify(myPosts));
+                    if (data && data[0]) {
+                        let myPosts = JSON.parse(localStorage.getItem('mne_my_posts') || '[]');
+                        myPosts.push(String(data[0].id));
+                        localStorage.setItem('mne_my_posts', JSON.stringify(myPosts));
+                    }
                 }
 
                 window.location.href = 'index.html';
 
             } catch (err) {
                 console.error(err);
-                alert('Ошибка при публикации: ' + (err.message || 'Неизвестная ошибка'));
+                alert('Ошибка при сохранении: ' + (err.message || 'Неизвестная ошибка'));
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"></i> <span>${dict[currentLang].publishBtn}</span>`;
+                submitBtn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"></i> <span>${editPostId ? dict[currentLang].saveBtn : dict[currentLang].publishBtn}</span>`;
                 lucide.createIcons();
             }
         }

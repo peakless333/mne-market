@@ -25,6 +25,7 @@
         <span id="toastText"></span>
     </div>
 
+    <!-- Модалка удаления -->
     <div id="deleteModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 animate-fade-in">
             <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto">
@@ -41,14 +42,80 @@
         </div>
     </div>
 
+    <!-- Модалка редактирования -->
+    <div id="editModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 animate-fade-in my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                <h3 class="font-bold text-gray-950 text-base" data-i18n="modalEditTitle">Редактировать объявление</h3>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-xl cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="editForm" onsubmit="submitEditPost(event)" class="space-y-4">
+                <input type="hidden" id="editPostId">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="nameLabel">Название</label>
+                    <input type="text" id="editTitle" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="categoryLabel">Категория</label>
+                        <select id="editCategory" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all cursor-pointer">
+                            <option value="auto" data-i18n="cat_auto">Авто</option>
+                            <option value="realestate" data-i18n="cat_realestate">Недвижимость</option>
+                            <option value="furniture" data-i18n="cat_furniture">Мебель</option>
+                            <option value="tech" data-i18n="cat_tech">Электроника</option>
+                            <option value="clothes" data-i18n="cat_clothes">Одежда</option>
+                            <option value="other" data-i18n="cat_other">Разное</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="cityLabel">Город</label>
+                        <select id="editCity" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all cursor-pointer">
+                            <option value="budva">Будва</option>
+                            <option value="bar">Бар</option>
+                            <option value="tivat">Тиват</option>
+                            <option value="podgorica">Подгорица</option>
+                            <option value="kotor">Котор</option>
+                            <option value="herceg_novi">Херцег-Нови</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="priceLabel">Цена (€)</label>
+                    <input type="number" id="editPrice" required min="0" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="descLabel">Описание</label>
+                    <textarea id="editDesc" rows="4" required class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="tgLabel">Telegram для связи</label>
+                    <input type="text" id="editTelegram" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="photosLabel">Фотографии (до 5 шт.)</label>
+                    <input type="file" id="editImageInput" accept="image/*" multiple class="hidden" onchange="handleEditImageSelection(event)">
+                    <div id="editImagePreviewsContainer" class="grid grid-cols-5 gap-2 mb-2"></div>
+                    <button type="button" onclick="document.getElementById('editImageInput').click()" class="w-full border-2 border-dashed border-gray-200 hover:border-[#009cf0] bg-gray-50 hover:bg-blue-50/50 rounded-2xl p-4 text-center transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <i data-lucide="image-plus" class="w-5 h-5 text-gray-400"></i>
+                        <span class="text-xs font-semibold text-gray-600" data-i18n="addPhotoBtn">Добавить фото</span>
+                    </button>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="cancelBtn"></button>
+                    <button type="submit" id="submitEditBtn" class="flex-1 bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm cursor-pointer" data-i18n="saveBtn">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <header class="bg-white border-b border-gray-200/80 sticky top-0 z-35 transition-transform duration-300 shadow-xs">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-3">
-            
             <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 shrink-0 tracking-tight group">
                 <span class="text-xl group-hover:scale-110 transition-transform">🇲🇪</span> 
                 <span class="hidden sm:inline text-gray-900">MNE<span class="text-[#009cf0]">Market</span></span>
             </a>
-
             <div class="flex-1 max-w-xl relative flex items-center min-w-[120px] sm:min-w-[200px]">
                 <div class="relative w-full flex items-center bg-gray-100 hover:bg-gray-200/60 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#009cf0] border border-transparent rounded-xl transition-all">
                     <input type="text" id="searchInput" oninput="handleSearchInput(event)" placeholder="" class="w-full bg-transparent pl-3 sm:pl-4 pr-8 sm:pr-10 py-2 text-xs sm:text-sm outline-none text-gray-900 placeholder:text-gray-400">
@@ -58,24 +125,20 @@
                 </div>
                 <button onclick="performSearchClick()" class="ml-2 bg-[#009cf0] hover:bg-[#0089d1] text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-sm shrink-0 cursor-pointer hidden md:block" data-i18n="searchBtn"></button>
             </div>
-
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <button onclick="toggleMyPostsFilter()" id="myPostsHeaderBtn" class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
                     <i data-lucide="user" class="w-4 h-4"></i>
                     <span id="myPostsCountBadge" class="absolute -top-1 -right-1 bg-[#009cf0] text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
                 </button>
-
                 <button onclick="toggleFavoritesFilter()" id="favoritesHeaderBtn" class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
                     <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
                     <span id="favoritesCountBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
                 </button>
-
                 <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-1.5 sm:px-2 py-2 text-[11px] sm:text-xs font-semibold text-gray-700 outline-none cursor-pointer">
                     <option value="ru">RU</option>
                     <option value="en">EN</option>
                     <option value="cnr">CNR</option>
                 </select>
-
                 <a href="create.html" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0">
                     <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> <span data-i18n="postAd"></span>
                 </a>
@@ -84,7 +147,6 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 pt-6 space-y-5">
-
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
             <div onclick="setCategory(event, 'auto')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_auto"></span>
@@ -132,7 +194,6 @@
                         <i data-lucide="chevron-left" class="w-4 h-4"></i>
                     </div>
                 </button>
-
                 <div id="citiesContainer" onscroll="checkCityScroll()" class="flex items-center gap-1.5 overflow-x-auto scrollbar-none px-1 w-full py-0.5 scroll-smooth">
                     <button onclick="setCity('all')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-900 text-white shadow-xs shrink-0" data-city="all" data-i18n="allCities"></button>
                     <button onclick="setCity('budva')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="budva">Будва</button>
@@ -142,14 +203,12 @@
                     <button onclick="setCity('kotor')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="kotor">Котор</button>
                     <button onclick="setCity('herceg_novi')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="herceg_novi">Херцег-Нови</button>
                 </div>
-                
                 <button id="scrollRightBtn" onclick="scrollCitiesRight()" class="absolute right-0 z-10 bg-gradient-to-l from-white via-white to-white/60 pl-5 pr-1.5 h-full flex items-center text-gray-600 hover:text-gray-900 cursor-pointer transition-opacity">
                     <div class="bg-gray-100 hover:bg-gray-200 shadow-sm rounded-full p-1.5 flex items-center justify-center">
                         <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </div>
                 </button>
             </div>
-
             <div class="flex items-center justify-between pt-2 border-t border-gray-100">
                 <div class="flex items-center gap-2">
                     <button id="freeFilterBtn" onclick="toggleFreeFilter()" class="text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shrink-0">
@@ -159,7 +218,6 @@
                         <i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="resetFilters"></span>
                     </button>
                 </div>
-
                 <select id="sortSelect" onchange="renderPosts()" class="bg-gray-100 hover:bg-gray-200 border-none rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
                     <option value="newest" data-i18n="sort_newest"></option>
                     <option value="cheap" data-i18n="sort_cheap"></option>
@@ -202,7 +260,6 @@
                 <span data-i18n="resetFilters"></span>
             </button>
         </div>
-
     </main>
 
     <script>
@@ -233,11 +290,14 @@
                 cat_auto: "Авто", cat_realestate: "Недвижимость", cat_furniture: "Мебель", cat_tech: "Электроника", cat_clothes: "Одежда", cat_other: "Разное",
                 sort_newest: "Сначала новые", sort_cheap: "Сначала дешевле", sort_expensive: "Сначала дороже",
                 resetFilters: "Сбросить", freeOnly: "Бесплатно", emptyTitle: "Ничего не найдено", emptyDesc: "Попробуйте изменить параметры поиска или сбросить фильтры.",
-                free: "Бесплатно", newBadge: "NEW", deletePost: "Удалить", confirmDelete: "Объявление успешно удалено",
+                free: "Бесплатно", newBadge: "NEW", deletePost: "Удалить", editPost: "Редактировать", confirmDelete: "Объявление успешно удалено",
+                confirmEdit: "Объявление успешно обновлено",
                 addedToFav: "Добавлено в избранное ❤️", removedFromFav: "Удалено из избранного",
                 myPostsModeTitle: "Управление вашими объявлениями", myPostsModeDesc: "Здесь отображаются только созданные вами товары.", closeMode: "Закрыть",
                 modalDeleteTitle: "Удалить объявление?", modalDeleteDesc: "Это действие нельзя будет отменить. Объявление исчезнет навсегда.",
-                cancelBtn: "Отмена", deleteBtn: "Удалить", myBadgeText: "Мое", noPhoto: "Без фото",
+                modalEditTitle: "Редактировать объявление", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
+                myBadgeText: "Мое", noPhoto: "Без фото", nameLabel: "Название", categoryLabel: "Категория", cityLabel: "Город",
+                priceLabel: "Цена (€)", descLabel: "Описание", tgLabel: "Telegram для связи", photosLabel: "Фотографии", addPhotoBtn: "Добавить",
                 foundCount: (n) => `Найдено: ${n}`,
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
@@ -247,11 +307,14 @@
                 cat_auto: "Vehicles", cat_realestate: "Real estate", cat_furniture: "Furniture", cat_tech: "Electronics", cat_clothes: "Clothing", cat_other: "Other",
                 sort_newest: "Newest first", sort_cheap: "Cheapest first", sort_expensive: "Most expensive",
                 resetFilters: "Reset", freeOnly: "Free", emptyTitle: "No items found", emptyDesc: "Try changing search parameters or reset filters.",
-                free: "Free", newBadge: "NEW", deletePost: "Delete", confirmDelete: "Listing successfully deleted",
+                free: "Free", newBadge: "NEW", deletePost: "Delete", editPost: "Edit", confirmDelete: "Listing successfully deleted",
+                confirmEdit: "Listing successfully updated",
                 addedToFav: "Added to favorites ❤️", removedFromFav: "Removed from favorites",
                 myPostsModeTitle: "Manage your listings", myPostsModeDesc: "Only listings created by you are displayed here.", closeMode: "Close",
                 modalDeleteTitle: "Delete listing?", modalDeleteDesc: "This action cannot be undone.",
-                cancelBtn: "Cancel", deleteBtn: "Delete", myBadgeText: "My", noPhoto: "No photo",
+                modalEditTitle: "Edit listing", cancelBtn: "Cancel", deleteBtn: "Delete", saveBtn: "Save",
+                myBadgeText: "My", noPhoto: "No photo", nameLabel: "Title", categoryLabel: "Category", cityLabel: "City",
+                priceLabel: "Price (€)", descLabel: "Description", tgLabel: "Telegram username", photosLabel: "Photos", addPhotoBtn: "Add",
                 foundCount: (n) => `Found: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
@@ -261,11 +324,14 @@
                 cat_auto: "Auto", cat_realestate: "Nekretnine", cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_clothes: "Odjeća", cat_other: "Razno",
                 sort_newest: "Najnovije", sort_cheap: "Najjeftinije", sort_expensive: "Najskuplje",
                 resetFilters: "Resetuj", freeOnly: "Besplatno", emptyTitle: "Nema rezultata", emptyDesc: "Pokušajte da promijenite parametre pretrage.",
-                free: "Besplatno", newBadge: "NOVO", deletePost: "Obriši", confirmDelete: "Oglas je uspješno obrisan",
+                free: "Besplatno", newBadge: "NOVO", deletePost: "Obriši", editPost: "Izmjeni", confirmDelete: "Oglas je uspješno obrisan",
+                confirmEdit: "Oglas je uspješno ažuriran",
                 addedToFav: "Dodato u omiljene ❤️", removedFromFav: "Uklonjeno iz omiljenih",
                 myPostsModeTitle: "Upravljanje vašim oglasima", myPostsModeDesc: "Ovdje se prikazuju samo vaši oglasi.", closeMode: "Zatvori",
                 modalDeleteTitle: "Obrisati oglas?", modalDeleteDesc: "Ova akcija se ne može opozvati.",
-                cancelBtn: "Otkaži", deleteBtn: "Obriši", myBadgeText: "Moj", noPhoto: "Bez fotografije",
+                modalEditTitle: "Izmjena oglasa", cancelBtn: "Otkaži", deleteBtn: "Obriši", saveBtn: "Sačuvaj",
+                myBadgeText: "Moj", noPhoto: "Bez fotografije", nameLabel: "Naziv", categoryLabel: "Kategorija", cityLabel: "Grad",
+                priceLabel: "Cijena (€)", descLabel: "Opis", tgLabel: "Telegram za kontakt", photosLabel: "Fotografije", addPhotoBtn: "Dodaj",
                 foundCount: (n) => `Pronađeno: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
@@ -280,6 +346,8 @@
         let showOnlyMyPosts = false;
         let showOnlyFree = false;
         let postToDeleteId = null;
+        let editImages = [];
+        let existingEditImages = [];
         
         let rawFavorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
         let favorites = [...new Set(rawFavorites.map(id => String(id)))];
@@ -466,6 +534,137 @@
             const modal = document.getElementById('deleteModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+        }
+
+        // Функции модалки редактирования
+        function openEditModal(e, id) {
+            e.stopPropagation();
+            const post = posts.find(p => String(p.id) === String(id));
+            if (!post) return;
+
+            document.getElementById('editPostId').value = post.id;
+            document.getElementById('editTitle').value = post.title || '';
+            document.getElementById('editCategory').value = post.category || 'other';
+            document.getElementById('editCity').value = post.city || 'budva';
+            document.getElementById('editPrice').value = post.price || 0;
+            document.getElementById('editDesc').value = post.description || '';
+            document.getElementById('editTelegram').value = post.telegram || post.contact || '';
+            
+            existingEditImages = post.images && Array.isArray(post.images) ? [...post.images] : (post.image_url ? [post.image_url] : []);
+            editImages = [];
+            renderEditPreviews();
+
+            const modal = document.getElementById('editModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function handleEditImageSelection(e) {
+            const files = Array.from(e.target.files);
+            if (existingEditImages.length + editImages.length + files.length > 5) {
+                alert(dict[currentLang].maxPhotos || 'Максимум 5 фотографий');
+                e.target.value = '';
+                return;
+            }
+            editImages = editImages.concat(files);
+            renderEditPreviews();
+            e.target.value = '';
+        }
+
+        function removeExistingEditImage(index) {
+            existingEditImages.splice(index, 1);
+            renderEditPreviews();
+        }
+
+        function removeNewEditImage(index) {
+            editImages.splice(index, 1);
+            renderEditPreviews();
+        }
+
+        function renderEditPreviews() {
+            const container = document.getElementById('editImagePreviewsContainer');
+            let html = '';
+
+            existingEditImages.forEach((url, idx) => {
+                html += `
+                    <div class="relative h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-100">
+                        <img src="${url}" class="w-full h-full object-cover">
+                        <button type="button" onclick="removeExistingEditImage(${idx})" class="absolute top-1 right-1 bg-black/60 hover:bg-rose-600 text-white p-1 rounded-full transition-all cursor-pointer">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            editImages.forEach((file, idx) => {
+                const url = URL.createObjectURL(file);
+                html += `
+                    <div class="relative h-20 rounded-xl overflow-hidden border border-blue-200 bg-blue-50">
+                        <img src="${url}" class="w-full h-full object-cover">
+                        <button type="button" onclick="removeNewEditImage(${idx})" class="absolute top-1 right-1 bg-black/60 hover:bg-rose-600 text-white p-1 rounded-full transition-all cursor-pointer">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        async function submitEditPost(event) {
+            event.preventDefault();
+            const id = document.getElementById('editPostId').value;
+            const submitBtn = document.getElementById('submitEditBtn');
+            submitBtn.disabled = true;
+
+            try {
+                let imageUrls = [...existingEditImages];
+
+                for (const file of editImages) {
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+                    const { error: uploadError } = await supabaseClient.storage.from('post-images').upload(fileName, file);
+                    if (uploadError) throw uploadError;
+
+                    const { data: publicUrlData } = supabaseClient.storage.from('post-images').getPublicUrl(fileName);
+                    imageUrls.push(publicUrlData.publicUrl);
+                }
+
+                if (imageUrls.length === 0) {
+                    imageUrls.push('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+                }
+
+                const updatedData = {
+                    title: document.getElementById('editTitle').value.trim(),
+                    category: document.getElementById('editCategory').value,
+                    city: document.getElementById('editCity').value,
+                    price: Number(document.getElementById('editPrice').value || 0),
+                    description: document.getElementById('editDesc').value.trim(),
+                    telegram: document.getElementById('editTelegram').value.trim(),
+                    contact: document.getElementById('editTelegram').value.trim(),
+                    images: imageUrls,
+                    image_url: imageUrls[0]
+                };
+
+                const { error } = await supabaseClient.from('posts').update(updatedData).eq('id', id);
+                if (error) throw error;
+
+                closeEditModal();
+                showToast(dict[currentLang].confirmEdit);
+                await fetchPosts();
+            } catch (err) {
+                console.error(err);
+                showToast('Ошибка сохранения');
+            } finally {
+                submitBtn.disabled = false;
+            }
         }
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
@@ -682,6 +881,9 @@
 
                             <div class="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10">
                                 ${isMine ? `
+                                    <button onclick="openEditModal(event, '${post.id}')" title="${dict[currentLang].editPost}" class="bg-white/90 hover:bg-[#009cf0] hover:text-white text-gray-700 p-2 rounded-full backdrop-blur-sm transition-all cursor-pointer shadow-sm active:scale-90">
+                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                    </button>
                                     <button onclick="openDeleteModal(event, '${post.id}')" title="${dict[currentLang].deletePost}" class="bg-white/90 hover:bg-rose-600 hover:text-white text-rose-600 p-2 rounded-full backdrop-blur-sm transition-all cursor-pointer shadow-sm active:scale-90">
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
@@ -718,7 +920,6 @@
 
         window.addEventListener('scroll', function() {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
             if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
                 header.style.transform = 'translateY(-100%)';
             } else {
