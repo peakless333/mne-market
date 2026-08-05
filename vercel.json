@@ -1,0 +1,7 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/post", "destination": "/post.html" },
+    { "source": "/create", "destination": "/create.html" }
+  ]
+}
