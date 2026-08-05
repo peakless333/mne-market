@@ -3,72 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MNE Market — Просмотр товара</title>
+  <title>Просмотр объявления</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
   <header>
-    <div class="container header-inner">
-      <a href="index.html" class="logo">MNE Market</a>
-      <div class="search-bar">
-        <input type="text" placeholder="Поиск по объявлениям...">
-      </div>
-      <div class="header-right">
-        <select class="lang-switcher">
-          <option value="ru">RU</option>
-          <option value="en">EN</option>
-        </select>
-        <a href="create.html" class="btn-create">+ Разместить</a>
+    <div class="header-container">
+      <a href="index.html" class="logo">AvitoClone</a>
+      <div class="header-actions">
+        <a href="index.html" class="btn-primary" style="background: #707579;">На главную</a>
       </div>
     </div>
   </header>
 
-  <main class="container">
-    <div class="post-layout" id="postContainer">
-      <p>Загрузка товара...</p>
-    </div>
+  <main class="container-post" id="postContainer">
+    <p>Загрузка товара...</p>
   </main>
 
   <script src="supabase.js"></script>
   <script>
     async function loadPost() {
       const params = new URLSearchParams(window.location.search);
-      const postId = params.get('id');
+      const id = params.get('id');
       const container = document.getElementById('postContainer');
 
-      if (!postId) {
+      if (!id) {
         container.innerHTML = '<p>Объявление не найдено.</p>';
         return;
       }
 
-      const { data, error } = await supabase
-        .from('ads')
-        .select('*')
-        .eq('id', postId)
-        .single();
+      const { data, error } = await supabase.from('ads').select('*').eq('id', id).single();
 
       if (error || !data) {
-        container.innerHTML = '<p>Товар не найден или удален.</p>';
+        container.innerHTML = '<p>Товар не существует или был удален.</p>';
         return;
       }
 
       container.innerHTML = `
-        <div class="post-gallery">
-          <img src="${data.image_url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800'}" alt="${data.title}">
-        </div>
-        <div class="post-info">
-          <h1>${data.title}</h1>
-          <div class="post-price">€${data.price}</div>
-          <p><strong>Категория:</strong> ${data.category}</p>
-          <p>${data.description || 'Описание отсутствует.'}</p>
-          ${data.telegram_id ? `<p><strong>Telegram:</strong> <a href="https://t.me/${data.telegram_id.replace('@','')}" target="_blank">${data.telegram_id}</a></p>` : ''}
-          <a href="index.html" class="btn-submit">На главную</a>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;" id="postLayoutGrid">
+          <div>
+            <img src="${data.image_url || 'https://via.placeholder.com/400x300?text=No+Photo'}" style="width: 100%; border-radius: var(--radius); object-fit: cover;" alt="">
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <h1 style="font-size: 26px;">${data.title}</h1>
+            <div style="font-size: 32px; font-weight: 800; color: var(--text-main);">${Number(data.price).toLocaleString()} ₽</div>
+            <hr style="border: none; border-top: 1px solid var(--border-color);">
+            <h3>Описание</h3>
+            <p style="white-space: pre-line; color: var(--text-secondary);">${data.description || 'Описание отсутствует'}</p>
+            <div style="margin-top: auto; background: #f0f8ff; padding: 16px; border-radius: var(--radius);">
+              <strong>Контактное лицо:</strong> ${data.contact_name || 'Продавец'}<br>
+              <strong>Телефон / Связь:</strong> ${data.phone || 'Не указан'}
+            </div>
+          </div>
         </div>
       `;
     }
-
     loadPost();
   </script>
 </body>
