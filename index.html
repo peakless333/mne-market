@@ -44,8 +44,8 @@
     </div>
 
     <!-- Шапка сайта -->
-    <header class="bg-white border-b border-gray-200/80 sticky top-0 z-35 transition-all shadow-xs">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <header class="bg-white border-b border-gray-200/80 sticky top-0 z-35 transition-transform duration-300 shadow-xs">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-3">
             
             <!-- Логотип -->
             <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 shrink-0 tracking-tight group">
@@ -56,7 +56,7 @@
             <!-- Поиск -->
             <div class="flex-1 max-w-xl relative flex items-center">
                 <div class="relative w-full flex items-center bg-gray-100 hover:bg-gray-200/60 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#009cf0] border border-transparent rounded-xl transition-all">
-                    <input type="text" id="searchInput" oninput="handleSearchInput(event)" placeholder="Поиск товаров..." class="w-full bg-transparent pl-4 pr-10 py-2 text-sm outline-none text-gray-900 placeholder:text-gray-400">
+                    <input type="text" id="searchInput" oninput="handleSearchInput(event)" placeholder="Поиск товаров..." class="w-full bg-transparent pl-3 sm:pl-4 pr-8 sm:pr-10 py-2 text-xs sm:text-sm outline-none text-gray-900 placeholder:text-gray-400">
                     <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 text-gray-400 hover:text-gray-600 cursor-pointer">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
@@ -67,25 +67,25 @@
             </div>
 
             <!-- Кнопки справа -->
-            <div class="flex items-center gap-2 shrink-0">
-                <button onclick="toggleMyPostsFilter()" id="myPostsHeaderBtn" title="Мои объявления" class="relative flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <button onclick="toggleMyPostsFilter()" id="myPostsHeaderBtn" title="Мои объявления" class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
                     <i data-lucide="user" class="w-4 h-4"></i>
                     <span id="myPostsCountBadge" class="absolute -top-1 -right-1 bg-[#009cf0] text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
                 </button>
 
-                <button onclick="toggleFavoritesFilter()" id="favoritesHeaderBtn" title="Избранное" class="relative flex items-center justify-center w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
+                <button onclick="toggleFavoritesFilter()" id="favoritesHeaderBtn" title="Избранное" class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
                     <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
                     <span id="favoritesCountBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
                 </button>
 
-                <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2 py-2 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
+                <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-1.5 sm:px-2 py-2 text-[11px] sm:text-xs font-semibold text-gray-700 outline-none cursor-pointer">
                     <option value="ru">RU</option>
                     <option value="en">EN</option>
                     <option value="cnr">CNR</option>
                 </select>
 
-                <a href="create.html" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-4 py-2 rounded-xl text-xs sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1.5 shrink-0">
-                    <i data-lucide="plus" class="w-4 h-4"></i> <span data-i18n="postAd">Разместить</span>
+                <a href="create.html" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0">
+                    <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> <span data-i18n="postAd">Разместить</span>
                 </a>
             </div>
         </div>
@@ -675,25 +675,22 @@
         }
 
         fetchPosts();
-    <script>
-    let lastScrollTop = 0;
-    const header = document.querySelector('header');
-    const scrollThreshold = 50; // Минимальный отступ для срабатывания
 
-    window.addEventListener('scroll', function() {
-        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-            // Свайп вниз — скрываем шапку
-            header.style.transform = 'translateY(-100%)';
-            header.style.transition = 'transform 0.3s ease-in-out';
-        } else {
-            // Свайп вверх — показываем шапку
-            header.style.transform = 'translateY(0)';
-            header.style.transition = 'transform 0.3s ease-in-out';
-        }
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-    }, { passive: true });
-</script>
+        // Скрипт скрытия шапки при свайпе вниз и появления при свайпе вверх на мобильных
+        let lastScrollTop = 0;
+        const header = document.querySelector('header');
+        const scrollThreshold = 50;
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+                header.style.transform = 'translateY(-100%)';
+            } else {
+                header.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        }, { passive: true });
+    </script>
 </body>
 </html>
