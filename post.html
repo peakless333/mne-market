@@ -47,9 +47,18 @@
                         <i id="favIcon" data-lucide="heart" class="w-5 h-5"></i>
                     </button>
 
-                    <div id="mainImageWrapper" onclick="openFullscreen()" class="relative h-[380px] bg-gray-100 rounded-xl overflow-hidden cursor-zoom-in group">
-                        <img id="mainProductImage" src="" class="w-full h-full object-contain" alt="Product">
-                        <div class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-1.5 shadow-md">
+                    <div id="mainImageWrapper" class="relative h-[380px] bg-gray-100 rounded-xl overflow-hidden group">
+                        <img id="mainProductImage" src="" class="w-full h-full object-contain hidden" alt="Product">
+                        
+                        <!-- Заглушка "Без фото" -->
+                        <div id="noImagePlaceholder" class="w-full h-full bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 flex flex-col items-center justify-center text-gray-400">
+                            <div class="w-16 h-16 rounded-2xl bg-white/80 shadow-sm flex items-center justify-center text-blue-500 mb-2">
+                                <i data-lucide="briefcase" class="w-8 h-8"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider" data-i18n="noPhoto">Без фото</span>
+                        </div>
+
+                        <div id="zoomBadge" class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-1.5 shadow-md cursor-pointer hidden" onclick="openFullscreen()">
                             <i data-lucide="maximize-2" class="w-4 h-4"></i> <span data-i18n="zoomText">Нажмите для увеличения</span>
                         </div>
                     </div>
@@ -149,7 +158,7 @@
                 back: "Назад к объявлениям", loading: "Загрузка...", free: "Бесплатно",
                 price: "Цена", city: "Город", desc: "ОПИСАНИЕ", contactBtn: "Написать продавцу",
                 shareBtn: "Поделиться в Telegram", copyBtn: "Скопировать ссылку",
-                zoomText: "Нажмите для увеличения",
+                zoomText: "Нажмите для увеличения", noPhoto: "Без фото",
                 similarTitle: "Похожие объявления", noSimilar: "Нет похожих объявлений",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 categories: { furniture: "Мебель", tech: "Техника", auto: "Авто", clothes: "Одежда", other: "Разное", realestate: "Недвижимость" }
@@ -158,7 +167,7 @@
                 back: "Back to listings", loading: "Loading...", free: "Free",
                 price: "Price", city: "City", desc: "DESCRIPTION", contactBtn: "Contact seller",
                 shareBtn: "Share to Telegram", copyBtn: "Copy link",
-                zoomText: "Click to zoom",
+                zoomText: "Click to zoom", noPhoto: "No photo",
                 similarTitle: "Related listings", noSimilar: "No related listings",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { furniture: "Furniture", tech: "Electronics", auto: "Vehicles", clothes: "Clothing", other: "Other", realestate: "Real estate" }
@@ -167,7 +176,7 @@
                 back: "Nazad na oglase", loading: "Učitavanje...", free: "Besplatno",
                 price: "Cijena", city: "Grad", desc: "OPIS", contactBtn: "Kontaktiraj prodavca",
                 shareBtn: "Podijeli na Telegram", copyBtn: "Kopiraj link",
-                zoomText: "Klikni za uvećanje",
+                zoomText: "Klikni za uvećanje", noPhoto: "Bez slike",
                 similarTitle: "Slični oglasi", noSimilar: "Nema sličnih oglasa",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { furniture: "Namještaj", tech: "Tehnika", auto: "Auto", clothes: "Odjeća", other: "Razno", realestate: "Nekretnine" }
@@ -276,6 +285,7 @@
         }
 
         function openFullscreen() {
+            if (postImages.length === 0 || !postImages[currentImageIndex]) return;
             const modal = document.getElementById('imageModal');
             document.getElementById('fullscreenImage').src = postImages[currentImageIndex];
             updateCounter();
@@ -288,12 +298,14 @@
 
         function nextImage(e) {
             if (e) e.stopPropagation();
+            if (postImages.length === 0) return;
             currentImageIndex = (currentImageIndex + 1) % postImages.length;
             updateFullscreenView();
         }
 
         function prevImage(e) {
             if (e) e.stopPropagation();
+            if (postImages.length === 0) return;
             currentImageIndex = (currentImageIndex - 1 + postImages.length) % postImages.length;
             updateFullscreenView();
         }
@@ -349,7 +361,26 @@
             document.getElementById('postTelegramBtn').href = `https://t.me/${tgClean}`;
 
             updateFavIcon();
-            document.getElementById('mainProductImage').src = postImages[0] || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
+
+            const mainImgEl = document.getElementById('mainProductImage');
+            const noImgPlaceholder = document.getElementById('noImagePlaceholder');
+            const zoomBadge = document.getElementById('zoomBadge');
+            const mainImageWrapper = document.getElementById('mainImageWrapper');
+
+            if (postImages.length > 0 && postImages[0]) {
+                mainImgEl.src = postImages[0];
+                mainImgEl.classList.remove('hidden');
+                noImgPlaceholder.classList.add('hidden');
+                zoomBadge.classList.remove('hidden');
+                mainImageWrapper.classList.add('cursor-zoom-in');
+                mainImageWrapper.setAttribute('onclick', 'openFullscreen()');
+            } else {
+                mainImgEl.classList.add('hidden');
+                noImgPlaceholder.classList.remove('hidden');
+                zoomBadge.classList.add('hidden');
+                mainImageWrapper.classList.remove('cursor-zoom-in');
+                mainImageWrapper.removeAttribute('onclick');
+            }
 
             const thumbsContainer = document.getElementById('thumbnailsContainer');
             if (postImages.length > 1) {
@@ -368,11 +399,16 @@
             
             if (similar.length > 0) {
                 similarContainer.innerHTML = similar.map(p => {
-                    const sImg = (p.images && p.images.length > 0) ? p.images[0] : (p.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+                    const sImg = (p.images && p.images.length > 0) ? p.images[0] : (p.image_url || '');
                     const sPrice = formatPrice(p.price);
+                    
+                    const imgHtml = sImg 
+                        ? `<img src="${sImg}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="Similar">`
+                        : `<div class="w-16 h-16 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0"><i data-lucide="briefcase" class="w-6 h-6"></i></div>`;
+
                     return `
                         <a href="post.html?id=${p.id}" class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
-                            <img src="${sImg}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="Similar">
+                            ${imgHtml}
                             <div class="min-w-0 flex-1">
                                 <h4 class="font-semibold text-xs text-gray-900 truncate group-hover:text-blue-600 transition-colors">${p.title}</h4>
                                 <p class="text-[11px] text-gray-400 mt-0.5">${dict[currentLang].cities[p.city] || p.city}</p>
