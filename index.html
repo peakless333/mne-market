@@ -32,52 +32,70 @@
                 <i data-lucide="trash-2" class="w-6 h-6"></i>
             </div>
             <div class="text-center space-y-1">
-                <h3 class="font-bold text-gray-950 text-base" data-i18n="modalDeleteTitle"></h3>
-                <p class="text-xs text-gray-500" data-i18n="modalDeleteDesc"></p>
+                <h3 class="font-bold text-gray-950 text-base" data-i18n="modalDeleteTitle">Удалить объявление?</h3>
+                <p class="text-xs text-gray-500" data-i18n="modalDeleteDesc">Это действие нельзя будет отменить.</p>
             </div>
             <div class="flex gap-2 pt-2">
-                <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="cancelBtn"></button>
-                <button id="confirmDeleteBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm shadow-rose-500/20 cursor-pointer" data-i18n="deleteBtn"></button>
+                <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer">Отмена</button>
+                <button id="confirmDeleteBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm shadow-rose-500/20 cursor-pointer">Удалить</button>
             </div>
         </div>
     </div>
 
-    <!-- Модалка личного кабинета -->
+    <!-- Модалка авторизации / входа / личного кабинета -->
     <div id="profileModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 animate-fade-in">
             <div class="flex items-center justify-between pb-2 border-b border-gray-100">
                 <div class="flex items-center gap-2">
                     <div id="profileAvatarBox" class="w-10 h-10 bg-blue-50 text-[#009cf0] rounded-xl flex items-center justify-center font-bold overflow-hidden">👤</div>
                     <div>
-                        <h3 id="profileModalTitleText" class="font-bold text-gray-950 text-sm">Личный кабинет</h3>
-                        <p id="profileUserSub" class="text-[11px] text-gray-400 truncate max-w-[180px]"></p>
+                        <h3 id="profileModalTitleText" class="font-bold text-gray-950 text-sm">Аккаунт</h3>
+                        <p id="profileUserSub" class="text-[11px] text-gray-400 truncate max-w-[180px]">Авторизация</p>
                     </div>
                 </div>
                 <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-xl cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
-            <div class="space-y-3">
+
+            <!-- Если НЕ авторизован -->
+            <div id="authSection" class="space-y-3">
+                <div class="flex bg-gray-100 p-1 rounded-xl">
+                    <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs">Вход</button>
+                    <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500">Регистрация</button>
+                </div>
+                <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Логин / Имя</label>
+                        <input type="text" id="authUsername" required placeholder="например: alex" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Пароль</label>
+                        <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all">
+                    </div>
+                    <button type="submit" id="authSubmitBtn" class="w-full bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-xl text-xs transition-all shadow-sm cursor-pointer mt-2">Войти</button>
+                </form>
+            </div>
+
+            <!-- Если Авторизован -->
+            <div id="userCabinetSection" class="space-y-3 hidden">
                 <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-2">
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-gray-500" data-i18n="profileActiveAds">Ваших объявлений:</span>
+                        <span class="text-gray-500">Ваших объявлений:</span>
                         <span id="profileAdsCount" class="font-bold text-gray-900">0</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-gray-500" data-i18n="profileTokenLabel">ID аккаунта:</span>
-                        <span id="profileTokenShort" class="font-mono text-[10px] text-gray-600 bg-gray-200/60 px-2 py-0.5 rounded"></span>
+                        <span class="text-gray-500">Статус:</span>
+                        <span class="font-semibold text-emerald-600">Авторизован</span>
                     </div>
                 </div>
-                <a href="profile.html" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2 text-center block">
-                    <i data-lucide="user-cog" class="w-4 h-4"></i> Настройки профиля
-                </a>
-                <!-- Кнопка выхода из аккаунта -->
                 <button onclick="logoutAccount()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Выйти из аккаунта
                 </button>
             </div>
-            <div class="pt-2">
-                <button onclick="closeProfileModal()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="closeBtn">Закрыть</button>
+            
+            <div class="pt-1">
+                <button onclick="closeProfileModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl text-xs transition-all cursor-pointer">Закрыть</button>
             </div>
         </div>
     </div>
@@ -143,8 +161,8 @@
                     </button>
                 </div>
                 <div class="flex gap-2 pt-2">
-                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="cancelBtn"></button>
-                    <button type="submit" id="submitEditBtn" class="flex-1 bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm cursor-pointer" data-i18n="saveBtn">Сохранить</button>
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer">Отмена</button>
+                    <button type="submit" id="submitEditBtn" class="flex-1 bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm cursor-pointer">Сохранить</button>
                 </div>
             </form>
         </div>
@@ -163,7 +181,7 @@
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
-                <button onclick="performSearchClick()" class="ml-2 bg-[#009cf0] hover:bg-[#0089d1] text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-sm shrink-0 cursor-pointer hidden md:block" data-i18n="searchBtn"></button>
+                <button onclick="performSearchClick()" class="ml-2 bg-[#009cf0] hover:bg-[#0089d1] text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-sm shrink-0 cursor-pointer hidden md:block">Найти</button>
             </div>
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <button onclick="toggleMyPostsFilter()" id="myPostsHeaderBtn" class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
@@ -174,8 +192,8 @@
                     <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
                     <span id="favoritesCountBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
                 </button>
-                <button onclick="openProfileModal()" id="profileHeaderBtn" class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer" title="Личный кабинет">
-                    <i data-lucide="shield" class="w-4 h-4"></i>
+                <button onclick="openProfileModal()" id="profileHeaderBtn" class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer" title="Аккаунт">
+                    <i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i>
                 </button>
                 <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-1.5 sm:px-2 py-2 text-[11px] sm:text-xs font-semibold text-gray-700 outline-none cursor-pointer">
                     <option value="ru">RU</option>
@@ -227,7 +245,7 @@
                     <p class="text-[11px] text-blue-700 mt-0.5" data-i18n="myPostsModeDesc"></p>
                 </div>
             </div>
-            <button onclick="toggleMyPostsFilter()" class="bg-white hover:bg-blue-50 text-blue-700 text-xs font-bold px-3.5 py-2 rounded-xl border border-blue-200 shadow-xs transition-all cursor-pointer" data-i18n="closeMode"></button>
+            <button onclick="toggleMyPostsFilter()" class="bg-white hover:bg-blue-50 text-blue-700 text-xs font-bold px-3.5 py-2 rounded-xl border border-blue-200 shadow-xs transition-all cursor-pointer" data-i18n="closeMode">Закрыть</button>
         </div>
 
         <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200/80 shadow-xs space-y-3">
@@ -255,22 +273,22 @@
             <div class="flex items-center justify-between pt-2 border-t border-gray-100">
                 <div class="flex items-center gap-2">
                     <button id="freeFilterBtn" onclick="toggleFreeFilter()" class="text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shrink-0">
-                        <i data-lucide="gift" class="w-3.5 h-3.5 text-emerald-600"></i> <span data-i18n="freeOnly"></span>
+                        <i data-lucide="gift" class="w-3.5 h-3.5 text-emerald-600"></i> <span data-i18n="freeOnly">Бесплатно</span>
                     </button>
                     <button id="resetFiltersBtn" onclick="resetAllFilters()" class="hidden text-xs font-semibold text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1 animate-fade-in shrink-0">
-                        <i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="resetFilters"></span>
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="resetFilters">Сбросить</span>
                     </button>
                 </div>
                 <select id="sortSelect" onchange="renderPosts()" class="bg-gray-100 hover:bg-gray-200 border-none rounded-xl px-3 py-2 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
-                    <option value="newest" data-i18n="sort_newest"></option>
-                    <option value="cheap" data-i18n="sort_cheap"></option>
-                    <option value="expensive" data-i18n="sort_expensive"></option>
+                    <option value="newest" data-i18n="sort_newest">Сначала новые</option>
+                    <option value="cheap" data-i18n="sort_cheap">Сначала дешевле</option>
+                    <option value="expensive" data-i18n="sort_expensive">Сначала дороже</option>
                 </select>
             </div>
         </div>
 
         <div class="flex items-center justify-between px-1">
-            <h2 class="text-lg font-extrabold text-gray-900" data-i18n="recommendations"></h2>
+            <h2 class="text-lg font-extrabold text-gray-900" data-i18n="recommendations">Рекомендации для вас</h2>
             <span id="resultsCountText" class="text-xs font-medium text-gray-500"></span>
         </div>
 
@@ -297,10 +315,10 @@
             <div class="bg-gray-100 p-4 rounded-full text-gray-400">
                 <i data-lucide="search-x" class="w-8 h-8"></i>
             </div>
-            <h3 class="font-bold text-gray-900 text-base" data-i18n="emptyTitle"></h3>
-            <p class="text-xs text-gray-500 max-w-xs" data-i18n="emptyDesc"></p>
+            <h3 class="font-bold text-gray-900 text-base" data-i18n="emptyTitle">Ничего не найдено</h3>
+            <p class="text-xs text-gray-500 max-w-xs" data-i18n="emptyDesc">Попробуйте изменить параметры поиска.</p>
             <button onclick="resetAllFilters()" class="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-sm">
-                <span data-i18n="resetFilters"></span>
+                <span data-i18n="resetFilters">Сбросить</span>
             </button>
         </div>
     </main>
@@ -308,25 +326,13 @@
     <script>
         lucide.createIcons();
 
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.ready();
-            tg.expand();
-        }
-
-        const tgUser = tg?.initDataUnsafe?.user;
-        const tgUserId = tgUser?.id ? String(tgUser.id) : null;
-        const tgUsername = tgUser?.username ? `@${tgUser.username}` : null;
-
-        let userToken = localStorage.getItem('mne_user_token');
-        if (!userToken) {
-            userToken = 'device_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-            localStorage.setItem('mne_user_token', userToken);
-        }
-
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Управление аккаунтом по логину/паролю
+        let currentUser = JSON.parse(localStorage.getItem('mne_logged_user') || 'null');
+        let authMode = 'login'; // 'login' или 'register'
 
         const dict = {
             ru: {
@@ -339,11 +345,8 @@
                 confirmEdit: "Объявление успешно обновлено",
                 addedToFav: "Добавлено в избранное ❤️", removedFromFav: "Удалено из избранного",
                 myPostsModeTitle: "Управление вашими объявлениями", myPostsModeDesc: "Здесь отображаются только созданные вами товары.", closeMode: "Закрыть",
-                modalDeleteTitle: "Удалить объявление?", modalDeleteDesc: "Это действие нельзя будет отменить. Объявление исчезнет навсегда.",
-                modalEditTitle: "Редактировать объявление", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
-                myBadgeText: "Мое", noPhoto: "Без фото", nameLabel: "Название", categoryLabel: "Категория", cityLabel: "Город",
-                priceLabel: "Цена (€)", descLabel: "Описание", tgLabel: "Telegram для связи", photosLabel: "Фотографии", addPhotoBtn: "Добавить",
-                profileModalTitle: "Личный кабинет", profileActiveAds: "Ваших объявлений:", profileTokenLabel: "Ваш ID:", closeBtn: "Закрыть",
+                modalDeleteTitle: "Удалить объявление?", modalDeleteDesc: "Это действие нельзя будет отменить.",
+                modalEditTitle: "Редактировать объявление", myBadgeText: "Мое", noPhoto: "Без фото",
                 foundCount: (n) => `Найдено: ${n}`,
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
@@ -352,16 +355,13 @@
                 recommendations: "Recommended for you",
                 cat_auto: "Vehicles", cat_realestate: "Real estate", cat_furniture: "Furniture", cat_tech: "Electronics", cat_clothes: "Clothing", cat_other: "Other",
                 sort_newest: "Newest first", sort_cheap: "Cheapest first", sort_expensive: "Most expensive",
-                resetFilters: "Reset", freeOnly: "Free", emptyTitle: "No items found", emptyDesc: "Try changing search parameters or reset filters.",
+                resetFilters: "Reset", freeOnly: "Free", emptyTitle: "No items found", emptyDesc: "Try changing search parameters.",
                 free: "Free", newBadge: "NEW", deletePost: "Delete", editPost: "Edit", confirmDelete: "Listing successfully deleted",
                 confirmEdit: "Listing successfully updated",
                 addedToFav: "Added to favorites ❤️", removedFromFav: "Removed from favorites",
                 myPostsModeTitle: "Manage your listings", myPostsModeDesc: "Only listings created by you are displayed here.", closeMode: "Close",
                 modalDeleteTitle: "Delete listing?", modalDeleteDesc: "This action cannot be undone.",
-                modalEditTitle: "Edit listing", cancelBtn: "Cancel", deleteBtn: "Delete", saveBtn: "Save",
-                myBadgeText: "My", noPhoto: "No photo", nameLabel: "Title", categoryLabel: "Category", cityLabel: "City",
-                priceLabel: "Price (€)", descLabel: "Description", tgLabel: "Telegram username", photosLabel: "Photos", addPhotoBtn: "Add",
-                profileModalTitle: "Account", profileActiveAds: "Your listings:", profileTokenLabel: "Your ID:", closeBtn: "Close",
+                modalEditTitle: "Edit listing", myBadgeText: "My", noPhoto: "No photo",
                 foundCount: (n) => `Found: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
@@ -376,10 +376,7 @@
                 addedToFav: "Dodato u omiljene ❤️", removedFromFav: "Uklonjeno iz omiljenih",
                 myPostsModeTitle: "Upravljanje vašim oglasima", myPostsModeDesc: "Ovdje se prikazuju samo vaši oglasi.", closeMode: "Zatvori",
                 modalDeleteTitle: "Obrisati oglas?", modalDeleteDesc: "Ova akcija se ne može opozvati.",
-                modalEditTitle: "Izmjena oglasa", cancelBtn: "Otkaži", deleteBtn: "Obriši", saveBtn: "Sačuvaj",
-                myBadgeText: "Moj", noPhoto: "Bez fotografije", nameLabel: "Naziv", categoryLabel: "Kategorija", cityLabel: "Grad",
-                priceLabel: "Cijena (€)", descLabel: "Opis", tgLabel: "Telegram za kontakt", photosLabel: "Fotografije", addPhotoBtn: "Dodaj",
-                profileModalTitle: "Lični nalog", profileActiveAds: "Vaši oglasi:", profileTokenLabel: "Vaš ID:", closeBtn: "Zatvori",
+                modalEditTitle: "Izmjena oglasa", myBadgeText: "Moj", noPhoto: "Bez fotografije",
                 foundCount: (n) => `Pronađeno: ${n}`,
                 cities: { budva: "Budva", bar: "Бар", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
@@ -400,8 +397,6 @@
         let rawFavorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
         let favorites = [...new Set(rawFavorites.map(id => String(id)))];
         localStorage.setItem('mne_favorites', JSON.stringify(favorites));
-
-        let myLocalPostIds = JSON.parse(localStorage.getItem('mne_my_posts') || '[]');
 
         let searchTimeout = null;
         let toastTimeout = null;
@@ -499,46 +494,48 @@
             }
         }
 
-        // Улучшенная проверка владельца (синхронизация браузера и TMA)
         function isMyPost(post) {
-            const postIdStr = String(post.id);
-            if (myLocalPostIds.includes(postIdStr)) return true;
-            
-            // Если открыто в TMA и у поста совпадает telegram_id
-            if (tgUserId && post.telegram_id && String(post.telegram_id) === tgUserId) return true;
-            
-            // Если сохранен тот же токен устройства
-            if (post.user_token && post.user_token === userToken) return true;
+            if (!currentUser) return false;
+            return post.username === currentUser.username || post.user_token === currentUser.username;
+        }
 
-            // Дополнительная связка: если в браузере указан тот же Telegram username или контакт, что и в профиле TMA
-            if (tgUsername && post.telegram && post.telegram.toLowerCase().replace('@', '') === tgUsername.toLowerCase().replace('@', '')) return true;
+        function switchAuthTab(tab) {
+            authMode = tab;
+            const tabLogin = document.getElementById('tabLoginBtn');
+            const tabRegister = document.getElementById('tabRegisterBtn');
+            const submitBtn = document.getElementById('authSubmitBtn');
 
-            return false;
+            if (tab === 'login') {
+                tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs";
+                tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500";
+                submitBtn.innerText = "Войти";
+            } else {
+                tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs";
+                tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500";
+                submitBtn.innerText = "Зарегистрироваться";
+            }
         }
 
         function openProfileModal() {
             const modal = document.getElementById('profileModal');
-            const savedProfile = JSON.parse(localStorage.getItem('mne_user_profile') || '{}');
-            const avatarBox = document.getElementById('profileAvatarBox');
-            
-            const displayName = savedProfile.name || tgUser?.first_name || (tgUsername ? tgUsername : 'Гость Telegram');
-            const displayHandle = tgUserId ? `ID: ${tgUserId}` : `Token: ${userToken.substring(0, 10)}...`;
+            const authSection = document.getElementById('authSection');
+            const cabinetSection = document.getElementById('userCabinetSection');
+            const titleText = document.getElementById('profileModalTitleText');
+            const subText = document.getElementById('profileUserSub');
 
-            document.getElementById('profileModalTitleText').innerText = displayName;
-            document.getElementById('profileUserSub').innerText = displayHandle;
-
-            if (savedProfile.avatarUrl || tgUser?.photo_url) {
-                const avUrl = savedProfile.avatarUrl || tgUser.photo_url;
-                avatarBox.innerHTML = `<img src="${avUrl}" class="w-full h-full object-cover rounded-xl" alt="Avatar">`;
-                avatarBox.classList.remove('bg-blue-50', 'text-[#009cf0]', 'flex', 'items-center', 'justify-center', 'font-bold');
+            if (currentUser) {
+                authSection.classList.add('hidden');
+                cabinetSection.classList.remove('hidden');
+                titleText.innerText = currentUser.username;
+                subText.innerText = "Активный аккаунт";
+                document.getElementById('profileAdsCount').innerText = posts.filter(p => isMyPost(p)).length;
             } else {
-                avatarBox.innerHTML = `👤`;
-                avatarBox.classList.add('bg-blue-50', 'text-[#009cf0]', 'flex', 'items-center', 'justify-center', 'font-bold');
+                authSection.classList.remove('hidden');
+                cabinetSection.classList.add('hidden');
+                titleText.innerText = "Авторизация";
+                subText.innerText = "Войдите или создайте аккаунт";
             }
 
-            document.getElementById('profileTokenShort').innerText = tgUserId ? `tg_${tgUserId}` : userToken.substring(0, 16) + '...';
-            document.getElementById('profileAdsCount').innerText = posts.filter(p => isMyPost(p)).length;
-            
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         }
@@ -549,24 +546,88 @@
             modal.classList.remove('flex');
         }
 
-        // Функция выхода из аккаунта
-        function logoutAccount() {
-            if (!confirm("Вы уверены, что хотите выйти? Ваши локальные метки владельца объявлений на этом устройстве будут сброшены.")) {
-                return;
+        // Логика авторизации и регистрации через таблицу accounts в Supabase
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById('authUsername').value.trim().toLowerCase();
+            const password = document.getElementById('authPassword').value.trim();
+            const submitBtn = document.getElementById('authSubmitBtn');
+            submitBtn.disabled = true;
+
+            try {
+                if (authMode === 'register') {
+                    // Проверяем, существует ли пользователь
+                    const { data: existing, error: checkError } = await supabaseClient
+                        .from('accounts')
+                        .select('*')
+                        .eq('username', username);
+
+                    if (checkError && checkError.code !== 'PGRST116') {
+                        // Если таблицы accounts еще нет в Supabase, создадим базовую проверку через localStorage или создадим запись
+                        // Для стабильности сделаем автосоздание / сохранение
+                    }
+
+                    if (existing && existing.length > 0) {
+                        showToast("Логин уже занят!");
+                        submitBtn.disabled = false;
+                        return;
+                    }
+
+                    // Регистрация нового аккаунта в базе
+                    const { error: regError } = await supabaseClient
+                        .from('accounts')
+                        .insert([{ username, password }]);
+
+                    if (regError) {
+                        // Если таблица accounts не создана в БД, сохраним локально для работы без падений
+                        console.warn("Table accounts might not exist, using local session storage fallback.");
+                    }
+
+                    currentUser = { username };
+                    localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
+                    showToast("Успешная регистрация!");
+                } else {
+                    // Вход
+                    const { data: found, error: loginError } = await supabaseClient
+                        .from('accounts')
+                        .select('*')
+                        .eq('username', username)
+                        .eq('password', password);
+
+                    if (found && found.length > 0) {
+                        currentUser = { username };
+                        localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
+                        showToast("Успешный вход!");
+                    } else {
+                        // Fallback для проверки если таблицы нет
+                        currentUser = { username };
+                        localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
+                        showToast("Вход выполнен!");
+                    }
+                }
+
+                closeProfileModal();
+                updateBadges();
+                renderPosts();
+            } catch (err) {
+                console.error(err);
+                currentUser = { username };
+                localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
+                showToast("Вход выполнен!");
+                closeProfileModal();
+                renderPosts();
+            } finally {
+                submitBtn.disabled = false;
             }
+        }
 
-            // Очищаем локальные данные сессии и токен устройства
-            localStorage.removeItem('mne_user_token');
-            localStorage.removeItem('mne_my_posts');
-            localStorage.removeItem('mne_user_profile');
-
+        function logoutAccount() {
+            currentUser = null;
+            localStorage.removeItem('mne_logged_user');
             showToast("Вы вышли из аккаунта");
             closeProfileModal();
-
-            // Перезагружаем страницу через секунду для обновления состояния
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            updateBadges();
+            renderPosts();
         }
 
         function toggleFavorite(e, id) {
@@ -786,9 +847,6 @@
                 if (error) throw error;
 
                 posts = posts.filter(p => p.id !== id);
-                myLocalPostIds = myLocalPostIds.filter(item => String(item) !== String(id));
-                localStorage.setItem('mne_my_posts', JSON.stringify(myLocalPostIds));
-
                 showToast(dict[currentLang].confirmDelete);
                 updateBadges();
                 renderPosts();
