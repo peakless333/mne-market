@@ -36,8 +36,8 @@
                 <p class="text-xs text-gray-500" data-i18n="modalDeleteDesc">Это действие нельзя будет отменить.</p>
             </div>
             <div class="flex gap-2 pt-2">
-                <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer">Отмена</button>
-                <button id="confirmDeleteBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm shadow-rose-500/20 cursor-pointer">Удалить</button>
+                <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="cancelBtn">Отмена</button>
+                <button id="confirmDeleteBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm shadow-rose-500/20 cursor-pointer" data-i18n="deleteBtn">Удалить</button>
             </div>
         </div>
     </div>
@@ -49,8 +49,8 @@
                 <div class="flex items-center gap-2">
                     <div id="profileAvatarBox" class="w-10 h-10 bg-blue-50 text-[#009cf0] rounded-xl flex items-center justify-center font-bold overflow-hidden">👤</div>
                     <div>
-                        <h3 id="profileModalTitleText" class="font-bold text-gray-950 text-sm">Аккаунт</h3>
-                        <p id="profileUserSub" class="text-[11px] text-gray-400 truncate max-w-[180px]">Авторизация</p>
+                        <h3 id="profileModalTitleText" class="font-bold text-gray-950 text-sm" data-i18n="accountTitle">Аккаунт</h3>
+                        <p id="profileUserSub" class="text-[11px] text-gray-400 truncate max-w-[180px]" data-i18n="authSub">Авторизация</p>
                     </div>
                 </div>
                 <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-xl cursor-pointer">
@@ -61,19 +61,19 @@
             <!-- Если НЕ авторизован -->
             <div id="authSection" class="space-y-3">
                 <div class="flex bg-gray-100 p-1 rounded-xl">
-                    <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs">Вход</button>
-                    <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500">Регистрация</button>
+                    <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs" data-i18n="tabLogin">Вход</button>
+                    <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500" data-i18n="tabRegister">Регистрация</button>
                 </div>
                 <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3">
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Логин / Имя</label>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="usernameLabel">Логин / Имя</label>
                         <input type="text" id="authUsername" required placeholder="например: alex" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Пароль</label>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="passwordLabel">Пароль</label>
                         <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all">
                     </div>
-                    <button type="submit" id="authSubmitBtn" class="w-full bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-xl text-xs transition-all shadow-sm cursor-pointer mt-2">Войти</button>
+                    <button type="submit" id="authSubmitBtn" class="w-full bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-xl text-xs transition-all shadow-sm cursor-pointer mt-2" data-i18n="loginBtn">Войти</button>
                 </form>
             </div>
 
@@ -81,21 +81,21 @@
             <div id="userCabinetSection" class="space-y-3 hidden">
                 <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-2">
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-gray-500">Ваших объявлений:</span>
+                        <span class="text-gray-500" data-i18n="yourAdsCount">Ваших объявлений:</span>
                         <span id="profileAdsCount" class="font-bold text-gray-900">0</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-gray-500">Статус:</span>
-                        <span class="font-semibold text-emerald-600">Авторизован</span>
+                        <span class="text-gray-500" data-i18n="statusLabel">Статус:</span>
+                        <span class="font-semibold text-emerald-600" data-i18n="authorizedStatus">Авторизован</span>
                     </div>
                 </div>
                 <button onclick="logoutAccount()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2">
-                    <i data-lucide="log-out" class="w-4 h-4"></i> Выйти из аккаунта
+                    <i data-lucide="log-out" class="w-4 h-4"></i> <span data-i18n="logoutBtn">Выйти из аккаунта</span>
                 </button>
             </div>
             
             <div class="pt-1">
-                <button onclick="closeProfileModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl text-xs transition-all cursor-pointer">Закрыть</button>
+                <button onclick="closeProfileModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl text-xs transition-all cursor-pointer" data-i18n="closeBtn">Закрыть</button>
             </div>
         </div>
     </div>
@@ -161,8 +161,8 @@
                     </button>
                 </div>
                 <div class="flex gap-2 pt-2">
-                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer">Отмена</button>
-                    <button type="submit" id="submitEditBtn" class="flex-1 bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm cursor-pointer">Сохранить</button>
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="cancelBtn">Отмена</button>
+                    <button type="submit" id="submitEditBtn" class="flex-1 bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm cursor-pointer" data-i18n="saveBtn">Сохранить</button>
                 </div>
             </form>
         </div>
@@ -181,7 +181,7 @@
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
-                <button onclick="performSearchClick()" class="ml-2 bg-[#009cf0] hover:bg-[#0089d1] text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-sm shrink-0 cursor-pointer hidden md:block">Найти</button>
+                <button onclick="performSearchClick()" class="ml-2 bg-[#009cf0] hover:bg-[#0089d1] text-white font-medium px-4 py-2 rounded-xl text-sm transition-all shadow-sm shrink-0 cursor-pointer hidden md:block" data-i18n="searchBtn">Найти</button>
             </div>
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <button onclick="toggleMyPostsFilter()" id="myPostsHeaderBtn" class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
@@ -200,7 +200,7 @@
                     <option value="en">EN</option>
                     <option value="cnr">CNR</option>
                 </select>
-                <button onclick="window.location.href='create.html'" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0 cursor-pointer">
+                <button onclick="handlePostAdClick()" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0 cursor-pointer">
                     <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> <span data-i18n="postAd">Разместить</span>
                 </button>
             </div>
@@ -347,6 +347,17 @@
                 myPostsModeTitle: "Управление вашими объявлениями", myPostsModeDesc: "Здесь отображаются только созданные вами товары.", closeMode: "Закрыть",
                 modalDeleteTitle: "Удалить объявление?", modalDeleteDesc: "Это действие нельзя будет отменить.",
                 modalEditTitle: "Редактировать объявление", myBadgeText: "Мое", noPhoto: "Без фото",
+                accountTitle: "Аккаунт", authSub: "Авторизация", tabLogin: "Вход", tabRegister: "Регистрация",
+                usernameLabel: "Логин / Имя", passwordLabel: "Пароль", loginBtn: "Войти", registerBtn: "Зарегистрироваться",
+                yourAdsCount: "Ваших объявлений:", statusLabel: "Статус:", authorizedStatus: "Авторизован",
+                logoutBtn: "Выйти из аккаунт", closeBtn: "Закрыть", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
+                nameLabel: "Название", categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
+                descLabel: "Описание", tgLabel: "Telegram для связи", photosLabel: "Фотографии (до 5 шт.)", addPhotoBtn: "Добавить фото",
+                toastUserNotFound: "Аккаунт не найден. Сначала зарегистрируйтесь!",
+                toastWrongPassword: "Неверный пароль!",
+                toastUserExists: "Такой логин уже занят!",
+                toastRegSuccess: "Успешная регистрация!",
+                toastLoginSuccess: "Успешный вход!",
                 foundCount: (n) => `Найдено: ${n}`,
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
@@ -362,6 +373,17 @@
                 myPostsModeTitle: "Manage your listings", myPostsModeDesc: "Only listings created by you are displayed here.", closeMode: "Close",
                 modalDeleteTitle: "Delete listing?", modalDeleteDesc: "This action cannot be undone.",
                 modalEditTitle: "Edit listing", myBadgeText: "My", noPhoto: "No photo",
+                accountTitle: "Account", authSub: "Authorization", tabLogin: "Login", tabRegister: "Register",
+                usernameLabel: "Username / Name", passwordLabel: "Password", loginBtn: "Log in", registerBtn: "Register",
+                yourAdsCount: "Your listings:", statusLabel: "Status:", authorizedStatus: "Authorized",
+                logoutBtn: "Log out", closeBtn: "Close", cancelBtn: "Cancel", deleteBtn: "Delete", saveBtn: "Save",
+                nameLabel: "Title", categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
+                descLabel: "Description", tgLabel: "Telegram for contact", photosLabel: "Photos (up to 5)", addPhotoBtn: "Add photo",
+                toastUserNotFound: "Account not found. Please register first!",
+                toastWrongPassword: "Wrong password!",
+                toastUserExists: "Username is already taken!",
+                toastRegSuccess: "Successful registration!",
+                toastLoginSuccess: "Successful login!",
                 foundCount: (n) => `Found: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
@@ -377,6 +399,17 @@
                 myPostsModeTitle: "Upravljanje vašim oglasima", myPostsModeDesc: "Ovdje se prikazuju samo vaši oglasi.", closeMode: "Zatvori",
                 modalDeleteTitle: "Obrisati oglas?", modalDeleteDesc: "Ova akcija se ne može opozvati.",
                 modalEditTitle: "Izmjena oglasa", myBadgeText: "Moj", noPhoto: "Bez fotografije",
+                accountTitle: "Nalog", authSub: "Autorizacija", tabLogin: "Prijava", tabRegister: "Registracija",
+                usernameLabel: "Korisničko ime / Ime", passwordLabel: "Lozinka", loginBtn: "Prijavi se", registerBtn: "Registruj se",
+                yourAdsCount: "Vaši oglasi:", statusLabel: "Status:", authorizedStatus: "Autorizovan",
+                logoutBtn: "Odjavi se", closeBtn: "Zatvori", cancelBtn: "Otkaži", deleteBtn: "Obriši", saveBtn: "Sačuvaj",
+                nameLabel: "Naziv", categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
+                descLabel: "Opis", tgLabel: "Telegram za kontakt", photosLabel: "Fotografije (do 5)", addPhotoBtn: "Dodaj fotografiju",
+                toastUserNotFound: "Nalog nije pronađen. Prvo se registrujte!",
+                toastWrongPassword: "Pogrešna lozinka!",
+                toastUserExists: "Korisničko ime je zauzeto!",
+                toastRegSuccess: "Uspješna registracija!",
+                toastLoginSuccess: "Uspješna prijava!",
                 foundCount: (n) => `Pronađeno: ${n}`,
                 cities: { budva: "Budva", bar: "Бар", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
@@ -469,6 +502,12 @@
                 if (btn) btn.innerText = name;
             }
 
+            // Обновляем текст кнопки отправки в модалке логина/регистрации в зависимости от активной вкладки
+            const submitBtn = document.getElementById('authSubmitBtn');
+            if (submitBtn) {
+                submitBtn.innerText = (authMode === 'login') ? dict[lang].loginBtn : dict[lang].registerBtn;
+            }
+
             renderPosts();
         }
 
@@ -508,11 +547,11 @@
             if (tab === 'login') {
                 tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs";
                 tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500";
-                submitBtn.innerText = "Войти";
+                submitBtn.innerText = dict[currentLang].loginBtn;
             } else {
                 tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs";
                 tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500";
-                submitBtn.innerText = "Зарегистрироваться";
+                submitBtn.innerText = dict[currentLang].registerBtn;
             }
         }
 
@@ -527,13 +566,13 @@
                 authSection.classList.add('hidden');
                 cabinetSection.classList.remove('hidden');
                 titleText.innerText = currentUser.username;
-                subText.innerText = "Активный аккаунт";
+                subText.innerText = dict[currentLang].authorizedStatus;
                 document.getElementById('profileAdsCount').innerText = posts.filter(p => isMyPost(p)).length;
             } else {
                 authSection.classList.remove('hidden');
                 cabinetSection.classList.add('hidden');
-                titleText.innerText = "Авторизация";
-                subText.innerText = "Войдите или создайте аккаунт";
+                titleText.innerText = dict[currentLang].accountTitle;
+                subText.innerText = dict[currentLang].authSub;
             }
 
             modal.classList.remove('hidden');
@@ -546,7 +585,16 @@
             modal.classList.remove('flex');
         }
 
-        // Логика авторизации и регистрации через таблицу accounts в Supabase
+        function handlePostAdClick() {
+            if (!currentUser) {
+                openProfileModal();
+                showToast(dict[currentLang].authSub);
+                return;
+            }
+            window.location.href = 'create.html';
+        }
+
+        // Логика строгой проверки существующих аккаунтов через таблицу accounts в Supabase
         async function handleAuthSubmit(event) {
             event.preventDefault();
             const username = document.getElementById('authUsername').value.trim().toLowerCase();
@@ -556,54 +604,61 @@
 
             try {
                 if (authMode === 'register') {
-                    // Проверяем, существует ли пользователь
+                    // Проверяем, существует ли пользователь в таблице accounts
                     const { data: existing, error: checkError } = await supabaseClient
                         .from('accounts')
                         .select('*')
                         .eq('username', username);
 
                     if (checkError && checkError.code !== 'PGRST116') {
-                        // Если таблицы accounts еще нет в Supabase, создадим базовую проверку через localStorage или создадим запись
-                        // Для стабильности сделаем автосоздание / сохранение
+                        console.warn("Table accounts check error:", checkError);
                     }
 
                     if (existing && existing.length > 0) {
-                        showToast("Логин уже занят!");
+                        showToast(dict[currentLang].toastUserExists);
                         submitBtn.disabled = false;
                         return;
                     }
 
-                    // Регистрация нового аккаунта в базе
+                    // Регистрация нового аккаунта в базе данных
                     const { error: regError } = await supabaseClient
                         .from('accounts')
                         .insert([{ username, password }]);
 
                     if (regError) {
-                        // Если таблица accounts не создана в БД, сохраним локально для работы без падений
-                        console.warn("Table accounts might not exist, using local session storage fallback.");
+                        throw regError;
                     }
 
                     currentUser = { username };
                     localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
-                    showToast("Успешная регистрация!");
+                    showToast(dict[currentLang].toastRegSuccess);
                 } else {
-                    // Вход
+                    // Режим входа: строго проверяем, существует ли аккаунт и совпадает ли пароль
                     const { data: found, error: loginError } = await supabaseClient
                         .from('accounts')
                         .select('*')
-                        .eq('username', username)
-                        .eq('password', password);
+                        .eq('username', username);
 
-                    if (found && found.length > 0) {
-                        currentUser = { username };
-                        localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
-                        showToast("Успешный вход!");
-                    } else {
-                        // Fallback для проверки если таблицы нет
-                        currentUser = { username };
-                        localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
-                        showToast("Вход выполнен!");
+                    if (loginError) {
+                        throw loginError;
                     }
+
+                    if (!found || found.length === 0) {
+                        showToast(dict[currentLang].toastUserNotFound);
+                        submitBtn.disabled = false;
+                        return;
+                    }
+
+                    const account = found[0];
+                    if (account.password !== password) {
+                        showToast(dict[currentLang].toastWrongPassword);
+                        submitBtn.disabled = false;
+                        return;
+                    }
+
+                    currentUser = { username };
+                    localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
+                    showToast(dict[currentLang].toastLoginSuccess);
                 }
 
                 closeProfileModal();
@@ -611,11 +666,7 @@
                 renderPosts();
             } catch (err) {
                 console.error(err);
-                currentUser = { username };
-                localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
-                showToast("Вход выполнен!");
-                closeProfileModal();
-                renderPosts();
+                showToast("Ошибка авторизации. Проверьте подключение к базе данных.");
             } finally {
                 submitBtn.disabled = false;
             }
