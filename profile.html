@@ -3,114 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профиль — MNE Market</title>
+    <title>Личный кабинет — MNE Market</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇲🇪</text></svg>">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-24">
+<body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- Шапка -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2 font-bold text-lg tracking-tight text-gray-950">
-                <span class="text-xl">🇲🇪</span> MNE<span class="text-blue-600">Market</span>
+        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="back">На главную</span>
             </a>
-            <a href="index.html" class="text-xs font-semibold text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-1">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> На главную
-            </a>
+            <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
+                <option value="ru">🇷🇺 RU</option>
+                <option value="en">🇬🇧 EN</option>
+                <option value="cnr">🇲🇪 CNR</option>
+            </select>
         </div>
     </header>
 
-    <!-- Основной контент -->
-    <main class="max-w-6xl mx-auto px-4 pt-6 space-y-6">
-        <h1 class="text-xl font-extrabold text-gray-950">Мои объявления</h1>
-        
-        <div id="myPostsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <div class="col-span-full text-center py-16 text-gray-400 text-sm">Загрузка...</div>
+    <main class="max-w-2xl mx-auto px-4 pt-6 space-y-6">
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-6">
+            <h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <i data-lucide="user-cog" class="w-6 h-6 text-blue-600"></i>
+                <span data-i18n="titleProfile">Личный кабинет</span>
+            </h1>
+
+            <form id="profileForm" onsubmit="saveProfile(event)" class="space-y-5">
+                
+                <!-- Блок Аватара с поддержкой Drag & Drop -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider" data-i18n="avatarLabel">Ваша фотография / Аватарка</label>
+                    <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="handleAvatarSelection(event)">
+
+                    <div class="flex items-center gap-4">
+                        <div id="currentAvatarPreview" class="w-20 h-20 rounded-full bg-blue-100 border-2 border-blue-500 overflow-hidden flex items-center justify-center text-blue-700 font-bold text-2xl shrink-0 shadow-inner">
+                            <i data-lucide="user" class="w-8 h-8"></i>
+                        </div>
+
+                        <div id="avatarDropZone" 
+                             onclick="document.getElementById('avatarInput').click()"
+                             class="flex-1 border-2 border-dashed border-gray-200 hover:border-blue-500 bg-gray-50 hover:bg-blue-50/50 rounded-2xl p-4 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 group">
+                            <div class="text-gray-400 group-hover:text-blue-600 transition-colors">
+                                <i data-lucide="image-plus" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-600 group-hover:text-blue-600" data-i18n="dropAvatarText">Нажмите или перетащите фото сюда</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ник / Имя -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="nameLabel">Ваше имя / Никнейм</label>
+                    <input type="text" id="profileName" required placeholder="Например: Александр" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                </div>
+
+                <!-- Telegram для связи -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="tgLabel">Telegram для связи</label>
+                    <input type="text" id="profileTelegram" required placeholder="@username" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                </div>
+
+                <button type="submit" id="saveProfileBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                    <i data-lucide="check" class="w-4 h-4"></i> <span data-i18n="saveBtn">Сохранить изменения</span>
+                </button>
+            </form>
         </div>
     </main>
 
     <script>
         lucide.createIcons();
 
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const citiesMap = {
-            budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови"
+        const dict = {
+            ru: {
+                back: "На главную", titleProfile: "Личный кабинет", avatarLabel: "Фотография профиля",
+                dropAvatarText: "Нажмите или перетащите новую аватарку сюда", nameLabel: "Ваше имя / Никнейм",
+                tgLabel: "Telegram для связи", saveBtn: "Сохранить изменения", savedAlert: "Данные успешно сохранены!",
+                saving: "Сохранение..."
+            },
+            en: {
+                back: "Home", titleProfile: "Profile", avatarLabel: "Profile Photo",
+                dropAvatarText: "Click or drag new avatar here", nameLabel: "Your Name / Nickname",
+                tgLabel: "Telegram username", saveBtn: "Save Changes", savedAlert: "Profile successfully saved!",
+                saving: "Saving..."
+            },
+            cnr: {
+                back: "Početna", titleProfile: "Lični profil", avatarLabel: "Profilna fotografija",
+                dropAvatarText: "Kliknite ili prevucite novu sliku ovdje", nameLabel: "Vaše ime / Korisničko ime",
+                tgLabel: "Telegram kontakt", saveBtn: "Sačuvaj izmjene", savedAlert: "Podaci su uspješno sačuvani!",
+                saving: "Čuvanje..."
+            }
         };
 
-        let userToken = localStorage.getItem('mne_user_token');
+        let currentLang = localStorage.getItem('mne_lang') || 'ru';
+        let profileData = JSON.parse(localStorage.getItem('mne_user_profile') || '{}');
+        let tempAvatarFile = null;
+        let tempAvatarUrl = profileData.avatarUrl || '';
 
-        async function fetchMyPosts() {
-            const container = document.getElementById('myPostsContainer');
-            if (!userToken) {
-                container.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400 text-sm">У вас пока нет объявлений</div>`;
-                return;
+        // Автозаполнение из Telegram WebApp, если пусто
+        if (tg?.initDataUnsafe?.user) {
+            if (!profileData.name && tg.initDataUnsafe.user.first_name) {
+                profileData.name = tg.initDataUnsafe.user.first_name;
             }
+            if (!profileData.username && tg.initDataUnsafe.user.username) {
+                profileData.username = '@' + tg.initDataUnsafe.user.username;
+            }
+        }
+
+        document.getElementById('profileName').value = profileData.name || '';
+        document.getElementById('profileTelegram').value = profileData.username || '';
+        updateAvatarDisplay(tempAvatarUrl, profileData.name || 'U');
+
+        function updateAvatarDisplay(url, nameStr) {
+            const container = document.getElementById('currentAvatarPreview');
+            if (url) {
+                container.innerHTML = `<img src="${url}" class="w-full h-full object-cover" alt="Avatar">`;
+            } else {
+                container.innerText = nameStr.charAt(0).toUpperCase();
+            }
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('mne_lang', lang);
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[lang][key]) el.innerText = dict[lang][key];
+            });
+        }
+        document.getElementById('langSelect').value = currentLang;
+        changeLanguage(currentLang);
+
+        // Настройка Drag & Drop для аватара
+        const avatarDropZone = document.getElementById('avatarDropZone');
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            avatarDropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                avatarDropZone.classList.add('border-blue-500', 'bg-blue-50/75');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            avatarDropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                avatarDropZone.classList.remove('border-blue-500', 'bg-blue-50/75');
+            }, false);
+        });
+
+        avatarDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                if (file.type.startsWith('image/')) {
+                    tempAvatarFile = file;
+                    tempAvatarUrl = URL.createObjectURL(file);
+                    updateAvatarDisplay(tempAvatarUrl, document.getElementById('profileName').value || 'U');
+                }
+            }
+        }, false);
+
+        function handleImageSelection(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                tempAvatarFile = file;
+                tempAvatarUrl = URL.createObjectURL(file);
+                updateAvatarDisplay(tempAvatarUrl, document.getElementById('profileName').value || 'U');
+            }
+        }
+
+        async function saveProfile(event) {
+            event.preventDefault();
+            const btn = document.getElementById('saveProfileBtn');
+            btn.disabled = true;
+            btn.innerText = dict[currentLang].saving;
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('posts')
-                    .select('*')
-                    .eq('user_token', userToken)
-                    .order('created_at', { ascending: false });
+                let finalAvatarUrl = tempAvatarUrl;
 
-                if (error) throw error;
-                
-                if (!data || !data.length) {
-                    container.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400 text-sm">Вы еще ничего не разместили</div>`;
-                    return;
+                if (tempAvatarFile) {
+                    const fileExt = tempAvatarFile.name.split('.').pop();
+                    const fileName = `avatar_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+                    
+                    const { error } = await supabaseClient.storage.from('post-images').upload(fileName, tempAvatarFile);
+                    if (error) throw error;
+
+                    const { data: publicUrlData } = supabaseClient.storage.from('post-images').getPublicUrl(fileName);
+                    finalAvatarUrl = publicUrlData.publicUrl;
                 }
 
-                container.innerHTML = data.map(post => {
-                    const imageUrl = post.image_url || (post.images && post.images[0]) || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
-                    const cityName = citiesMap[post.city] || post.city;
+                const updatedProfile = {
+                    name: document.getElementById('profileName').value.trim(),
+                    username: document.getElementById('profileTelegram').value.trim(),
+                    avatarUrl: finalAvatarUrl
+                };
 
-                    return `
-                        <div onclick="window.location.href='view.html?id=${post.id}'" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col cursor-pointer hover:shadow-md transition-all relative group">
-                            <div class="h-48 bg-gray-100 relative overflow-hidden">
-                                <img src="${imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="${post.title}">
-                                <button onclick="event.stopPropagation(); deletePost('${post.id}')" class="absolute top-2 right-2 bg-white/90 hover:bg-red-600 hover:text-white text-red-500 p-1.5 rounded-full shadow-md transition-all">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-                            <div class="p-4 flex flex-col flex-1 justify-between space-y-3">
-                                <div>
-                                    <div class="text-base font-extrabold text-gray-950">${post.price} €</div>
-                                    <div class="text-xs font-medium text-gray-700 line-clamp-1 mt-1">${post.title}</div>
-                                </div>
-                                <div class="flex items-center gap-1 text-gray-400 text-xs">
-                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i>
-                                    <span class="line-clamp-1">${cityName}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                lucide.createIcons();
+                localStorage.setItem('mne_user_profile', JSON.stringify(updatedProfile));
+                alert(dict[currentLang].savedAlert);
+                window.location.href = 'index.html';
+
             } catch (err) {
                 console.error(err);
-                container.innerHTML = `<div class="col-span-full text-center py-16 text-gray-400 text-sm">Ошибка загрузки</div>`;
+                alert('Ошибка сохранения: ' + (err.message || 'Неизвестная ошибка'));
+                btn.disabled = false;
+                btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> <span>${dict[currentLang].saveBtn}</span>`;
+                lucide.createIcons();
             }
         }
-
-        async function deletePost(id) {
-            if (!confirm('Удалить это объявление?')) return;
-            try {
-                const { error } = await supabaseClient.from('posts').delete().eq('id', id);
-                if (error) throw error;
-                fetchMyPosts();
-            } catch (err) {
-                alert('Ошибка: ' + err.message);
-            }
-        }
-
-        fetchMyPosts();
     </script>
 </body>
 </html>
