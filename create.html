@@ -13,9 +13,9 @@
 <body class="bg-gray-50 text-gray-800 pb-20">
 
     <script>
-        // Проверка авторизации: если нет email в localStorage, перенаправляем на главную
-        const currentAuthEmail = localStorage.getItem('mne_user_email');
-        if (!currentAuthEmail) {
+        // Проверка авторизации: если нет аккаунта в localStorage, перенаправляем на главную
+        const currentLoggedUser = localStorage.getItem('mne_logged_user');
+        if (!currentLoggedUser) {
             alert('Для создания объявления необходимо авторизоваться!');
             window.location.href = 'index.html';
         }
@@ -118,18 +118,8 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Используем подтвержденный email текущего пользователя как основной идентификатор токена
-        let userToken = localStorage.getItem('mne_user_email');
-        if (!userToken) {
-            userToken = localStorage.getItem('mne_user_token');
-        }
-        if (!userToken) {
-            userToken = 'user_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-            localStorage.setItem('mne_user_token', userToken);
-        } else {
-            // Синхронизируем оба ключа на всякий случай
-            localStorage.setItem('mne_user_token', userToken);
-        }
+        let loggedUserObj = JSON.parse(localStorage.getItem('mne_logged_user') || 'null');
+        let usernameToken = loggedUserObj ? loggedUserObj.username : ('user_' + Math.random().toString(36).substring(2, 15));
 
         const urlParams = new URLSearchParams(window.location.search);
         const editPostId = urlParams.get('edit');
@@ -442,27 +432,20 @@
                     telegram: document.getElementById('postTelegram').value.trim(),
                     contact: document.getElementById('postTelegram').value.trim(),
                     images: imageUrls,
-                    image_url: imageUrls[0]
+                    image_url: imageUrls[0],
+                    username: usernameToken,
+                    user_token: usernameToken
                 };
 
                 if (editPostId) {
                     const { error: updateError } = await supabaseClient.from('posts').update(postData).eq('id', editPostId);
                     if (updateError) throw updateError;
                 } else {
-                    // Используем текущий email авторизованного пользователя вместо рандомного токена
-                    const activeEmail = localStorage.getItem('mne_user_email');
-                    postData.user_token = activeEmail || userToken;
                     postData.telegram_id = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null;
                     postData.views = 0;
 
                     const { data, error: insertError } = await supabaseClient.from('posts').insert([postData]).select();
                     if (insertError) throw insertError;
-
-                    if (data && data[0]) {
-                        let myPosts = JSON.parse(localStorage.getItem('mne_my_posts') || '[]');
-                        myPosts.push(String(data[0].id));
-                        localStorage.setItem('mne_my_posts', JSON.stringify(myPosts));
-                    }
                 }
 
                 window.location.href = 'index.html';

@@ -349,7 +349,7 @@
                 accountTitle: "Аккаунт", authSub: "Авторизация", tabLogin: "Вход", tabRegister: "Регистрация",
                 usernameLabel: "Логин / Имя", passwordLabel: "Пароль", loginBtn: "Войти", registerBtn: "Зарегистрироваться",
                 yourAdsCount: "Ваших объявлений:", statusLabel: "Статус:", authorizedStatus: "Авторизован",
-                logoutBtn: "Выйти из аккаунт", closeBtn: "Закрыть", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
+                logoutBtn: "Выйти из аккаунта", closeBtn: "Закрыть", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
                 nameLabel: "Название", categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
                 descLabel: "Описание", tgLabel: "Telegram для связи", photosLabel: "Фотографии (до 5 шт.)", addPhotoBtn: "Добавить фото",
                 toastUserNotFound: "Аккаунт не найден. Сначала зарегистрируйтесь!",
@@ -531,7 +531,6 @@
             }
         }
 
-        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ПРОВЕРКИ АВТОРСТВА
         function isMyPost(post) {
             if (!currentUser) return false;
             const currentName = String(currentUser.username || '').toLowerCase().trim();
