@@ -578,9 +578,40 @@
 
         function openProfileModal() {
             const modal = document.getElementById('profileModal');
-            document.getElementById('profileUserSub').innerText = userEmail || userToken;
+            
+            // Читаем актуальный профиль из localStorage
+            const savedProfile = JSON.parse(localStorage.getItem('mne_user_profile') || '{}');
+            
+            // Получаем элементы интерфейса внутри модалки
+            const subTitle = document.getElementById('profileUserSub');
+            const avatarContainer = modal.querySelector('.w-9.h-9'); // Ищем блок иконки/аватара в шапке модалки
+            
+            // Устанавливаем имя и телеграм/email
+            const displayName = savedProfile.name || userEmail || 'Личный кабинет';
+            const displayHandle = savedProfile.username || userEmail || userToken;
+            
+            // Меняем заголовок на имя пользователя, если оно задано
+            const titleEl = modal.querySelector('h3[data-i18n="profileModalTitle"]');
+            if (savedProfile.name) {
+                titleEl.innerText = savedProfile.name;
+                subTitle.innerText = savedProfile.username || userToken;
+            } else {
+                titleEl.innerText = dict[currentLang].profileModalTitle;
+                subTitle.innerText = displayHandle;
+            }
+
+            // Рендерим аватарку в шапке модалки, если она есть
+            if (savedProfile.avatarUrl) {
+                avatarContainer.innerHTML = `<img src="${savedProfile.avatarUrl}" class="w-full h-full object-cover rounded-xl" alt="Avatar">`;
+                avatarContainer.classList.remove('bg-blue-50', 'text-[#009cf0]', 'flex', 'items-center', 'justify-center', 'font-bold');
+            } else {
+                avatarContainer.innerHTML = `👤`;
+                avatarContainer.classList.add('bg-blue-50', 'text-[#009cf0]', 'flex', 'items-center', 'justify-center', 'font-bold');
+            }
+
             document.getElementById('profileTokenShort').innerText = userToken.substring(0, 16) + '...';
             document.getElementById('profileAdsCount').innerText = posts.filter(p => isMyPost(p)).length;
+            
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         }
