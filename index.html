@@ -310,7 +310,6 @@
             tg.expand();
         }
 
-        // Авторизация по защищенному Telegram ID или уникальному токену устройства
         const tgUser = tg?.initDataUnsafe?.user;
         const tgUserId = tgUser?.id ? String(tgUser.id) : null;
         const tgUsername = tgUser?.username ? `@${tgUser.username}` : null;
@@ -496,12 +495,20 @@
             }
         }
 
-        // Ключевая проверка владельца: по реальному telegram_id или локальному токену устройства
+        // Улучшенная проверка владельца (синхронизация браузера и TMA)
         function isMyPost(post) {
             const postIdStr = String(post.id);
             if (myLocalPostIds.includes(postIdStr)) return true;
+            
+            // Если открыто в TMA и у поста совпадает telegram_id
             if (tgUserId && post.telegram_id && String(post.telegram_id) === tgUserId) return true;
+            
+            // Если сохранен тот же токен устройства
             if (post.user_token && post.user_token === userToken) return true;
+
+            // Дополнительная связка: если в браузере указан тот же Telegram username или контакт, что и в профиле TMA
+            if (tgUsername && post.telegram && post.telegram.toLowerCase().replace('@', '') === tgUsername.toLowerCase().replace('@', '')) return true;
+
             return false;
         }
 
@@ -979,7 +986,7 @@
                             </div>
                             <div class="space-y-1">
                                 <div class="flex items-center gap-1 text-[11px] text-gray-400">
-                                    <i data-lucide="map-pin" class="w-3 h-3"></i><span>${cityName}</span>
+                                    <i data-lucide="map-pin" class="w-3 h-3"><span>${cityName}</span></i>
                                 </div>
                             </div>
                         </div>
