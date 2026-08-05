@@ -198,7 +198,6 @@
             currentPost = postData;
             allPosts = allData || [];
 
-            // Увеличиваем счетчик просмотров на +1
             const newViews = (currentPost.views || 0) + 1;
             await supabaseClient.from('posts').update({ views: newViews }).eq('id', postId);
             currentPost.views = newViews;

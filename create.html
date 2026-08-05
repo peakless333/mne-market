@@ -239,7 +239,6 @@
             try {
                 let imageUrls = [];
 
-                // Загрузка в ваш бакет post-images
                 for (const file of selectedFiles) {
                     const fileExt = file.name.split('.').pop();
                     const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
