@@ -42,6 +42,68 @@
         </div>
     </div>
 
+    <!-- Модалка авторизации / регистрации -->
+    <div id="authModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 animate-fade-in">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🇲🇪</span>
+                    <h3 class="font-bold text-gray-950 text-base" data-i18n="authModalTitle">Вход / Регистрация</h3>
+                </div>
+                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-xl cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <p class="text-xs text-gray-500" data-i18n="authModalDesc">Введите ваш Email или Telegram, чтобы привязать профиль и управлять объявлениями на любых устройствах.</p>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="authIdentifierLabel">Email или @telegram</label>
+                    <input type="text" id="authInput" placeholder="user@example.com или @username" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#009cf0] focus:bg-white transition-all">
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeAuthModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="cancelBtn">Отмена</button>
+                <button onclick="submitAuth()" class="flex-1 bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm cursor-pointer" data-i18n="authSubmitBtn">Войти</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка личного кабинета -->
+    <div id="profileModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 animate-fade-in">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 bg-blue-50 text-[#009cf0] rounded-xl flex items-center justify-center font-bold">👤</div>
+                    <div>
+                        <h3 class="font-bold text-gray-950 text-sm" data-i18n="profileModalTitle">Личный кабинет</h3>
+                        <p id="profileUserSub" class="text-[11px] text-gray-400 truncate max-w-[180px]"></p>
+                    </div>
+                </div>
+                <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-xl cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-500" data-i18n="profileActiveAds">Ваших объявлений:</span>
+                        <span id="profileAdsCount" class="font-bold text-gray-900">0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-500" data-i18n="profileTokenLabel">Идентификатор:</span>
+                        <span id="profileTokenShort" class="font-mono text-[10px] text-gray-600 bg-gray-200/60 px-2 py-0.5 rounded"></span>
+                    </div>
+                </div>
+                <button onclick="openAuthModal(); closeProfileModal();" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer flex items-center justify-center gap-2">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> <span data-i18n="changeAccountBtn">Сменить аккаунт / Войти по другому</span>
+                </button>
+            </div>
+            <div class="pt-2">
+                <button onclick="closeProfileModal()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="closeBtn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Модалка редактирования -->
     <div id="editModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all overflow-y-auto">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 animate-fade-in my-auto max-h-[90vh] overflow-y-auto">
@@ -133,6 +195,9 @@
                 <button onclick="toggleFavoritesFilter()" id="favoritesHeaderBtn" class="relative flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer">
                     <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
                     <span id="favoritesCountBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
+                </button>
+                <button onclick="openProfileOrAuth()" id="profileHeaderBtn" class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer" title="Личный кабинет">
+                    <i data-lucide="shield" class="w-4 h-4"></i>
                 </button>
                 <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-1.5 sm:px-2 py-2 text-[11px] sm:text-xs font-semibold text-gray-700 outline-none cursor-pointer">
                     <option value="ru">RU</option>
@@ -298,6 +363,10 @@
                 modalEditTitle: "Редактировать объявление", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
                 myBadgeText: "Мое", noPhoto: "Без фото", nameLabel: "Название", categoryLabel: "Категория", cityLabel: "Город",
                 priceLabel: "Цена (€)", descLabel: "Описание", tgLabel: "Telegram для связи", photosLabel: "Фотографии", addPhotoBtn: "Добавить",
+                authModalTitle: "Вход / Регистрация", authModalDesc: "Введите ваш Email или Telegram, чтобы привязать профиль и управлять объявлениями на любых устройствах.",
+                authIdentifierLabel: "Email или @telegram", authSubmitBtn: "Продолжить", authSuccess: "Вы успешно вошли!",
+                profileModalTitle: "Личный кабинет", profileActiveAds: "Ваших объявлений:", profileTokenLabel: "Ваш ключ:",
+                changeAccountBtn: "Сменить аккаунт", closeBtn: "Закрыть",
                 foundCount: (n) => `Найдено: ${n}`,
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
@@ -315,6 +384,10 @@
                 modalEditTitle: "Edit listing", cancelBtn: "Cancel", deleteBtn: "Delete", saveBtn: "Save",
                 myBadgeText: "My", noPhoto: "No photo", nameLabel: "Title", categoryLabel: "Category", cityLabel: "City",
                 priceLabel: "Price (€)", descLabel: "Description", tgLabel: "Telegram username", photosLabel: "Photos", addPhotoBtn: "Add",
+                authModalTitle: "Sign in / Register", authModalDesc: "Enter your Email or Telegram to link your profile and manage listings across devices.",
+                authIdentifierLabel: "Email or @telegram", authSubmitBtn: "Continue", authSuccess: "Successfully signed in!",
+                profileModalTitle: "Account", profileActiveAds: "Your listings:", profileTokenLabel: "Your ID:",
+                changeAccountBtn: "Switch account", closeBtn: "Close",
                 foundCount: (n) => `Found: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
@@ -332,6 +405,10 @@
                 modalEditTitle: "Izmjena oglasa", cancelBtn: "Otkaži", deleteBtn: "Obriši", saveBtn: "Sačuvaj",
                 myBadgeText: "Moj", noPhoto: "Bez fotografije", nameLabel: "Naziv", categoryLabel: "Kategorija", cityLabel: "Grad",
                 priceLabel: "Cijena (€)", descLabel: "Opis", tgLabel: "Telegram za kontakt", photosLabel: "Fotografije", addPhotoBtn: "Dodaj",
+                authModalTitle: "Prijava / Registracija", authModalDesc: "Unesite Vaš Email ili Telegram da povežete profil i upravljate oglasima.",
+                authIdentifierLabel: "Email ili @telegram", authSubmitBtn: "Nastavi", authSuccess: "Uspješno ste prijavljeni!",
+                profileModalTitle: "Lični nalog", profileActiveAds: "Vaši oglasi:", profileTokenLabel: "Vaš ID:",
+                changeAccountBtn: "Promijeni nalog", closeBtn: "Zatvori",
                 foundCount: (n) => `Pronađeno: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
@@ -459,6 +536,56 @@
             return false;
         }
 
+        // Логика авторизации и профиля
+        function openAuthModal() {
+            const modal = document.getElementById('authModal');
+            document.getElementById('authInput').value = localStorage.getItem('mne_user_email') || '';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function submitAuth() {
+            const val = document.getElementById('authInput').value.trim();
+            if (!val) return;
+            localStorage.setItem('mne_user_email', val);
+            userToken = 'auth_' + val;
+            localStorage.setItem('mne_user_token', userToken);
+            closeAuthModal();
+            showToast(dict[currentLang].authSuccess);
+            updateBadges();
+            renderPosts();
+        }
+
+        function openProfileModal() {
+            const modal = document.getElementById('profileModal');
+            const userEmail = localStorage.getItem('mne_user_email') || userToken;
+            document.getElementById('profileUserSub').innerText = userEmail;
+            document.getElementById('profileTokenShort').innerText = userToken.substring(0, 16) + '...';
+            document.getElementById('profileAdsCount').innerText = posts.filter(p => isMyPost(p)).length;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeProfileModal() {
+            const modal = document.getElementById('profileModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function openProfileOrAuth() {
+            if (localStorage.getItem('mne_user_email')) {
+                openProfileModal();
+            } else {
+                openAuthModal();
+            }
+        }
+
         function toggleFavorite(e, id) {
             e.stopPropagation();
             const stringId = String(id);
@@ -536,7 +663,6 @@
             modal.classList.remove('flex');
         }
 
-        // Функции модалки редактирования
         function openEditModal(e, id) {
             e.stopPropagation();
             const post = posts.find(p => String(p.id) === String(id));
