@@ -204,7 +204,6 @@
 
             postImages = currentPost.images && currentPost.images.length > 0 ? currentPost.images : [];
             if (postImages.length === 0 && currentPost.image_url) postImages.push(currentPost.image_url);
-            if (postImages.length === 0) postImages.push(currentPost.image_url)';
 
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('postContent').classList.remove('hidden');
@@ -350,7 +349,7 @@
             document.getElementById('postTelegramBtn').href = `https://t.me/${tgClean}`;
 
             updateFavIcon();
-            document.getElementById('mainProductImage').src = postImages[0];
+            document.getElementById('mainProductImage').src = postImages[0] || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500';
 
             const thumbsContainer = document.getElementById('thumbnailsContainer');
             if (postImages.length > 1) {
