@@ -37,12 +37,15 @@
                     
                     <div id="imagePreviewsContainer" class="grid grid-cols-5 gap-2 mb-2 hidden"></div>
 
-                    <button type="button" onclick="document.getElementById('imageInput').click()" class="w-full border-2 border-dashed border-gray-200 hover:border-blue-500 bg-gray-50 hover:bg-blue-50/50 rounded-2xl p-6 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 group">
+                    <!-- Зона Drag-and-Drop -->
+                    <div id="dropZone" 
+                         onclick="document.getElementById('imageInput').click()" 
+                         class="w-full border-2 border-dashed border-gray-200 hover:border-blue-500 bg-gray-50 hover:bg-blue-50/50 rounded-2xl p-6 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 group">
                         <div class="bg-white p-3 rounded-full shadow-sm text-gray-400 group-hover:text-blue-600 transition-colors">
                             <i data-lucide="image-plus" class="w-6 h-6"></i>
                         </div>
-                        <span class="text-xs font-semibold text-gray-600 group-hover:text-blue-600" data-i18n="addPhotoBtn">Нажмите, чтобы добавить фото</span>
-                    </button>
+                        <span class="text-xs font-semibold text-gray-600 group-hover:text-blue-600" data-i18n="addPhotoBtn">Нажмите или перетащите фото сюда</span>
+                    </div>
                 </div>
 
                 <div>
@@ -119,7 +122,7 @@
         const dict = {
             ru: {
                 back: "Назад", titleNew: "Новое объявление", titleEdit: "Редактировать объявление", photosLabel: "Фотографии (до 5 шт.)",
-                addPhotoBtn: "Нажмите, чтобы добавить фото", nameLabel: "Название",
+                addPhotoBtn: "Нажмите или перетащите фото сюда", nameLabel: "Название",
                 categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
                 descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
                 cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_other: "Разное",
@@ -131,7 +134,7 @@
             },
             en: {
                 back: "Back", titleNew: "New Listing", titleEdit: "Edit Listing", photosLabel: "Photos (up to 5)",
-                addPhotoBtn: "Click to add photos", nameLabel: "Title",
+                addPhotoBtn: "Click or drag photos here", nameLabel: "Title",
                 categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
                 descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing", saveBtn: "Save changes",
                 cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_other: "Other",
@@ -143,7 +146,7 @@
             },
             cnr: {
                 back: "Nazad", titleNew: "Novi oglas", titleEdit: "Izmjena oglasa", photosLabel: "Fotografije (do 5)",
-                addPhotoBtn: "Kliknite da dodate fotografije", nameLabel: "Naziv",
+                addPhotoBtn: "Kliknite ili prevucite fotografije ovdje", nameLabel: "Naziv",
                 categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
                 descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
                 cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_other: "Razno",
@@ -223,16 +226,43 @@
             }
         }
 
+        // Настройка Drag-and-Drop
+        const dropZone = document.getElementById('dropZone');
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('border-blue-500', 'bg-blue-50/70');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('border-blue-500', 'bg-blue-50/70');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            processFiles(files);
+        }, false);
+
         function handleImageSelection(e) {
             const files = Array.from(e.target.files);
+            processFiles(files);
+            e.target.value = '';
+        }
+
+        function processFiles(files) {
             if (existingImages.length + selectedFiles.length + files.length > 5) {
                 alert(dict[currentLang].maxPhotos);
-                e.target.value = '';
                 return;
             }
             selectedFiles = selectedFiles.concat(files);
             renderPreviews();
-            e.target.value = '';
         }
 
         function removeExistingImage(index) {
