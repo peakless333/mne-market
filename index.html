@@ -239,7 +239,7 @@
                 addedToFav: "Добавлено в избранное ❤️", removedFromFav: "Удалено из избранного",
                 myPostsModeTitle: "Управление вашими объявлениями", myPostsModeDesc: "Здесь отображаются только созданные вами товары.", closeMode: "Закрыть",
                 modalDeleteTitle: "Удалить объявление?", modalDeleteDesc: "Это действие нельзя будет отменить. Объявление исчезнет навсегда.",
-                cancelBtn: "Отмена", deleteBtn: "Удалить", myBadgeText: "Мое",
+                cancelBtn: "Отмена", deleteBtn: "Удалить", myBadgeText: "Мое", noPhoto: "Без фото",
                 foundCount: (n) => `Найдено: ${n}`,
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
@@ -253,7 +253,7 @@
                 addedToFav: "Added to favorites ❤️", removedFromFav: "Removed from favorites",
                 myPostsModeTitle: "Manage your listings", myPostsModeDesc: "Only listings created by you are displayed here.", closeMode: "Close",
                 modalDeleteTitle: "Delete listing?", modalDeleteDesc: "This action cannot be undone.",
-                cancelBtn: "Cancel", deleteBtn: "Delete", myBadgeText: "My",
+                cancelBtn: "Cancel", deleteBtn: "Delete", myBadgeText: "My", noPhoto: "No photo",
                 foundCount: (n) => `Found: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
@@ -267,7 +267,7 @@
                 addedToFav: "Dodato u omiljene ❤️", removedFromFav: "Uklonjeno iz omiljenih",
                 myPostsModeTitle: "Upravljanje vašim oglasima", myPostsModeDesc: "Ovdje se prikazuju samo vaši oglasi.", closeMode: "Zatvori",
                 modalDeleteTitle: "Obrisati oglas?", modalDeleteDesc: "Ova akcija se ne može opozvati.",
-                cancelBtn: "Otkaži", deleteBtn: "Obriši", myBadgeText: "Moj",
+                cancelBtn: "Otkaži", deleteBtn: "Obriši", myBadgeText: "Moj", noPhoto: "Bez fotografije",
                 foundCount: (n) => `Pronađeno: ${n}`,
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             }
@@ -629,7 +629,7 @@
                            <div class="w-12 h-12 rounded-2xl bg-white/80 shadow-sm flex items-center justify-center text-[#009cf0] mb-1">
                                <i data-lucide="briefcase" class="w-6 h-6"></i>
                            </div>
-                           <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Без фото</span>
+                           <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">${dict[currentLang].noPhoto}</span>
                        </div>`;
                 
                 const isNew = post.created_at && (now - new Date(post.created_at) < 48 * 3600 * 1000);
