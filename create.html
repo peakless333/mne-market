@@ -41,7 +41,7 @@
             <form id="createForm" onsubmit="submitPost(event)" class="space-y-4">
                 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="photosLabel">Фотографии (до 5 шт.)</label>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="photosLabel">Фотографии (до 10 шт.)</label>
                     <input type="file" id="imageInput" accept="image/*" multiple class="hidden" onchange="handleImageSelection(event)">
                     
                     <div id="imagePreviewsContainer" class="grid grid-cols-5 gap-2 mb-2 hidden"></div>
@@ -129,36 +129,36 @@
 
         const dict = {
             ru: {
-                back: "Назад", titleNew: "Новое объявление", titleEdit: "Редактировать объявление", photosLabel: "Фотографии (до 5 шт.)",
+                back: "Назад", titleNew: "Новое объявление", titleEdit: "Редактировать объявление", photosLabel: "Фотографии (до 10 шт.)",
                 addPhotoBtn: "Нажмите или перетащите фото сюда", nameLabel: "Название",
                 categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
                 descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
                 cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_other: "Разное",
-                publishing: "Сохранение...", maxPhotos: "Максимально можно загрузить 5 фотографий",
+                publishing: "Сохранение...", maxPhotos: "Максимально можно загрузить 10 фотографий",
                 ph_title: "Например: iPhone 13 Pro 128GB",
                 ph_price: "0 (если бесплатно)",
                 ph_desc: "Опишите состояние, комплектацию и детали...",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
             },
             en: {
-                back: "Back", titleNew: "New Listing", titleEdit: "Edit Listing", photosLabel: "Photos (up to 5)",
+                back: "Back", titleNew: "New Listing", titleEdit: "Edit Listing", photosLabel: "Photos (up to 10)",
                 addPhotoBtn: "Click or drag photos here", nameLabel: "Title",
                 categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
                 descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing", saveBtn: "Save changes",
                 cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_other: "Other",
-                publishing: "Saving...", maxPhotos: "Maximum 5 photos allowed",
+                publishing: "Saving...", maxPhotos: "Maximum 10 photos allowed",
                 ph_title: "e.g. iPhone 13 Pro 128GB",
                 ph_price: "0 (if free)",
                 ph_desc: "Describe condition, package and details...",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
             },
             cnr: {
-                back: "Nazad", titleNew: "Novi oglas", titleEdit: "Izmjena oglasa", photosLabel: "Fotografije (do 5)",
+                back: "Nazad", titleNew: "Novi oglas", titleEdit: "Izmjena oglasa", photosLabel: "Fotografije (do 10)",
                 addPhotoBtn: "Kliknite ili prevucite fotografije ovdje", nameLabel: "Naziv",
                 categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
                 descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
                 cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_other: "Razno",
-                publishing: "Čuvanje...", maxPhotos: "Možete otpremiti najviše 5 fotografija",
+                publishing: "Čuvanje...", maxPhotos: "Možete otpremiti najviše 10 fotografija",
                 ph_title: "npr. iPhone 13 Pro 128GB",
                 ph_price: "0 (ako je besplatno)",
                 ph_desc: "Opišite stanje, opremu i detalje...",
@@ -346,7 +346,7 @@
         }
 
         function processFiles(files) {
-            if (existingImages.length + selectedFiles.length + files.length > 5) {
+            if (existingImages.length + selectedFiles.length + files.length > 10) {
                 alert(dict[currentLang].maxPhotos);
                 return;
             }
