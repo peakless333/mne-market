@@ -118,9 +118,16 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let userToken = localStorage.getItem('mne_user_token');
+        // Используем подтвержденный email текущего пользователя как основной идентификатор токена
+        let userToken = localStorage.getItem('mne_user_email');
+        if (!userToken) {
+            userToken = localStorage.getItem('mne_user_token');
+        }
         if (!userToken) {
             userToken = 'user_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('mne_user_token', userToken);
+        } else {
+            // Синхронизируем оба ключа на всякий случай
             localStorage.setItem('mne_user_token', userToken);
         }
 
@@ -442,7 +449,9 @@
                     const { error: updateError } = await supabaseClient.from('posts').update(postData).eq('id', editPostId);
                     if (updateError) throw updateError;
                 } else {
-                    postData.user_token = userToken;
+                    // Используем текущий email авторизованного пользователя вместо рандомного токена
+                    const activeEmail = localStorage.getItem('mne_user_email');
+                    postData.user_token = activeEmail || userToken;
                     postData.telegram_id = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null;
                     postData.views = 0;
 
