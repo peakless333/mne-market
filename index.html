@@ -17,12 +17,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        /* Градиент для подсказки скролла городов */
-        .scroll-fade-right {
-            mask-image: linear-gradient(to right, black 85%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
-        }
     </style>
 </head>
 <body class="bg-[#f5f6f8] text-gray-900 pb-28 selection:bg-[#009cf0] selection:text-white antialiased">
@@ -142,12 +136,12 @@
             <button onclick="toggleMyPostsFilter()" class="bg-white hover:bg-blue-50 text-blue-700 text-xs font-bold px-3.5 py-2 rounded-xl border border-blue-200 shadow-xs transition-all cursor-pointer" data-i18n="closeMode">Закрыть</button>
         </div>
 
-        <!-- Панель фильтров: Города (с прокруткой и подсказкой) и Доп. фильтры -->
+        <!-- Панель фильтров -->
         <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200/80 shadow-xs space-y-3">
             
-            <!-- Строка городов с градиентным подсказывающим краем и стрелочкой скролла -->
+            <!-- Строка городов с кликабельной кнопкой прокрутки вправо -->
             <div class="relative flex items-center">
-                <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none scroll-fade-right pr-6 w-full py-0.5" id="citiesContainer">
+                <div id="citiesContainer" onscroll="checkCityScroll()" class="flex items-center gap-1.5 overflow-x-auto scrollbar-none pr-10 w-full py-0.5 scroll-smooth">
                     <button onclick="setCity('all')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-900 text-white shadow-xs shrink-0" data-city="all" data-i18n="allCities">Все города</button>
                     <button onclick="setCity('budva')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="budva">Будва</button>
                     <button onclick="setCity('bar')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="bar">Бар</button>
@@ -156,10 +150,13 @@
                     <button onclick="setCity('kotor')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="kotor">Котор</button>
                     <button onclick="setCity('herceg_novi')" class="city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 shrink-0" data-city="herceg_novi">Херцег-Нови</button>
                 </div>
-                <!-- Индикатор вправо, показывающий что можно прокрутить -->
-                <div class="absolute right-0 pointer-events-none bg-gradient-to-l from-white via-white/80 to-transparent pl-6 pr-1 h-full flex items-center text-gray-400">
-                    <i data-lucide="chevron-right" class="w-4 h-4 animate-pulse"></i>
-                </div>
+                
+                <!-- Кликабельная кнопка прокрутки вправо -->
+                <button id="scrollRightBtn" onclick="scrollCitiesRight()" class="absolute right-0 bg-gradient-to-l from-white via-white to-white/60 pl-5 pr-1.5 h-full flex items-center text-gray-600 hover:text-gray-900 cursor-pointer transition-opacity">
+                    <div class="bg-gray-100 hover:bg-gray-200 shadow-sm rounded-full p-1.5 flex items-center justify-center">
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </div>
+                </button>
             </div>
 
             <!-- Нижняя строка панели фильтров: Бесплатно, Сброс, Сортировка -->
@@ -308,6 +305,32 @@
 
         let searchTimeout = null;
         let toastTimeout = null;
+
+        function scrollCitiesRight() {
+            const container = document.getElementById('citiesContainer');
+            container.scrollBy({ left: 160, behavior: 'smooth' });
+        }
+
+        function checkCityScroll() {
+            const container = document.getElementById('citiesContainer');
+            const btn = document.getElementById('scrollRightBtn');
+            if (!container || !btn) return;
+            
+            // Если доскроллили почти до конца, скрываем стрелочку
+            const isEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 10;
+            if (isEnd) {
+                btn.style.opacity = '0';
+                btn.style.pointerEvents = 'none';
+            } else {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Проверяем видимость стрелочки при загрузке
+        window.addEventListener('DOMContentLoaded', () => {
+            checkCityScroll();
+        });
 
         function showToast(text) {
             const toast = document.getElementById('toast');
