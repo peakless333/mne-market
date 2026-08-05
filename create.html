@@ -282,6 +282,26 @@
             }
         }, false);
 
+        window.addEventListener('paste', async (e) => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            const files = [];
+            
+            for (const item of items) {
+                if (item.type.indexOf('image') !== -1) {
+                    const blob = item.getAsFile();
+                    if (blob) {
+                        const fileName = `clipboard_${Date.now()}.${blob.type.split('/')[1] || 'jpg'}`;
+                        files.push(new File([blob], fileName, { type: blob.type }));
+                    }
+                }
+            }
+            
+            if (files.length > 0) {
+                e.preventDefault();
+                processFiles(files);
+            }
+        });
+
         function handleImageSelection(e) {
             const files = Array.from(e.target.files);
             processFiles(files);
@@ -405,7 +425,7 @@
                 console.error(err);
                 alert('Ошибка при сохранении: ' + (err.message || 'Неизвестная ошибка'));
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"></i> <span>${editPostId ? dict[currentLang].saveBtn : dict[currentLang].publishBtn}</span>`;
+                submitBtn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"><span>${editPostId ? dict[currentLang].saveBtn : dict[currentLang].publishBtn}</span>`;
                 lucide.createIcons();
             }
         }
