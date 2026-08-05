@@ -249,12 +249,28 @@
             
             if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                 const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-                processFiles(files);
-                return;
+                if (files.length > 0) {
+                    processFiles(files);
+                    return;
+                }
+            }
+
+            const items = e.dataTransfer.items;
+            if (items) {
+                for (const item of items) {
+                    if (item.kind === 'file' && item.type.startsWith('image/')) {
+                        const file = item.getAsFile();
+                        if (file) {
+                            processFiles([file]);
+                            return;
+                        }
+                    }
+                }
             }
 
             const htmlData = e.dataTransfer.getData('text/html');
             const uriData = e.dataTransfer.getData('text/uri-list');
+            const plainText = e.dataTransfer.getData('text/plain');
             
             let imageUrl = '';
             if (htmlData) {
@@ -262,8 +278,12 @@
                 if (match && match[1]) {
                     imageUrl = match[1];
                 }
-            } else if (uriData) {
+            }
+            if (!imageUrl && uriData) {
                 imageUrl = uriData;
+            }
+            if (!imageUrl && plainText && (plainText.startsWith('http://') || plainText.startsWith('https://'))) {
+                imageUrl = plainText;
             }
 
             if (imageUrl) {
@@ -276,8 +296,16 @@
                         processFiles([file]);
                     }
                 } catch (err) {
-                    console.error(err);
-                    alert("Не удалось загрузить эту картинку напрямую. Попробуйте сохранить её или выбрать через проводник.");
+                    try {
+                        const proxyResponse = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`);
+                        const proxyBlob = await proxyResponse.blob();
+                        const fileName = `tg_image_${Date.now()}.${proxyBlob.type.split('/')[1] || 'jpg'}`;
+                        const file = new File([proxyBlob], fileName, { type: proxyBlob.type || 'image/jpeg' });
+                        processFiles([file]);
+                    } catch (proxyErr) {
+                        console.error(proxyErr);
+                        alert("Не удалось загрузить эту картинку напрямую. Попробуйте сохранить её или выбрать через проводник.");
+                    }
                 }
             }
         }, false);
@@ -425,7 +453,7 @@
                 console.error(err);
                 alert('Ошибка при сохранении: ' + (err.message || 'Неизвестная ошибка'));
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"><span>${editPostId ? dict[currentLang].saveBtn : dict[currentLang].publishBtn}</span>`;
+                submitBtn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"></i> <span>${editPostId ? dict[currentLang].saveBtn : dict[currentLang].publishBtn}</span>`;
                 lucide.createIcons();
             }
         }
