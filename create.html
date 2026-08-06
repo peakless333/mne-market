@@ -302,6 +302,12 @@
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.mileage.label}</label>
                         <input type="number" id="attr_mileage" value="${savedValues.mileage || ''}" placeholder="150000" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
                 `;
             } else if (category === 'furniture') {
                 html += `
