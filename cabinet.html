@@ -41,10 +41,17 @@
         <!-- Блок профиля -->
         <div class="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-blue-50 text-[#009cf0] rounded-2xl flex items-center justify-center text-xl font-bold">👤</div>
+                <div class="w-14 h-14 bg-gradient-to-tr from-blue-500 to-[#009cf0] text-white rounded-2xl flex items-center justify-center text-xl font-black shadow-md shadow-blue-500/20" id="profileInitials">
+                    U
+                </div>
                 <div>
-                    <h1 id="cabinetUsername" class="text-base font-extrabold text-gray-950">Загрузка...</h1>
-                    <p id="profileSubtitle" class="text-xs text-gray-500 mt-0.5">Управление вашими объявлениями в Черногории</p>
+                    <div class="flex items-center gap-2">
+                        <h1 id="cabinetUsername" class="text-base font-extrabold text-gray-950">Загрузка...</h1>
+                        <button onclick="openEditNameModal()" class="text-gray-400 hover:text-[#009cf0] transition-colors p-1 cursor-pointer" title="Изменить имя для вида">
+                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                    <p id="profileSubtitle" class="text-xs text-gray-400 mt-0.5">Управление вашими объявлениями в Черногории</p>
                 </div>
             </div>
             <button onclick="logout()" id="logoutBtn" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer">
@@ -76,10 +83,22 @@
         </div>
     </main>
 
+    <!-- Модалка изменения красивого имени -->
+    <div id="editNameModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+            <h3 class="font-bold text-gray-950 text-base">Изменить имя профиля</h3>
+            <p class="text-xs text-gray-500">Это имя будет отображаться только в вашем личном кабинете для красоты.</p>
+            <input type="text" id="newDisplayNameInput" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all" placeholder="Введите имя...">
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeEditNameModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl text-xs transition-all cursor-pointer">Отмена</button>
+                <button onclick="saveDisplayName()" class="flex-1 bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-2.5 rounded-xl text-xs transition-all cursor-pointer">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
 
-        // Словарь переводов
         const translations = {
             ru: {
                 pageTitle: "Личный кабинет — MNE Market",
@@ -95,7 +114,8 @@
                 toastLoadError: "Ошибка загрузки объявлений",
                 confirmDelete: "Точно удалить это объявление?",
                 toastDeleted: "Объявление удалено",
-                toastDeleteError: "Не удалось удалить"
+                toastDeleteError: "Не удалось удалить",
+                toastNameUpdated: "Имя профиля обновлено"
             },
             en: {
                 pageTitle: "Dashboard — MNE Market",
@@ -111,7 +131,8 @@
                 toastLoadError: "Error loading listings",
                 confirmDelete: "Are you sure you want to delete this listing?",
                 toastDeleted: "Listing deleted",
-                toastDeleteError: "Failed to delete"
+                toastDeleteError: "Failed to delete",
+                toastNameUpdated: "Profile name updated"
             },
             me: {
                 pageTitle: "Korisnički profil — MNE Market",
@@ -127,7 +148,8 @@
                 toastLoadError: "Greška pri učitavanju oglasa",
                 confirmDelete: "Da li ste sigurni da želite da obrišete ovaj oglas?",
                 toastDeleted: "Oglas je obrisan",
-                toastDeleteError: "Brisanje nije uspjelo"
+                toastDeleteError: "Brisanje nije uspjelo",
+                toastNameUpdated: "Ime profila je ažurirano"
             }
         };
 
@@ -137,7 +159,7 @@
             currentLang = lang;
             localStorage.setItem('mne_lang', lang);
             updateLocalization();
-            fetchUserPosts(); // Перерисовываем объявления под новый язык
+            fetchUserPosts();
         }
 
         function updateLocalization() {
@@ -151,7 +173,6 @@
             document.getElementById('emptyDesc').innerText = t.emptyDesc;
             document.getElementById('emptyBtn').innerText = t.emptyBtn;
 
-            // Подсветка кнопок языка
             ['ru', 'en', 'me'].forEach(l => {
                 const btn = document.getElementById(`lang${l.charAt(0).toUpperCase() + l.slice(1)}`);
                 if (l === currentLang) {
@@ -170,7 +191,37 @@
         if (!currentUser) {
             window.location.href = 'index.html'; 
         } else {
-            document.getElementById('cabinetUsername').innerText = currentUser.username;
+            updateProfileUI();
+        }
+
+        function updateProfileUI() {
+            const displayName = localStorage.getItem('mne_display_name') || currentUser.username;
+            document.getElementById('cabinetUsername').innerText = displayName;
+            document.getElementById('profileInitials').innerText = displayName.charAt(0).toUpperCase();
+        }
+
+        function openEditNameModal() {
+            const currentName = localStorage.getItem('mne_display_name') || currentUser.username;
+            document.getElementById('newDisplayNameInput').value = currentName;
+            const modal = document.getElementById('editNameModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEditNameModal() {
+            const modal = document.getElementById('editNameModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveDisplayName() {
+            const newName = document.getElementById('newDisplayNameInput').value.trim();
+            if (newName) {
+                localStorage.setItem('mne_display_name', newName);
+                updateProfileUI();
+                showToast(translations[currentLang].toastNameUpdated);
+            }
+            closeEditNameModal();
         }
 
         function showToast(text) {
@@ -182,6 +233,7 @@
 
         function logout() {
             localStorage.removeItem('mne_logged_user');
+            localStorage.removeItem('mne_display_name');
             window.location.href = 'index.html';
         }
 
@@ -270,7 +322,6 @@
             }
         }
 
-        // Инициализация языка и загрузка при старте
         updateLocalization();
         fetchUserPosts();
     </script>
