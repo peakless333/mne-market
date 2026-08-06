@@ -193,9 +193,6 @@
                     <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i>
                     <span id="favoritesCountBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold hidden shadow-sm animate-fade-in">0</span>
                 </button>
-                <button onclick="openProfileModal()" id="profileHeaderBtn" class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-all cursor-pointer" title="Аккаунт">
-                    <i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i>
-                </button>
                 <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-1.5 sm:px-2 py-2 text-[11px] sm:text-xs font-semibold text-gray-700 outline-none cursor-pointer">
                     <option value="ru">RU</option>
                     <option value="en">EN</option>
@@ -455,7 +452,7 @@
         let posts = [];
         let selectedCity = 'all';
         let selectedCategory = 'all';
-        let categoryFiltersState = {}; // Хранение выбранных подфильтров категории
+        let categoryFiltersState = {};
         let searchQuery = '';
         let showOnlyFavorites = false;
         let showOnlyMyPosts = false;
@@ -864,7 +861,6 @@
             renderPosts();
         }
 
-        // Отрисовка интерактивных подфильтров под плитками категорий
         function renderDynamicCategoryFilters() {
             const container = document.getElementById('dynamicCategoryFilters');
             const a = dict[currentLang].attrs;
@@ -1026,7 +1022,6 @@
                 if (selectedCity !== 'all' && post.city !== selectedCity) return false;
                 if (selectedCategory !== 'all' && post.category !== selectedCategory) return false;
                 
-                // Фильтрация по дополнительным параметрам (attributes JSONB)
                 if (selectedCategory !== 'all') {
                     const postAttrs = post.attributes || {};
                     for (const [key, val] of Object.entries(categoryFiltersState)) {
