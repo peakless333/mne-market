@@ -141,7 +141,7 @@
                 attrs: {
                     condition: { label: "Состояние", opts: { new: "Новое", used: "Б/У" } },
                     size: { label: "Размер", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Другой" } },
-                    material: { label: "Материал", opts: { wood: "Дерево", metal: "Металл", glass: "Стекло", fabric: "Ткань", other: "Другой" } },
+                    furniture_type: { label: "Вид мебели", opts: { sofa: "Диваны и кресла", table: "Столы и стулья", bed: "Кровати и матрасы", wardrobe: "Шкафы и комоды", office: "Офисная мебель", other: "Другое" } },
                     brand: { label: "Бренд / Производитель" },
                     year: { label: "Год выпуска" },
                     mileage: { label: "Пробег (км)" }
@@ -161,7 +161,7 @@
                 attrs: {
                     condition: { label: "Condition", opts: { new: "New", used: "Used" } },
                     size: { label: "Size", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Other" } },
-                    material: { label: "Material", opts: { wood: "Wood", metal: "Metal", glass: "Glass", fabric: "Fabric", other: "Other" } },
+                    furniture_type: { label: "Furniture Type", opts: { sofa: "Sofas & Armchairs", table: "Tables & Chairs", bed: "Beds & Mattresses", wardrobe: "Wardrobes & Dressers", office: "Office Furniture", other: "Other" } },
                     brand: { label: "Brand / Manufacturer" },
                     year: { label: "Year" },
                     mileage: { label: "Mileage (km)" }
@@ -181,7 +181,7 @@
                 attrs: {
                     condition: { label: "Stanje", opts: { new: "Novo", used: "Korišćeno" } },
                     size: { label: "Veličina", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Ostalo" } },
-                    material: { label: "Materijal", opts: { wood: "Drvo", metal: "Metal", glass: "Staklo", fabric: "Tkanina", other: "Ostalo" } },
+                    furniture_type: { label: "Vrsta namještaja", opts: { sofa: "Sofe i fotelje", table: "Stolovi i stolice", bed: "Kreveti i dušeci", wardrobe: "Ormari i komode", office: "Kancelarijski namještaj", other: "Ostalo" } },
                     brand: { label: "Marka / Proizvođač" },
                     year: { label: "Godina proizvodnje" },
                     mileage: { label: "Kilometraža (km)" }
@@ -251,9 +251,9 @@
             } else if (category === 'furniture') {
                 html += `
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.material.label}</label>
-                        <select id="attr_material" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
-                            ${Object.keys(a.material.opts).map(k => `<option value="${k}" ${savedValues.material === k ? 'selected' : ''}>${a.material.opts[k]}</option>`).join('')}
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.furniture_type.label}</label>
+                        <select id="attr_furniture_type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.furniture_type.opts).map(k => `<option value="${k}" ${savedValues.furniture_type === k ? 'selected' : ''}>${a.furniture_type.opts[k]}</option>`).join('')}
                         </select>
                     </div>
                     <div>
@@ -310,14 +310,14 @@
             const attrs = {};
             const sizeEl = document.getElementById('attr_size');
             const condEl = document.getElementById('attr_condition');
-            const matEl = document.getElementById('attr_material');
+            const furnEl = document.getElementById('attr_furniture_type');
             const brandEl = document.getElementById('attr_brand');
             const yearEl = document.getElementById('attr_year');
             const milEl = document.getElementById('attr_mileage');
 
             if (sizeEl) attrs.size = sizeEl.value;
             if (condEl) attrs.condition = condEl.value;
-            if (matEl) attrs.material = matEl.value;
+            if (furnEl) attrs.furniture_type = furnEl.value;
             if (brandEl) attrs.brand = brandEl.value;
             if (yearEl) attrs.year = yearEl.value;
             if (milEl) attrs.mileage = milEl.value;
