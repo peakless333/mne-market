@@ -201,7 +201,6 @@
                     <option value="en">EN</option>
                     <option value="cnr">CNR</option>
                 </select>
-                <!-- Кнопка размещения в шапке (в веб-версии на ПК видна справа от смены языка, в Telegram скрывается автоматически) -->
                 <button id="headerPostBtn" onclick="handlePostAdClick()" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0 cursor-pointer">
                     <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> <span data-i18n="postAd">Разместить</span>
                 </button>
@@ -209,38 +208,41 @@
         </div>
     </header>
 
-    <!-- Плавающая кнопка «Плюс» для Telegram Mini App (появляется только в TMA) -->
+    <!-- Плавающая кнопка «Плюс» для Telegram Mini App -->
     <button id="tmaFloatingBtn" onclick="handlePostAdClick()" class="fixed right-4 bottom-6 z-40 bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all cursor-pointer hidden">
         <i data-lucide="plus" class="w-7 h-7"></i>
     </button>
 
     <main class="max-w-6xl mx-auto px-4 pt-6 space-y-5">
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-            <div onclick="setCategory(event, 'auto')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
-                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_auto"></span>
-                <div class="self-end text-2xl group-hover:scale-110 transition-transform">🚗</div>
-            </div>
-            <div onclick="setCategory(event, 'realestate')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
-                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_realestate"></span>
-                <div class="self-end text-2xl group-hover:scale-110 transition-transform">🏢</div>
-            </div>
             <div onclick="setCategory(event, 'furniture')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
-                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_furniture"></span>
+                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_furniture">Мебель</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">🛋️</div>
             </div>
             <div onclick="setCategory(event, 'tech')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
-                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_tech"></span>
+                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_tech">Техника</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">📱</div>
             </div>
+            <div onclick="setCategory(event, 'auto')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_auto">Авто</span>
+                <div class="self-end text-2xl group-hover:scale-110 transition-transform">🚗</div>
+            </div>
             <div onclick="setCategory(event, 'clothes')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
-                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_clothes"></span>
+                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_clothes">Одежда</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">👕</div>
             </div>
+            <div onclick="setCategory(event, 'realestate')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_realestate">Недвижимость</span>
+                <div class="self-end text-2xl group-hover:scale-110 transition-transform">🏢</div>
+            </div>
             <div onclick="setCategory(event, 'other')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
-                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_other"></span>
+                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_other">Разное</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">📦</div>
             </div>
         </div>
+
+        <!-- Контейнер для динамических фильтров выбранной категории -->
+        <div id="dynamicCategoryFilters" class="hidden bg-white rounded-2xl p-4 border border-blue-100 shadow-sm animate-fade-in space-y-3"></div>
 
         <div id="myPostsBanner" class="hidden bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/70 rounded-2xl p-4 items-center justify-between text-blue-950 shadow-sm animate-fade-in">
             <div class="flex items-center gap-3">
@@ -333,10 +335,8 @@
     <script>
         lucide.createIcons();
 
-        // Проверяем, открыт ли сайт внутри Telegram WebApp
         const isInTelegram = Boolean(window.Telegram?.WebApp?.initData || window.Telegram?.WebApp?.version);
         if (isInTelegram) {
-            // Если в Телеграме, скрываем кнопку из хедера и показываем плавающую кнопку
             document.addEventListener('DOMContentLoaded', () => {
                 const headerBtn = document.getElementById('headerPostBtn');
                 const tmaFloatBtn = document.getElementById('tmaFloatingBtn');
@@ -356,7 +356,7 @@
             ru: {
                 postAd: "Разместить", searchBtn: "Найти", searchPh: "Поиск товаров...", allCities: "Все города",
                 recommendations: "Рекомендации для вас",
-                cat_auto: "Авто", cat_realestate: "Недвижимость", cat_furniture: "Мебель", cat_tech: "Электроника", cat_clothes: "Одежда", cat_other: "Разное",
+                cat_auto: "Авто", cat_realestate: "Недвижимость", cat_furniture: "Мебель", cat_tech: "Техника", cat_clothes: "Одежда", cat_other: "Разное",
                 sort_newest: "Сначала новые", sort_cheap: "Сначала дешевле", sort_expensive: "Сначала дороже",
                 resetFilters: "Сбросить", freeOnly: "Бесплатно", emptyTitle: "Ничего не найдено", emptyDesc: "Попробуйте изменить параметры поиска или сбросить фильтры.",
                 free: "Бесплатно", newBadge: "NEW", deletePost: "Удалить", editPost: "Редактировать", confirmDelete: "Объявление успешно удалено",
@@ -376,8 +376,14 @@
                 toastUserExists: "Такой логин уже занят!",
                 toastRegSuccess: "Успешная регистрация!",
                 toastLoginSuccess: "Успешный вход!",
+                allAttr: "Все",
                 foundCount: (n) => `Найдено: ${n}`,
-                cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
+                cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
+                attrs: {
+                    condition: { label: "Состояние", opts: { all: "Любое", new: "Новое", used: "Б/У" } },
+                    size: { label: "Размер", opts: { all: "Все", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Другой" } },
+                    material: { label: "Материал", opts: { all: "Все", wood: "Дерево", metal: "Металл", glass: "Стекло", fabric: "Ткань", other: "Другой" } }
+                }
             },
             en: {
                 postAd: "Post", searchBtn: "Search", searchPh: "Search items...", allCities: "All cities",
@@ -402,8 +408,14 @@
                 toastUserExists: "Username is already taken!",
                 toastRegSuccess: "Successful registration!",
                 toastLoginSuccess: "Successful login!",
+                allAttr: "All",
                 foundCount: (n) => `Found: ${n}`,
-                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
+                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                attrs: {
+                    condition: { label: "Condition", opts: { all: "Any", new: "New", used: "Used" } },
+                    size: { label: "Size", opts: { all: "All", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Other" } },
+                    material: { label: "Material", opts: { all: "All", wood: "Wood", metal: "Metal", glass: "Glass", fabric: "Fabric", other: "Other" } }
+                }
             },
             cnr: {
                 postAd: "Objavi", searchBtn: "Traži", searchPh: "Pretraga artikala...", allCities: "Svi gradovi",
@@ -428,8 +440,14 @@
                 toastUserExists: "Korisničko ime je zauzeto!",
                 toastRegSuccess: "Uspješna registracija!",
                 toastLoginSuccess: "Uspješna prijava!",
+                allAttr: "Sve",
                 foundCount: (n) => `Pronađeno: ${n}`,
-                cities: { budva: "Budva", bar: "Бар", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
+                cities: { budva: "Budva", bar: "Бар", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                attrs: {
+                    condition: { label: "Stanje", opts: { all: "Bilo koje", new: "Novo", used: "Korišćeno" } },
+                    size: { label: "Veličina", opts: { all: "Sve", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Ostalo" } },
+                    material: { label: "Materijal", opts: { all: "Svi", wood: "Drvo", metal: "Metal", glass: "Staklo", fabric: "Tkanina", other: "Ostalo" } }
+                }
             }
         };
 
@@ -437,6 +455,7 @@
         let posts = [];
         let selectedCity = 'all';
         let selectedCategory = 'all';
+        let categoryFiltersState = {}; // Хранение выбранных подфильтров категории
         let searchQuery = '';
         let showOnlyFavorites = false;
         let showOnlyMyPosts = false;
@@ -525,6 +544,7 @@
                 submitBtn.innerText = (authMode === 'login') ? dict[lang].loginBtn : dict[lang].registerBtn;
             }
 
+            renderDynamicCategoryFilters();
             renderPosts();
         }
 
@@ -648,9 +668,7 @@
                         .from('accounts')
                         .insert([{ username, password }]);
 
-                    if (regError) {
-                        throw regError;
-                    }
+                    if (regError) throw regError;
 
                     currentUser = { username };
                     localStorage.setItem('mne_logged_user', JSON.stringify(currentUser));
@@ -661,9 +679,7 @@
                         .select('*')
                         .eq('username', username);
 
-                    if (loginError) {
-                        throw loginError;
-                    }
+                    if (loginError) throw loginError;
 
                     if (!found || found.length === 0) {
                         showToast(dict[currentLang].toastUserNotFound);
@@ -782,132 +798,7 @@
 
         function openEditModal(e, id) {
             e.stopPropagation();
-            const post = posts.find(p => String(p.id) === String(id));
-            if (!post) return;
-
-            document.getElementById('editPostId').value = post.id;
-            document.getElementById('editTitle').value = post.title || '';
-            document.getElementById('editCategory').value = post.category || 'other';
-            document.getElementById('editCity').value = post.city || 'budva';
-            document.getElementById('editPrice').value = post.price || 0;
-            document.getElementById('editDesc').value = post.description || '';
-            document.getElementById('editTelegram').value = post.telegram || post.contact || '';
-            
-            existingEditImages = post.images && Array.isArray(post.images) ? [...post.images] : (post.image_url ? [post.image_url] : []);
-            editImages = [];
-            renderEditPreviews();
-
-            const modal = document.getElementById('editModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeEditModal() {
-            const modal = document.getElementById('editModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function handleEditImageSelection(e) {
-            const files = Array.from(e.target.files);
-            if (existingEditImages.length + editImages.length + files.length > 5) {
-                alert('Максимум 5 фотографий');
-                e.target.value = '';
-                return;
-            }
-            editImages = editImages.concat(files);
-            renderEditPreviews();
-            e.target.value = '';
-        }
-
-        function removeExistingEditImage(index) {
-            existingEditImages.splice(index, 1);
-            renderEditPreviews();
-        }
-
-        function removeNewEditImage(index) {
-            editImages.splice(index, 1);
-            renderEditPreviews();
-        }
-
-        function renderEditPreviews() {
-            const container = document.getElementById('editImagePreviewsContainer');
-            let html = '';
-
-            existingEditImages.forEach((url, idx) => {
-                html += `
-                    <div class="relative h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-100">
-                        <img src="${url}" class="w-full h-full object-cover">
-                        <button type="button" onclick="removeExistingEditImage(${idx})" class="absolute top-1 right-1 bg-black/60 hover:bg-rose-600 text-white p-1 rounded-full transition-all cursor-pointer">
-                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-                `;
-            });
-
-            editImages.forEach((file, idx) => {
-                const url = URL.createObjectURL(file);
-                html += `
-                    <div class="relative h-20 rounded-xl overflow-hidden border border-blue-200 bg-blue-50">
-                        <img src="${url}" class="w-full h-full object-cover">
-                        <button type="button" onclick="removeNewEditImage(${idx})" class="absolute top-1 right-1 bg-black/60 hover:bg-rose-600 text-white p-1 rounded-full transition-all cursor-pointer">
-                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-            lucide.createIcons();
-        }
-
-        async function submitEditPost(event) {
-            event.preventDefault();
-            const id = document.getElementById('editPostId').value;
-            const submitBtn = document.getElementById('submitEditBtn');
-            submitBtn.disabled = true;
-
-            try {
-                let imageUrls = [...existingEditImages];
-
-                for (const file of editImages) {
-                    const fileExt = file.name.split('.').pop();
-                    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
-                    const { error: uploadError } = await supabaseClient.storage.from('post-images').upload(fileName, file);
-                    if (uploadError) throw uploadError;
-
-                    const { data: publicUrlData } = supabaseClient.storage.from('post-images').getPublicUrl(fileName);
-                    imageUrls.push(publicUrlData.publicUrl);
-                }
-
-                if (imageUrls.length === 0) {
-                    imageUrls.push('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
-                }
-
-                const updatedData = {
-                    title: document.getElementById('editTitle').value.trim(),
-                    category: document.getElementById('editCategory').value,
-                    city: document.getElementById('editCity').value,
-                    price: Number(document.getElementById('editPrice').value || 0),
-                    description: document.getElementById('editDesc').value.trim(),
-                    telegram: document.getElementById('editTelegram').value.trim(),
-                    contact: document.getElementById('editTelegram').value.trim(),
-                    images: imageUrls,
-                    image_url: imageUrls[0]
-                };
-
-                const { error } = await supabaseClient.from('posts').update(updatedData).eq('id', id);
-                if (error) throw error;
-
-                closeEditModal();
-                showToast(dict[currentLang].confirmEdit);
-                await fetchPosts();
-            } catch (err) {
-                console.error(err);
-                showToast('Ошибка сохранения');
-            } finally {
-                submitBtn.disabled = false;
-            }
+            window.location.href = `create.html?edit=${id}`;
         }
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
@@ -945,8 +836,10 @@
         function setCategory(e, cat) {
             if (selectedCategory === cat) {
                 selectedCategory = 'all';
+                categoryFiltersState = {};
             } else {
                 selectedCategory = cat;
+                categoryFiltersState = {};
             }
 
             document.querySelectorAll('.category-tile').forEach(tile => {
@@ -957,6 +850,66 @@
                 e.currentTarget.classList.add('ring-2', 'ring-[#009cf0]', 'bg-blue-50/50');
             }
 
+            renderDynamicCategoryFilters();
+            checkResetButtonVisibility();
+            renderPosts();
+        }
+
+        // Отрисовка интерактивных подфильтров под плитками категорий
+        function renderDynamicCategoryFilters() {
+            const container = document.getElementById('dynamicCategoryFilters');
+            const a = dict[currentLang].attrs;
+
+            if (selectedCategory === 'all') {
+                container.classList.add('hidden');
+                container.innerHTML = '';
+                return;
+            }
+
+            container.classList.remove('hidden');
+            let html = '<div class="flex flex-wrap items-center gap-3 text-xs">';
+
+            if (selectedCategory === 'clothes') {
+                html += renderSelectFilter('size', a.size.label, a.size.opts);
+                html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
+            } else if (selectedCategory === 'tech') {
+                html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
+            } else if (selectedCategory === 'furniture') {
+                html += renderSelectFilter('material', a.material.label, a.material.opts);
+                html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
+            } else if (selectedCategory === 'auto') {
+                html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
+            } else {
+                html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderSelectFilter(key, label, opts) {
+            const currentVal = categoryFiltersState[key] || 'all';
+            let optionsHtml = '';
+            for (const [val, name] of Object.entries(opts)) {
+                optionsHtml += `<option value="${val}" ${currentVal === val ? 'selected' : ''}>${name}</option>`;
+            }
+
+            return `
+                <div class="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5">
+                    <span class="font-bold text-gray-500 uppercase text-[10px]">${label}:</span>
+                    <select onchange="handleAttrFilterChange('${key}', this.value)" class="bg-transparent font-semibold text-gray-800 outline-none cursor-pointer">
+                        ${optionsHtml}
+                    </select>
+                </div>
+            `;
+        }
+
+        function handleAttrFilterChange(key, value) {
+            if (value === 'all') {
+                delete categoryFiltersState[key];
+            } else {
+                categoryFiltersState[key] = value;
+            }
             checkResetButtonVisibility();
             renderPosts();
         }
@@ -994,7 +947,8 @@
 
         function checkResetButtonVisibility() {
             const resetBtn = document.getElementById('resetFiltersBtn');
-            if (selectedCity !== 'all' || selectedCategory !== 'all' || searchQuery !== '' || showOnlyFavorites || showOnlyMyPosts || showOnlyFree) {
+            const hasActiveAttrFilters = Object.keys(categoryFiltersState).length > 0;
+            if (selectedCity !== 'all' || selectedCategory !== 'all' || hasActiveAttrFilters || searchQuery !== '' || showOnlyFavorites || showOnlyMyPosts || showOnlyFree) {
                 resetBtn.classList.remove('hidden');
                 resetBtn.classList.add('flex');
             } else {
@@ -1006,6 +960,7 @@
         function resetAllFilters() {
             selectedCity = 'all';
             selectedCategory = 'all';
+            categoryFiltersState = {};
             searchQuery = '';
             showOnlyFavorites = false;
             showOnlyMyPosts = false;
@@ -1022,6 +977,7 @@
                 tile.classList.remove('ring-2', 'ring-[#009cf0]', 'bg-blue-50/50');
             });
 
+            renderDynamicCategoryFilters();
             setCity('all');
             checkResetButtonVisibility();
             renderPosts();
@@ -1060,6 +1016,15 @@
                 const postIdStr = String(post.id);
                 if (selectedCity !== 'all' && post.city !== selectedCity) return false;
                 if (selectedCategory !== 'all' && post.category !== selectedCategory) return false;
+                
+                // Фильтрация по дополнительным параметрам (attributes JSONB)
+                if (selectedCategory !== 'all') {
+                    const postAttrs = post.attributes || {};
+                    for (const [key, val] of Object.entries(categoryFiltersState)) {
+                        if (postAttrs[key] !== val) return false;
+                    }
+                }
+
                 if (showOnlyFavorites && !favorites.includes(postIdStr)) return false;
                 if (showOnlyMyPosts && !isMyPost(post)) return false;
                 if (showOnlyFree && Number(post.price || 0) > 0) return false;
