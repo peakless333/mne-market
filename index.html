@@ -310,7 +310,7 @@
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 attrs: {
                     condition: { label: "Состояние", opts: { all: "Любое", new: "Новое", used: "Б/У" } },
-                    clothing_type: { label: "Тип одежды", opts: { all: "Все типы", top: "Верх", bottom: "Низ", shoes: "Обувь" } },
+                    clothes_type: { label: "Тип одежды", opts: { all: "Все типы", top: "Верх", bottom: "Низ", shoes: "Обувь" } },
                     size: { label: "Размер", opts: { all: "Все", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", "28": "28", "29": "29", "30": "30", "31": "31", "32": "32", "33": "33", "34": "34", "36": "36", "38": "38 EU", "39": "39 EU", "40": "40 EU", "41": "41 EU", "42": "42 EU", "43": "43 EU", "44": "44 EU", "45": "45 EU", "46": "46 EU" } },
                     furniture_type: { label: "Вид мебели", opts: { all: "Все виды", sofas: "Диваны и кресла", tables: "Столы и стулья", beds: "Кровати и матрасы", wardrobes: "Шкафы и комоды", office: "Офисная мебель", other: "Другое" } }
                 }
@@ -344,7 +344,7 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Condition", opts: { all: "Any", new: "New", used: "Used" } },
-                    clothing_type: { label: "Type", opts: { all: "All types", top: "Top", bottom: "Bottom", shoes: "Shoes" } },
+                    clothes_type: { label: "Type", opts: { all: "All types", top: "Top", bottom: "Bottom", shoes: "Shoes" } },
                     size: { label: "Size", opts: { all: "All", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", "28": "28", "29": "29", "30": "30", "31": "31", "32": "32", "33": "33", "34": "34", "36": "36", "38": "38 EU", "39": "39 EU", "40": "40 EU", "41": "41 EU", "42": "42 EU", "43": "43 EU", "44": "44 EU", "45": "45 EU", "46": "46 EU" } },
                     furniture_type: { label: "Type", opts: { all: "All types", sofas: "Sofas & armchairs", tables: "Tables & chairs", beds: "Beds & mattresses", wardrobes: "Wardrobes & dressers", office: "Office furniture", other: "Other" } }
                 }
@@ -378,7 +378,7 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Stanje", opts: { all: "Bilo koje", new: "Novo", used: "Korišćeno" } },
-                    clothing_type: { label: "Tip odjeće", opts: { all: "Svi tipovi", top: "Gornji dio", bottom: "Donji dio", shoes: "Obuća" } },
+                    clothes_type: { label: "Tip odjeće", opts: { all: "Svi tipovi", top: "Gornji dio", bottom: "Donji dio", shoes: "Obuća" } },
                     size: { label: "Veličina", opts: { all: "Sve", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", "28": "28", "29": "29", "30": "30", "31": "31", "32": "32", "33": "33", "34": "34", "36": "36", "38": "38 EU", "39": "39 EU", "40": "40 EU", "41": "41 EU", "42": "42 EU", "43": "43 EU", "44": "44 EU", "45": "45 EU", "46": "46 EU" } },
                     furniture_type: { label: "Vrsta", opts: { all: "Sve vrste", sofas: "Sofas & armchairs", tables: "Sto i stolice", beds: "Kreveti i dušeci", wardrobes: "Ormari i komode", office: "Kancelarijski namještaj", other: "Ostalo" } }
                 }
@@ -812,7 +812,7 @@
 
             if (selectedCategory === 'clothes') {
                 html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
-                html += renderSelectFilter('clothing_type', a.clothing_type.label, a.clothing_type.opts);
+                html += renderSelectFilter('clothes_type', a.clothes_type.label, a.clothes_type.opts);
                 html += renderSelectFilter('size', a.size.label, a.size.opts);
             } else if (selectedCategory === 'tech') {
                 html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
