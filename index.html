@@ -27,7 +27,7 @@
     </div>
 
     <!-- Модалка удаления -->
-    <div id="deleteModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
+    <div id="deleteModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-all">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 animate-fade-in">
             <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto">
                 <i data-lucide="trash-2" class="w-6 h-6"></i>
@@ -44,7 +44,7 @@
     </div>
 
     <!-- Модалка авторизации / входа / личного кабинета -->
-    <div id="profileModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden items-center justify-center p-4 transition-all">
+    <div id="profileModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-all">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 animate-fade-in">
             <div class="flex items-center justify-between pb-2 border-b border-gray-100">
                 <div class="flex items-center gap-2">
@@ -61,7 +61,7 @@
 
             <div id="authSection" class="space-y-3">
                 <div class="flex bg-gray-100 p-1 rounded-xl">
-                    <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs" data-i18n="tabLogin">Вход</button>
+                    <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-sm" data-i18n="tabLogin">Вход</button>
                     <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500" data-i18n="tabRegister">Регистрация</button>
                 </div>
                 <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3">
@@ -536,11 +536,11 @@
             const submitBtn = document.getElementById('authSubmitBtn');
 
             if (tab === 'login') {
-                tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs";
+                tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-sm";
                 tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500";
                 submitBtn.innerText = dict[currentLang].loginBtn;
             } else {
-                tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-xs";
+                tabRegister.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all bg-white text-gray-900 shadow-sm";
                 tabLogin.className = "flex-1 py-2 text-xs font-bold rounded-lg transition-all text-gray-500";
                 submitBtn.innerText = dict[currentLang].registerBtn;
             }
