@@ -47,9 +47,19 @@
                         <i id="favIcon" data-lucide="heart" class="w-5 h-5"></i>
                     </button>
 
-                    <div id="mainImageWrapper" onclick="openFullscreen()" class="relative h-[380px] bg-gray-100 rounded-xl overflow-hidden cursor-zoom-in group">
-                        <img id="mainProductImage" src="" class="w-full h-full object-contain" alt="Product">
-                        <div class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-1.5 shadow-md">
+                    <div id="mainImageWrapper" class="relative h-[380px] bg-gray-100 rounded-xl overflow-hidden group">
+                        <!-- Само изображение (клик открывает полный экран) -->
+                        <img id="mainProductImage" src="" onclick="openFullscreen()" class="w-full h-full object-contain cursor-zoom-in" alt="Product">
+                        
+                        <!-- Компактные стрелки переключения прямо на превью -->
+                        <button id="prevImgBtn" onclick="prevImageInline(event)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer z-20">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                        </button>
+                        <button id="nextImgBtn" onclick="nextImageInline(event)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer z-20">
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+
+                        <div class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-1.5 shadow-md pointer-events-none">
                             <i data-lucide="maximize-2" class="w-4 h-4"></i> <span data-i18n="zoomText">Нажмите для увеличения</span>
                         </div>
                     </div>
@@ -355,6 +365,35 @@
                     btn.classList.add('border-gray-200');
                 }
             });
+            updateInlineButtonsVisibility();
+        }
+
+        function nextImageInline(e) {
+            if (e) e.stopPropagation();
+            if (postImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex + 1) % postImages.length;
+            switchMainImage(currentImageIndex);
+        }
+
+        function prevImageInline(e) {
+            if (e) e.stopPropagation();
+            if (postImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex - 1 + postImages.length) % postImages.length;
+            switchMainImage(currentImageIndex);
+        }
+
+        function updateInlineButtonsVisibility() {
+            const prevBtn = document.getElementById('prevImgBtn');
+            const nextBtn = document.getElementById('nextImgBtn');
+            if (!prevBtn || !nextBtn) return;
+
+            if (postImages.length <= 1) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
+            }
         }
 
         function openFullscreen() {
@@ -531,6 +570,7 @@
 
             updateFavIcon();
             document.getElementById('mainProductImage').src = postImages[0];
+            updateInlineButtonsVisibility();
 
             const thumbsContainer = document.getElementById('thumbnailsContainer');
             if (postImages.length > 1) {
