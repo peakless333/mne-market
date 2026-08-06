@@ -818,7 +818,6 @@
                 html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
                 html += renderSelectFilter('clothes_type', a.clothes_type.label, a.clothes_type.opts);
                 
-                // Если выбран тип "обувь", выводим размеры для обуви (цифры + EU), иначе стандартные X, XS...
                 const clothesType = categoryFiltersState['clothes_type'];
                 if (clothesType === 'shoes') {
                     html += renderSelectFilter('size', a.shoes_size.label, a.shoes_size.opts);
@@ -864,7 +863,6 @@
                 categoryFiltersState[key] = value;
             }
             
-            // Если изменился тип одежды и это не обувь, сбрасываем выбранный ранее размер обуви (и наоборот)
             if (key === 'clothes_type') {
                 delete categoryFiltersState['size'];
             }
@@ -1017,7 +1015,10 @@
                 const isFav = favorites.includes(postIdStr);
                 const isMine = isMyPost(post);
                 const cityName = citiesMap[post.city] || post.city;
-                const priceText = post.price > 0 ? `${post.price} €` : dict[currentLang].free;
+                
+                // Форматирование числа с пробелами через toLocaleString('ru-RU') -> 18 000, 100 000, 1 000
+                const formattedNumber = Number(post.price || 0).toLocaleString('ru-RU');
+                const priceText = post.price > 0 ? `${formattedNumber}&nbsp;€` : dict[currentLang].free;
                 
                 let rawImage = post.image_url || (post.images && post.images[0]);
                 const hasValidImage = rawImage && rawImage.trim() !== '' && !rawImage.includes('images.unsplash.com') && !rawImage.startsWith('data:image/svg+xml');
