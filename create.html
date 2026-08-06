@@ -3,124 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Разместить объявление — MNE Market</title>
+    <title>Объявление — MNE Market</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇲🇪</text></svg>">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-[#f5f6f8] text-gray-950 min-h-screen pb-20 antialiased">
+<body class="bg-gray-50 text-gray-800 pb-20">
 
-    <!-- Уведомления -->
-    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900/95 backdrop-blur-md text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-2xl z-50 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none">
-        <span id="toastText"></span>
-    </div>
+    <script>
+        const currentLoggedUser = localStorage.getItem('mne_logged_user');
+        if (!currentLoggedUser) {
+            alert('Для создания объявления необходимо авторизоваться!');
+            window.location.href = 'index.html';
+        }
+    </script>
 
-    <!-- Шапка -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-xs">
-        <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 tracking-tight">
-                <span class="text-xl">🇲🇪</span> 
-                <span>MNE<span class="text-[#009cf0]">Market</span></span>
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="back">Назад</span>
             </a>
-            <div class="flex items-center gap-2">
-                <!-- Переключатель языка -->
-                <div class="flex bg-gray-100 p-1 rounded-xl text-xs font-semibold">
-                    <button onclick="setLang('ru')" id="langRu" class="px-2.5 py-1.5 rounded-lg transition-all">RU</button>
-                    <button onclick="setLang('en')" id="langEn" class="px-2.5 py-1.5 rounded-lg transition-all">EN</button>
-                    <button onclick="setLang('me')" id="langMe" class="px-2.5 py-1.5 rounded-lg transition-all">ME</button>
-                </div>
-                <a href="index.html" id="navHome" class="text-xs font-semibold text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl transition-all">
-                    На главную
-                </a>
-            </div>
+            <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-gray-100 border-none rounded-xl px-2.5 py-1.5 text-xs font-semibold text-gray-700 outline-none cursor-pointer">
+                <option value="ru">🇷🇺 RU</option>
+                <option value="en">🇬🇧 EN</option>
+                <option value="cnr">🇲🇪 CNR</option>
+            </select>
         </div>
     </header>
 
-    <main class="max-w-3xl mx-auto px-4 pt-6">
-        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-xs space-y-6">
-            <h1 id="mainHeader" class="text-xl font-black text-gray-950 tracking-tight">Новое объявление</h1>
+    <main class="max-w-2xl mx-auto px-4 pt-6">
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm space-y-6">
+            <h1 id="pageTitle" class="text-xl font-bold text-gray-900" data-i18n="titleNew">Новое объявление</h1>
 
-            <form id="postForm" onsubmit="handleFormSubmit(event)" class="space-y-5">
+            <form id="createForm" onsubmit="submitPost(event)" class="space-y-4">
                 
-                <!-- Категория -->
-                <div class="space-y-1.5">
-                    <label id="labelCategory" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Категория</label>
-                    <select id="category" onchange="renderCategoryAttributes()" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all font-medium">
-                        <option value="electronics">Электроника / Tehnika</option>
-                        <option value="auto">Авто / Automobili</option>
-                        <option value="realty">Недвижимость / Nekretnine</option>
-                        <option value="jobs">Работа / Posao</option>
-                        <option value="services">Услуги / Usluge</option>
-                        <option value="clothing">Одежда / Odjeća</option>
-                        <option value="home">Для дома / Za kuću</option>
-                        <option value="other">Разное / Ostalo</option>
-                    </select>
-                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2" data-i18n="photosLabel">Фотографии (до 10 шт.)</label>
+                    <input type="file" id="imageInput" accept="image/*" multiple class="hidden" onchange="handleImageSelection(event)">
+                    
+                    <div id="imagePreviewsContainer" class="grid grid-cols-5 gap-2 mb-2 hidden"></div>
 
-                <!-- Динамические атрибуты под категорию -->
-                <div id="attributesContainer" class="space-y-4"></div>
-
-                <!-- Название -->
-                <div class="space-y-1.5">
-                    <label id="labelTitle" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Название</label>
-                    <input type="text" id="title" required class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all font-medium" placeholder="Например: iPhone 14 Pro 128GB">
-                </div>
-
-                <!-- Описание -->
-                <div class="space-y-1.5">
-                    <label id="labelDesc" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Описание</label>
-                    <textarea id="description" rows="4" class="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all font-medium resize-none" placeholder="Расскажите подробнее о товаре или услуге..."></textarea>
-                </div>
-
-                <!-- Цена -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label id="labelPrice" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Цена (€)</label>
-                        <input type="number" id="price" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all font-medium" placeholder="Оставьте пустым, если бесплатно">
+                    <div id="dropZone" 
+                         onclick="document.getElementById('imageInput').click()" 
+                         class="w-full border-2 border-dashed border-gray-200 hover:border-blue-500 bg-gray-50 hover:bg-blue-50/50 rounded-2xl p-6 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-2 group">
+                        <div class="bg-white p-3 rounded-full shadow-sm text-gray-400 group-hover:text-blue-600 transition-colors">
+                            <i data-lucide="image-plus" class="w-6 h-6"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-600 group-hover:text-blue-600" data-i18n="addPhotoBtn">Нажмите или перетащите фото сюда</span>
                     </div>
-                    <div class="space-y-1.5">
-                        <label id="labelCity" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Город</label>
-                        <select id="city" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all font-medium">
-                            <option value="Budva">Будва (Budva)</option>
-                            <option value="Podgorica">Подгорица (Podgorica)</option>
-                            <option value="Bar">Бар (Bar)</option>
-                            <option value="Tivat">Тиват (Tivat)</option>
-                            <option value="Kotor">Котор (Kotor)</option>
-                            <option value="Herceg Novi">Герцег-Нови (Herceg Novi)</option>
-                            <option value="Ulcinj">Ульцинь (Ulcinj)</option>
-                            <option value="Cetinje">Цетинье (Cetinje)</option>
-                            <option value="Nikšić">Никшич (Nikšić)</option>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="nameLabel">Название</label>
+                    <input type="text" id="postTitle" required placeholder="Например: iPhone 13 Pro 128GB" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="categoryLabel">Категория</label>
+                        <select id="postCategory" onchange="renderCategoryAttributes()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            <option value="furniture" data-i18n="cat_furniture">Мебель</option>
+                            <option value="tech" data-i18n="cat_tech">Техника</option>
+                            <option value="auto" data-i18n="cat_auto">Авто</option>
+                            <option value="clothes" data-i18n="cat_clothes">Одежда</option>
+                            <option value="other" data-i18n="cat_other">Разное</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="cityLabel">Город</label>
+                        <select id="postCity" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
                         </select>
                     </div>
                 </div>
 
-                <!-- Фотографии -->
-                <div class="space-y-1.5">
-                    <label id="labelPhotos" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Фотографии (до 10 шт.)</label>
-                    <div class="flex flex-wrap gap-3" id="photoPreviews">
-                        <label class="w-20 h-20 bg-gray-50 border-2 border-dashed border-gray-200 hover:border-[#009cf0] rounded-2xl flex flex-col items-center justify-center cursor-pointer text-gray-400 hover:text-[#009cf0] transition-all">
-                            <i data-lucide="image-plus" class="w-5 h-5"></i>
-                            <input type="file" id="imageInput" accept="image/*" multiple onchange="handleImagesSelect(event)" class="hidden">
-                        </label>
-                    </div>
+                <!-- Контейнер для динамических параметров категории -->
+                <div id="categoryAttributesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="priceLabel">Цена (€)</label>
+                    <input type="number" id="postPrice" required placeholder="0 (если бесплатно)" min="0" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
                 </div>
 
-                <!-- Контакты -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Telegram / Телефон</label>
-                        <input type="text" id="contact" required class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all font-medium" placeholder="@username или +382...">
-                    </div>
-                    <div class="space-y-1.5">
-                        <label id="labelAuthor" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Имя автора</label>
-                        <input type="text" id="username" required class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all font-medium" placeholder="Ваше имя">
-                    </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="descLabel">Описание</label>
+                    <textarea id="postDesc" rows="4" required placeholder="Опишите состояние, комплектацию и детали..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all resize-none"></textarea>
                 </div>
 
-                <!-- Кнопка отправки -->
-                <button type="submit" id="submitBtn" class="w-full bg-[#009cf0] hover:bg-[#0089d1] text-white font-bold py-3.5 rounded-2xl text-xs transition-all shadow-md shadow-blue-500/20 cursor-pointer mt-4">
-                    Опубликовать объявление
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="tgLabel">Telegram для связи</label>
+                    <input type="text" id="postTelegram" required placeholder="@username" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer mt-4">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="publishBtn">Опубликовать объявление</span>
                 </button>
             </form>
         </div>
@@ -129,198 +107,488 @@
     <script>
         lucide.createIcons();
 
-        const translations = {
-            ru: {
-                pageTitle: "Разместить объявление — MNE Market",
-                navHome: "На главную",
-                mainHeader: "Новое объявление",
-                labelCategory: "Категория",
-                labelTitle: "Название",
-                labelDesc: "Описание",
-                labelPrice: "Цена (€)",
-                labelCity: "Город",
-                labelPhotos: "Фотографии (до 10 шт.)",
-                labelAuthor: "Имя автора",
-                submitBtn: "Опубликовать объявление",
-                toastSuccess: "Объявление успешно опубликовано!",
-                toastError: "Ошибка при сохранении"
-            },
-            en: {
-                pageTitle: "Create Listing — MNE Market",
-                navHome: "Home",
-                mainHeader: "New Listing",
-                labelCategory: "Category",
-                labelTitle: "Title",
-                labelDesc: "Description",
-                labelPrice: "Price (€)",
-                labelCity: "City",
-                labelPhotos: "Photos (up to 10)",
-                labelAuthor: "Author Name",
-                submitBtn: "Publish Listing",
-                toastSuccess: "Listing published successfully!",
-                toastError: "Error saving listing"
-            },
-            me: {
-                pageTitle: "Kreiraj oglas — MNE Market",
-                navHome: "Početna",
-                mainHeader: "Novi oglas",
-                labelCategory: "Kategorija",
-                labelTitle: "Naslov",
-                labelDesc: "Opis",
-                labelPrice: "Cijena (€)",
-                labelCity: "Grad",
-                labelPhotos: "Fotografije (do 10)",
-                labelAuthor: "Ime autora",
-                submitBtn: "Objavi oglas",
-                toastSuccess: "Oglas je uspješno objavljen!",
-                toastError: "Greška pri čuvanju"
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            if (tg.initDataUnsafe?.user?.username && !window.location.search.includes('edit=')) {
+                document.getElementById('postTelegram').value = '@' + tg.initDataUnsafe.user.username;
             }
-        };
-
-        let currentLang = localStorage.getItem('mne_lang') || 'ru';
-        let uploadedImages = [];
-
-        function setLang(lang) {
-            currentLang = lang;
-            localStorage.setItem('mne_lang', lang);
-            updateLocalization();
-            renderCategoryAttributes();
-        }
-
-        function updateLocalization() {
-            const t = translations[currentLang];
-            document.getElementById('pageTitle').innerText = t.pageTitle;
-            document.getElementById('navHome').innerText = t.navHome;
-            document.getElementById('mainHeader').innerText = t.mainHeader;
-            document.getElementById('labelCategory').innerText = t.labelCategory;
-            document.getElementById('labelTitle').innerText = t.labelTitle;
-            document.getElementById('labelDesc').innerText = t.labelDesc;
-            document.getElementById('labelPrice').innerText = t.labelPrice;
-            document.getElementById('labelCity').innerText = t.labelCity;
-            document.getElementById('labelPhotos').innerText = t.labelPhotos;
-            document.getElementById('labelAuthor').innerText = t.labelAuthor;
-            document.getElementById('submitBtn').innerText = t.submitBtn;
-
-            ['ru', 'en', 'me'].forEach(l => {
-                const btn = document.getElementById(`lang${l.charAt(0).toUpperCase() + l.slice(1)}`);
-                if (l === currentLang) {
-                    btn.className = "px-2.5 py-1.5 rounded-lg bg-white text-gray-950 shadow-xs transition-all";
-                } else {
-                    btn.className = "px-2.5 py-1.5 rounded-lg text-gray-500 hover:text-gray-900 transition-all";
-                }
-            });
-        }
-
-        function renderCategoryAttributes() {
-            const cat = document.getElementById('category').value;
-            const container = document.getElementById('attributesContainer');
-            
-            // Динамические поля в зависимости от категории
-            if (cat === 'realty') {
-                container.innerHTML = `
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Тип недвижимости</label>
-                            <select id="attr_realty_type" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-xs outline-none focus:border-[#009cf0]">
-                                <option value="Новостройки">Новостройки (Первичное)</option>
-                                <option value="Вторичное жилье">Вторичное жилье</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Комнаты</label>
-                            <input type="text" id="attr_rooms" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-xs outline-none focus:border-[#009cf0]" placeholder="Например: 2 спальни">
-                        </div>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = '';
-            }
-        }
-
-        function handleImagesSelect(event) {
-            const files = Array.from(event.target.files);
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    if (uploadedImages.length < 10) {
-                        uploadedImages.push(e.target.result);
-                        updateImagePreviews();
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function updateImagePreviews() {
-            const container = document.getElementById('photoPreviews');
-            const addBtnHTML = container.firstElementChild.outerHTML;
-            
-            let imagesHTML = uploadedImages.map((img, index) => `
-                <div class="relative w-20 h-20 rounded-2xl overflow-hidden border border-gray-200 group">
-                    <img src="${img}" class="w-full h-full object-cover">
-                    <button type="button" onclick="removeImage(${index})" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <i data-lucide="x" class="w-3 h-3"></i>
-                    </button>
-                </div>
-            `).join('');
-
-            container.innerHTML = imagesHTML + addBtnHTML;
-            lucide.createIcons();
-        }
-
-        function removeImage(index) {
-            uploadedImages.splice(index, 1);
-            updateImagePreviews();
         }
 
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Автозаполнение имени автора из сессии
-        const currentUser = JSON.parse(localStorage.getItem('mne_logged_user') || 'null');
-        if (currentUser && currentUser.username) {
-            document.getElementById('username').value = currentUser.username;
+        let loggedUserObj = JSON.parse(localStorage.getItem('mne_logged_user') || 'null');
+        let usernameToken = loggedUserObj ? loggedUserObj.username : ('user_' + Math.random().toString(36).substring(2, 15));
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const editPostId = urlParams.get('edit');
+
+        const dict = {
+            ru: {
+                back: "Назад", titleNew: "Новое объявление", titleEdit: "Редактировать объявление", photosLabel: "Фотографии (до 10 шт.)",
+                addPhotoBtn: "Нажмите или перетащите фото сюда", nameLabel: "Название",
+                categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
+                descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
+                cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_other: "Разное",
+                publishing: "Сохранение...", maxPhotos: "Максимально можно загрузить 10 фотографий",
+                ph_title: "Например: iPhone 13 Pro 128GB",
+                ph_price: "0 (если бесплатно)",
+                ph_desc: "Опишите состояние, комплектацию и детали...",
+                cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
+                attrs: {
+                    condition: { label: "Состояние", opts: { new: "Новое", used: "Б/У" } },
+                    size: { label: "Размер", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Другой" } },
+                    furniture_type: { label: "Вид мебели", opts: { sofa: "Диваны и кресла", table: "Столы и стулья", bed: "Кровати и матрасы", wardrobe: "Шкафы и комоды", office: "Офисная мебель", other: "Другое" } },
+                    brand: { label: "Бренд / Производитель" },
+                    year: { label: "Год выпуска" },
+                    mileage: { label: "Пробег (км)" }
+                }
+            },
+            en: {
+                back: "Back", titleNew: "New Listing", titleEdit: "Edit Listing", photosLabel: "Photos (up to 10)",
+                addPhotoBtn: "Click or drag photos here", nameLabel: "Title",
+                categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
+                descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing", saveBtn: "Save changes",
+                cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_other: "Other",
+                publishing: "Saving...", maxPhotos: "Maximum 10 photos allowed",
+                ph_title: "e.g. iPhone 13 Pro 128GB",
+                ph_price: "0 (if free)",
+                ph_desc: "Describe condition, package and details...",
+                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                attrs: {
+                    condition: { label: "Condition", opts: { new: "New", used: "Used" } },
+                    size: { label: "Size", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Other" } },
+                    furniture_type: { label: "Furniture Type", opts: { sofa: "Sofas & Armchairs", table: "Tables & Chairs", bed: "Beds & Mattresses", wardrobe: "Wardrobes & Dressers", office: "Office Furniture", other: "Other" } },
+                    brand: { label: "Brand / Manufacturer" },
+                    year: { label: "Year" },
+                    mileage: { label: "Mileage (km)" }
+                }
+            },
+            cnr: {
+                back: "Nazad", titleNew: "Novi oglas", titleEdit: "Izmjena oglasa", photosLabel: "Fotografije (do 10)",
+                addPhotoBtn: "Kliknite ili prevucite fotografije ovdje", nameLabel: "Naziv",
+                categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
+                descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
+                cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_other: "Razno",
+                publishing: "Čuvanje...", maxPhotos: "Možete otpremiti najviše 10 fotografija",
+                ph_title: "npr. iPhone 13 Pro 128GB",
+                ph_price: "0 (ako je besplatno)",
+                ph_desc: "Opišite stanje, opremu i detalje...",
+                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                attrs: {
+                    condition: { label: "Stanje", opts: { new: "Novo", used: "Korišćeno" } },
+                    size: { label: "Veličina", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Ostalo" } },
+                    furniture_type: { label: "Vrsta namještaja", opts: { sofa: "Sofe i fotelje", table: "Stolovi i stolice", bed: "Kreveti i dušeci", wardrobe: "Ormari i komode", office: "Kancelarijski namještaj", other: "Ostalo" } },
+                    brand: { label: "Marka / Proizvođač" },
+                    year: { label: "Godina proizvodnje" },
+                    mileage: { label: "Kilometraža (km)" }
+                }
+            }
+        };
+
+        let currentLang = localStorage.getItem('mne_lang') || 'ru';
+        let selectedFiles = [];
+        let existingImages = [];
+        let currentPostAttributes = {}; // Хранилище загруженных параметров при редактировании
+
+        function initCitiesSelect(selectedCity = 'budva') {
+            const citySelect = document.getElementById('postCity');
+            const citiesObj = dict[currentLang].cities;
+            citySelect.innerHTML = Object.keys(citiesObj).map(code => `
+                <option value="${code}" ${code === selectedCity ? 'selected' : ''}>${citiesObj[code]}</option>
+            `).join('');
         }
 
-        async function handleFormSubmit(event) {
-            event.preventDefault();
-            const t = translations[currentLang];
-            
-            const postData = {
-                category: document.getElementById('category').value,
-                title: document.getElementById('title').value,
-                description: document.getElementById('description').value,
-                price: document.getElementById('price').value ? parseFloat(document.getElementById('price').value) : null,
-                city: document.getElementById('city').value,
-                images: uploadedImages,
-                image_url: uploadedImages[0] || null,
-                contact: document.getElementById('contact').value,
-                username: document.getElementById('username').value,
-                created_at: new Date().toISOString()
-            };
+        // Рендеринг дополнительных полей в зависимости от выбранной категории
+        function renderCategoryAttributes(savedValues = {}) {
+            const category = document.getElementById('postCategory').value;
+            const container = document.getElementById('categoryAttributesContainer');
+            const a = dict[currentLang].attrs;
+            let html = '';
 
+            if (category === 'clothes') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.size.label}</label>
+                        <select id="attr_size" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.size.opts).map(k => `<option value="${k}" ${savedValues.size === k ? 'selected' : ''}>${a.size.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            } else if (category === 'tech') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.brand.label}</label>
+                        <input type="text" id="attr_brand" value="${savedValues.brand || ''}" placeholder="Apple, Samsung..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            } else if (category === 'auto') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.year.label}</label>
+                        <input type="number" id="attr_year" value="${savedValues.year || ''}" placeholder="2018" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.mileage.label}</label>
+                        <input type="number" id="attr_mileage" value="${savedValues.mileage || ''}" placeholder="150000" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    </div>
+                `;
+            } else if (category === 'furniture') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.furniture_type.label}</label>
+                        <select id="attr_furniture_type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.furniture_type.opts).map(k => `<option value="${k}" ${savedValues.furniture_type === k ? 'selected' : ''}>${a.furniture_type.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('mne_lang', lang);
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[lang][key]) el.innerText = dict[lang][key];
+            });
+
+            if (editPostId) {
+                document.getElementById('pageTitle').innerText = dict[lang].titleEdit;
+                document.getElementById('submitBtn').querySelector('span').innerText = dict[lang].saveBtn;
+            } else {
+                document.getElementById('pageTitle').innerText = dict[lang].titleNew;
+                document.getElementById('submitBtn').querySelector('span').innerText = dict[lang].publishBtn;
+            }
+
+            document.getElementById('postTitle').placeholder = dict[lang].ph_title;
+            document.getElementById('postPrice').placeholder = dict[lang].ph_price;
+            document.getElementById('postDesc').placeholder = dict[lang].ph_desc;
+
+            const currentCityValue = document.getElementById('postCity').value || 'budva';
+            initCitiesSelect(currentCityValue);
+            
+            // Сохраняем введенные/выбранные атрибуты при переключении языка
+            const currentAttrs = collectAttributesFromDOM();
+            renderCategoryAttributes(currentAttrs);
+        }
+
+        function collectAttributesFromDOM() {
+            const attrs = {};
+            const sizeEl = document.getElementById('attr_size');
+            const condEl = document.getElementById('attr_condition');
+            const furnEl = document.getElementById('attr_furniture_type');
+            const brandEl = document.getElementById('attr_brand');
+            const yearEl = document.getElementById('attr_year');
+            const milEl = document.getElementById('attr_mileage');
+
+            if (sizeEl) attrs.size = sizeEl.value;
+            if (condEl) attrs.condition = condEl.value;
+            if (furnEl) attrs.furniture_type = furnEl.value;
+            if (brandEl) attrs.brand = brandEl.value;
+            if (yearEl) attrs.year = yearEl.value;
+            if (milEl) attrs.mileage = milEl.value;
+
+            return attrs;
+        }
+
+        document.getElementById('langSelect').value = currentLang;
+        initCitiesSelect();
+        renderCategoryAttributes();
+        changeLanguage(currentLang);
+
+        if (editPostId) {
+            document.getElementById('pageTitle').innerText = dict[currentLang].titleEdit;
+            document.getElementById('submitBtn').innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> <span>${dict[currentLang].saveBtn}</span>`;
+            loadPostForEditing(editPostId);
+        }
+
+        async function loadPostForEditing(id) {
             try {
-                const { error } = await supabaseClient.from('posts').insert([postData]);
+                const { data, error } = await supabaseClient.from('posts').select('*').eq('id', id).single();
                 if (error) throw error;
+                if (!data) return;
+
+                document.getElementById('postTitle').value = data.title || '';
+                document.getElementById('postCategory').value = data.category || 'other';
+                initCitiesSelect(data.city || 'budva');
                 
-                showToast(t.toastSuccess);
-                setTimeout(() => window.location.href = 'cabinet.html', 1500);
+                currentPostAttributes = data.attributes || {};
+                renderCategoryAttributes(currentPostAttributes);
+
+                document.getElementById('postPrice').value = data.price || 0;
+                document.getElementById('postDesc').value = data.description || '';
+                document.getElementById('postTelegram').value = data.telegram || data.contact || '';
+
+                existingImages = data.images && Array.isArray(data.images) ? [...data.images] : (data.image_url ? [data.image_url] : []);
+                renderPreviews();
             } catch (err) {
                 console.error(err);
-                showToast(t.toastError);
+                alert('Не удалось загрузить объявление для редактирования');
             }
         }
 
-        function showToast(text) {
-            const toast = document.getElementById('toast');
-            toast.firstElementChild.innerText = text;
-            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
-            setTimeout(() => toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'), 2500);
+        const dropZone = document.getElementById('dropZone');
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('border-blue-500', 'bg-blue-50/70');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('border-blue-500', 'bg-blue-50/70');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+                if (files.length > 0) {
+                    processFiles(files);
+                    return;
+                }
+            }
+
+            const items = e.dataTransfer.items;
+            if (items) {
+                for (const item of items) {
+                    if (item.kind === 'file' && item.type.startsWith('image/')) {
+                        const file = item.getAsFile();
+                        if (file) {
+                            processFiles([file]);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            const htmlData = e.dataTransfer.getData('text/html');
+            const uriData = e.dataTransfer.getData('text/uri-list');
+            const plainText = e.dataTransfer.getData('text/plain');
+            
+            let imageUrl = '';
+            if (htmlData) {
+                const match = htmlData.match(/src="([^"]+)"/);
+                if (match && match[1]) {
+                    imageUrl = match[1];
+                }
+            }
+            if (!imageUrl && uriData) {
+                imageUrl = uriData;
+            }
+            if (!imageUrl && plainText && (plainText.startsWith('http://') || plainText.startsWith('https://'))) {
+                imageUrl = plainText;
+            }
+
+            if (imageUrl) {
+                try {
+                    const response = await fetch(imageUrl);
+                    const blob = await response.blob();
+                    if (blob.type.startsWith('image/')) {
+                        const fileName = `tg_image_${Date.now()}.${blob.type.split('/')[1] || 'jpg'}`;
+                        const file = new File([blob], fileName, { type: blob.type });
+                        processFiles([file]);
+                    }
+                } catch (err) {
+                    try {
+                        const proxyResponse = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`);
+                        const proxyBlob = await proxyResponse.blob();
+                        const fileName = `tg_image_${Date.now()}.${proxyBlob.type.split('/')[1] || 'jpg'}`;
+                        const file = new File([proxyBlob], fileName, { type: proxyBlob.type || 'image/jpeg' });
+                        processFiles([file]);
+                    } catch (proxyErr) {
+                        console.error(proxyErr);
+                        alert("Не удалось загрузить эту картинку напрямую. Попробуйте сохранить её или выбрать через проводник.");
+                    }
+                }
+            }
+        }, false);
+
+        window.addEventListener('paste', async (e) => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            const files = [];
+            
+            for (const item of items) {
+                if (item.type.indexOf('image') !== -1) {
+                    const blob = item.getAsFile();
+                    if (blob) {
+                        const fileName = `clipboard_${Date.now()}.${blob.type.split('/')[1] || 'jpg'}`;
+                        files.push(new File([blob], fileName, { type: blob.type }));
+                    }
+                }
+            }
+            
+            if (files.length > 0) {
+                e.preventDefault();
+                processFiles(files);
+            }
+        });
+
+        function handleImageSelection(e) {
+            const files = Array.from(e.target.files);
+            processFiles(files);
+            e.target.value = '';
         }
 
-        updateLocalization();
-        renderCategoryAttributes();
+        function processFiles(files) {
+            if (existingImages.length + selectedFiles.length + files.length > 10) {
+                alert(dict[currentLang].maxPhotos);
+                return;
+            }
+            selectedFiles = selectedFiles.concat(files);
+            renderPreviews();
+        }
+
+        function removeExistingImage(index) {
+            existingImages.splice(index, 1);
+            renderPreviews();
+        }
+
+        function removeNewImage(index) {
+            selectedFiles.splice(index, 1);
+            renderPreviews();
+        }
+
+        function renderPreviews() {
+            const container = document.getElementById('imagePreviewsContainer');
+            if (existingImages.length === 0 && selectedFiles.length === 0) {
+                container.classList.add('hidden');
+                container.innerHTML = '';
+                return;
+            }
+
+            container.classList.remove('hidden');
+            let html = '';
+
+            existingImages.forEach((url, idx) => {
+                html += `
+                    <div class="relative h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-100">
+                        <img src="${url}" class="w-full h-full object-cover" alt="Preview">
+                        <button type="button" onclick="removeExistingImage(${idx})" class="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white p-1 rounded-full transition-all cursor-pointer">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            selectedFiles.forEach((file, idx) => {
+                const url = URL.createObjectURL(file);
+                html += `
+                    <div class="relative h-20 rounded-xl overflow-hidden border border-blue-200 bg-blue-50">
+                        <img src="${url}" class="w-full h-full object-cover" alt="Preview">
+                        <button type="button" onclick="removeNewImage(${idx})" class="absolute top-1 right-1 bg-black/60 hover:bg-red-600 text-white p-1 rounded-full transition-all cursor-pointer">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        async function submitPost(event) {
+            event.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = dict[currentLang].publishing;
+
+            try {
+                let imageUrls = [...existingImages];
+
+                for (const file of selectedFiles) {
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+                    
+                    const { error } = await supabaseClient.storage.from('post-images').upload(fileName, file);
+                    if (error) throw error;
+
+                    const { data: publicUrlData } = supabaseClient.storage.from('post-images').getPublicUrl(fileName);
+                    imageUrls.push(publicUrlData.publicUrl);
+                }
+
+                if (imageUrls.length === 0) {
+                    imageUrls.push('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+                }
+
+                const postData = {
+                    title: document.getElementById('postTitle').value.trim(),
+                    category: document.getElementById('postCategory').value,
+                    city: document.getElementById('postCity').value,
+                    attributes: collectAttributesFromDOM(), // Сохраняем дополнительные плашки параметров в jsonb поле
+                    price: Number(document.getElementById('postPrice').value || 0),
+                    description: document.getElementById('postDesc').value.trim(),
+                    telegram: document.getElementById('postTelegram').value.trim(),
+                    contact: document.getElementById('postTelegram').value.trim(),
+                    images: imageUrls,
+                    image_url: imageUrls[0],
+                    username: usernameToken,
+                    user_token: usernameToken
+                };
+
+                if (editPostId) {
+                    const { error: updateError } = await supabaseClient.from('posts').update(postData).eq('id', editPostId);
+                    if (updateError) throw updateError;
+                } else {
+                    postData.telegram_id = tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null;
+                    postData.views = 0;
+
+                    const { data, error: insertError } = await supabaseClient.from('posts').insert([postData]).select();
+                    if (insertError) throw insertError;
+                }
+
+                window.location.href = 'index.html';
+
+            } catch (err) {
+                console.error(err);
+                alert('Ошибка при сохранении: ' + (err.message || 'Неизвестная ошибка'));
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"></i> <span>${editPostId ? dict[currentLang].saveBtn : dict[currentLang].publishBtn}</span>`;
+                lucide.createIcons();
+            }
+        }
     </script>
 </body>
 </html>
