@@ -384,7 +384,7 @@
                 attrs: {
                     condition: { label: "Состояние", opts: { all: "Любое", new: "Новое", used: "Б/У" } },
                     size: { label: "Размер", opts: { all: "Все", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Другой" } },
-                    material: { label: "Материал", opts: { all: "Все", wood: "Дерево", metal: "Металл", glass: "Стекло", fabric: "Ткань", other: "Другой" } }
+                    furniture_type: { label: "Вид мебели", opts: { all: "Все виды", sofas: "Диваны и кресла", tables: "Столы и стулья", beds: "Кровати и матрасы", wardrobes: "Шкафы и комоды", office: "Офисная мебель", other: "Другое" } }
                 }
             },
             en: {
@@ -417,7 +417,7 @@
                 attrs: {
                     condition: { label: "Condition", opts: { all: "Any", new: "New", used: "Used" } },
                     size: { label: "Size", opts: { all: "All", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Other" } },
-                    material: { label: "Material", opts: { all: "All", wood: "Wood", metal: "Metal", glass: "Glass", fabric: "Fabric", other: "Other" } }
+                    furniture_type: { label: "Type", opts: { all: "All types", sofas: "Sofas & armchairs", tables: "Tables & chairs", beds: "Beds & mattresses", wardrobes: "Wardrobes & dressers", office: "Office furniture", other: "Other" } }
                 }
             },
             cnr: {
@@ -450,7 +450,7 @@
                 attrs: {
                     condition: { label: "Stanje", opts: { all: "Bilo koje", new: "Novo", used: "Korišćeno" } },
                     size: { label: "Veličina", opts: { all: "Sve", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Ostalo" } },
-                    material: { label: "Materijal", opts: { all: "Svi", wood: "Drvo", metal: "Metal", glass: "Staklo", fabric: "Tkanina", other: "Ostalo" } }
+                    furniture_type: { label: "Vrsta", opts: { all: "Sve vrste", sofas: "Sofas & armchairs", tables: "Sto i stolice", beds: "Kreveti i dušeci", wardrobes: "Ormari i komode", office: "Kancelarijski namještaj", other: "Ostalo" } }
                 }
             }
         };
@@ -888,7 +888,7 @@
             } else if (selectedCategory === 'tech') {
                 html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
             } else if (selectedCategory === 'furniture') {
-                html += renderSelectFilter('material', a.material.label, a.material.opts);
+                html += renderSelectFilter('furniture_type', a.furniture_type.label, a.furniture_type.opts);
                 html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
             } else if (selectedCategory === 'auto') {
                 html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
