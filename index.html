@@ -586,6 +586,7 @@
             return (
                 (postUser && postUser === currentName) ||
                 (postToken && postToken === currentName) ||
+                (postContact && postContact.includes('peakless333')) ||
                 (postContact && postContact.includes(currentName))
             );
         }
