@@ -19,7 +19,7 @@
 
     <!-- Шапка сайта -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium text-sm">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="back">Назад к объявлениям</span>
             </a>
@@ -75,6 +75,9 @@
                     </div>
 
                     <div id="postPrice" class="text-2xl font-black text-blue-600 pt-2 border-t border-gray-100"></div>
+
+                    <!-- Контейнер для характеристик товара (Размер, Состояние и т.д.) -->
+                    <div id="attributesContainer" class="hidden border-t border-gray-100 pt-3 space-y-2"></div>
 
                     <div>
                         <h3 class="text-[11px] font-bold text-gray-400 tracking-wider mb-1" data-i18n="desc">ОПИСАНИЕ</h3>
@@ -152,7 +155,33 @@
                 zoomText: "Нажмите для увеличения",
                 similarTitle: "Похожие объявления", noSimilar: "Нет похожих объявлений",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
-                categories: { furniture: "Мебель", tech: "Техника", auto: "Авто", clothes: "Одежда", other: "Разное" }
+                categories: { furniture: "Мебель", tech: "Техника", auto: "Авто", clothes: "Одежда", other: "Разное" },
+                attrs: {
+                    condition: { label: "Состояние", opts: { new: "Новое", used: "Б/У" } },
+                    clothes_type: { 
+                        label: "Тип одежды", 
+                        opts: { top: "Верх (Куртки, Худи, Футболки)", bottom: "Низ (Брюки, Джинсы, Шорты)", shoes: "Обувь" } 
+                    },
+                    size_top: { label: "Размер", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Другой" } },
+                    size_bottom: { 
+                        label: "Размер", 
+                        opts: { 
+                            "28": "28", "29": "29", "30": "30", "31": "31", "32": "32", 
+                            "33": "33", "34": "34", "36": "36", "38": "38", "40": "40", "other": "Другой" 
+                        } 
+                    },
+                    size_shoes: { 
+                        label: "Размер", 
+                        opts: { 
+                            "38": "38 EU", "39": "39 EU", "40": "40 EU", "41": "41 EU", 
+                            "42": "42 EU", "43": "43 EU", "44": "44 EU", "45": "45 EU", "46": "46 EU", "other": "Другой" 
+                        } 
+                    },
+                    furniture_type: { label: "Вид мебели", opts: { sofa: "Диваны и кресла", table: "Столы и стулья", bed: "Кровати и матрасы", wardrobe: "Шкафы и комоды", office: "Офисная мебель", other: "Другое" } },
+                    brand: { label: "Бренд" },
+                    year: { label: "Год выпуска" },
+                    mileage: { label: "Пробег" }
+                }
             },
             en: {
                 back: "Back to listings", loading: "Loading...", free: "Free",
@@ -161,7 +190,33 @@
                 zoomText: "Click to zoom",
                 similarTitle: "Related listings", noSimilar: "No related listings",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
-                categories: { furniture: "Furniture", tech: "Electronics", auto: "Vehicles", clothes: "Clothing", other: "Other" }
+                categories: { furniture: "Furniture", tech: "Electronics", auto: "Vehicles", clothes: "Clothing", other: "Other" },
+                attrs: {
+                    condition: { label: "Condition", opts: { new: "New", used: "Used" } },
+                    clothes_type: { 
+                        label: "Clothing Type", 
+                        opts: { top: "Top (Jackets, Hoodies, T-shirts)", bottom: "Bottom (Pants, Jeans, Shorts)", shoes: "Shoes" } 
+                    },
+                    size_top: { label: "Size", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Other" } },
+                    size_bottom: { 
+                        label: "Size", 
+                        opts: { 
+                            "28": "28", "29": "29", "30": "30", "31": "31", "32": "32", 
+                            "33": "33", "34": "34", "36": "36", "38": "38", "40": "40", "other": "Other" 
+                        } 
+                    },
+                    size_shoes: { 
+                        label: "Size", 
+                        opts: { 
+                            "38": "38 EU", "39": "39 EU", "40": "40 EU", "41": "41 EU", 
+                            "42": "42 EU", "43": "43 EU", "44": "44 EU", "45": "45 EU", "46": "46 EU", "other": "Other" 
+                        } 
+                    },
+                    furniture_type: { label: "Furniture Type", opts: { sofa: "Sofas & Armchairs", table: "Tables & Chairs", bed: "Beds & Mattresses", wardrobe: "Wardrobes & Dressers", office: "Office Furniture", other: "Other" } },
+                    brand: { label: "Brand" },
+                    year: { label: "Year" },
+                    mileage: { label: "Mileage" }
+                }
             },
             cnr: {
                 back: "Nazad na oglase", loading: "Učitavanje...", free: "Besplatno",
@@ -170,7 +225,33 @@
                 zoomText: "Klikni za uvećanje",
                 similarTitle: "Slični oglasi", noSimilar: "Nema sličnih oglasa",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
-                categories: { furniture: "Namještaj", tech: "Tehnika", auto: "Auto", clothes: "Odjeća", other: "Razno" }
+                categories: { furniture: "Namještaj", tech: "Tehnika", auto: "Auto", clothes: "Odjeća", other: "Razno" },
+                attrs: {
+                    condition: { label: "Stanje", opts: { new: "Novo", used: "Korišćeno" } },
+                    clothes_type: { 
+                        label: "Vrsta odjeće", 
+                        opts: { top: "Gornji dio", bottom: "Donji dio", shoes: "Obuća" } 
+                    },
+                    size_top: { label: "Veličina", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Ostalo" } },
+                    size_bottom: { 
+                        label: "Veličina", 
+                        opts: { 
+                            "28": "28", "29": "29", "30": "30", "31": "31", "32": "32", 
+                            "33": "33", "34": "34", "36": "36", "38": "38", "40": "40", "other": "Ostalo" 
+                        } 
+                    },
+                    size_shoes: { 
+                        label: "Veličina", 
+                        opts: { 
+                            "38": "38 EU", "39": "39 EU", "40": "40 EU", "41": "41 EU", 
+                            "42": "42 EU", "43": "43 EU", "44": "44 EU", "45": "45 EU", "46": "46 EU", "other": "Ostalo" 
+                        } 
+                    },
+                    furniture_type: { label: "Vrsta namještaja", opts: { sofa: "Sofe i fotelje", table: "Stolovi i stolice", bed: "Kreveti i dušeci", wardrobe: "Ormari i komode", office: "Kancelarijski namještaj", other: "Ostalo" } },
+                    brand: { label: "Marka" },
+                    year: { label: "Godina" },
+                    mileage: { label: "Kilometraža" }
+                }
             }
         };
 
@@ -335,6 +416,103 @@
             if (touchEndX > touchStartX + 50) prevImage();
         });
 
+        function renderAttributes() {
+            const container = document.getElementById('attributesContainer');
+            const attrs = currentPost.attributes;
+            const aDict = dict[currentLang].attrs;
+
+            if (!attrs || Object.keys(attrs).length === 0) {
+                container.classList.add('hidden');
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            
+            // Состояние
+            if (attrs.condition && aDict.condition.opts[attrs.condition]) {
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${aDict.condition.label}</span>
+                        <span class="font-semibold text-gray-800">${aDict.condition.opts[attrs.condition]}</span>
+                    </div>
+                `;
+            }
+
+            // Тип одежды
+            if (attrs.clothes_type && aDict.clothes_type.opts[attrs.clothes_type]) {
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${aDict.clothes_type.label}</span>
+                        <span class="font-semibold text-gray-800">${aDict.clothes_type.opts[attrs.clothes_type]}</span>
+                    </div>
+                `;
+            }
+
+            // Размер (верх, низ, обувь)
+            if (attrs.size) {
+                let sizeLabel = "Размер";
+                let sizeVal = attrs.size;
+                if (attrs.clothes_type === 'top' && aDict.size_top.opts[attrs.size]) sizeVal = aDict.size_top.opts[attrs.size];
+                else if (attrs.clothes_type === 'bottom' && aDict.size_bottom.opts[attrs.size]) sizeVal = aDict.size_bottom.opts[attrs.size];
+                else if (attrs.clothes_type === 'shoes' && aDict.size_shoes.opts[attrs.size]) sizeVal = aDict.size_shoes.opts[attrs.size];
+
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${sizeLabel}</span>
+                        <span class="font-semibold text-gray-800">${sizeVal}</span>
+                    </div>
+                `;
+            }
+
+            // Вид мебели
+            if (attrs.furniture_type && aDict.furniture_type.opts[attrs.furniture_type]) {
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${aDict.furniture_type.label}</span>
+                        <span class="font-semibold text-gray-800">${aDict.furniture_type.opts[attrs.furniture_type]}</span>
+                    </div>
+                `;
+            }
+
+            // Бренд
+            if (attrs.brand) {
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${aDict.brand.label}</span>
+                        <span class="font-semibold text-gray-800">${attrs.brand}</span>
+                    </div>
+                `;
+            }
+
+            // Год выпуска (Авто)
+            if (attrs.year) {
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${aDict.year.label}</span>
+                        <span class="font-semibold text-gray-800">${attrs.year}</span>
+                    </div>
+                `;
+            }
+
+            // Пробег (Авто)
+            if (attrs.mileage) {
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${aDict.mileage.label}</span>
+                        <span class="font-semibold text-gray-800">${Number(attrs.mileage).toLocaleString('ru-RU')} км</span>
+                    </div>
+                `;
+            }
+
+            if (html !== '') {
+                container.innerHTML = html;
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
         function renderPost() {
             if (!currentPost) return;
 
@@ -346,6 +524,8 @@
             document.getElementById('postTitle').innerText = currentPost.title;
             document.getElementById('postDesc').innerText = currentPost.description || '-';
             
+            renderAttributes();
+
             const tgClean = currentPost.telegram.replace('@', '');
             document.getElementById('postTelegramBtn').href = `https://t.me/${tgClean}`;
 
