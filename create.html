@@ -140,7 +140,25 @@
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 attrs: {
                     condition: { label: "Состояние", opts: { new: "Новое", used: "Б/У" } },
-                    size: { label: "Размер", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Другой" } },
+                    clothes_type: { 
+                        label: "Тип одежды", 
+                        opts: { top: "Верх (Куртки, Худи, Футболки)", bottom: "Низ (Брюки, Джинсы, Шорты)", shoes: "Обувь" } 
+                    },
+                    size_top: { label: "Размер (Верх)", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Другой" } },
+                    size_bottom: { 
+                        label: "Размер (Низ)", 
+                        opts: { 
+                            "28": "28", "29": "29", "30": "30", "31": "31", "32": "32", 
+                            "33": "33", "34": "34", "36": "36", "38": "38", "40": "40", "other": "Другой" 
+                        } 
+                    },
+                    size_shoes: { 
+                        label: "Размер (Обувь)", 
+                        opts: { 
+                            "38": "38 EU", "39": "39 EU", "40": "40 EU", "41": "41 EU", 
+                            "42": "42 EU", "43": "43 EU", "44": "44 EU", "45": "45 EU", "46": "46 EU", "other": "Другой" 
+                        } 
+                    },
                     furniture_type: { label: "Вид мебели", opts: { sofa: "Диваны и кресла", table: "Столы и стулья", bed: "Кровати и матрасы", wardrobe: "Шкафы и комоды", office: "Офисная мебель", other: "Другое" } },
                     brand: { label: "Бренд / Производитель" },
                     year: { label: "Год выпуска" },
@@ -160,7 +178,25 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Condition", opts: { new: "New", used: "Used" } },
-                    size: { label: "Size", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Other" } },
+                    clothes_type: { 
+                        label: "Clothing Type", 
+                        opts: { top: "Top (Jackets, Hoodies, T-shirts)", bottom: "Bottom (Pants, Jeans, Shorts)", shoes: "Shoes" } 
+                    },
+                    size_top: { label: "Size (Top)", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Other" } },
+                    size_bottom: { 
+                        label: "Size (Bottom)", 
+                        opts: { 
+                            "28": "28", "29": "29", "30": "30", "31": "31", "32": "32", 
+                            "33": "33", "34": "34", "36": "36", "38": "38", "40": "40", "other": "Other" 
+                        } 
+                    },
+                    size_shoes: { 
+                        label: "Size (Shoes)", 
+                        opts: { 
+                            "38": "38 EU", "39": "39 EU", "40": "40 EU", "41": "41 EU", 
+                            "42": "42 EU", "43": "43 EU", "44": "44 EU", "45": "45 EU", "46": "46 EU", "other": "Other" 
+                        } 
+                    },
                     furniture_type: { label: "Furniture Type", opts: { sofa: "Sofas & Armchairs", table: "Tables & Chairs", bed: "Beds & Mattresses", wardrobe: "Wardrobes & Dressers", office: "Office Furniture", other: "Other" } },
                     brand: { label: "Brand / Manufacturer" },
                     year: { label: "Year" },
@@ -180,7 +216,25 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Stanje", opts: { new: "Novo", used: "Korišćeno" } },
-                    size: { label: "Veličina", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Ostalo" } },
+                    clothes_type: { 
+                        label: "Vrsta odjeće", 
+                        opts: { top: "Gornji dio (Jakne, Duksevi, Majice)", bottom: "Donji dio (Pantalone, Farmerice, Šortsevi)", shoes: "Obuća" } 
+                    },
+                    size_top: { label: "Veličina (Gornji dio)", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Ostalo" } },
+                    size_bottom: { 
+                        label: "Veličina (Donji dio)", 
+                        opts: { 
+                            "28": "28", "29": "29", "30": "30", "31": "31", "32": "32", 
+                            "33": "33", "34": "34", "36": "36", "38": "38", "40": "40", "other": "Ostalo" 
+                        } 
+                    },
+                    size_shoes: { 
+                        label: "Veličina (Obuća)", 
+                        opts: { 
+                            "38": "38 EU", "39": "39 EU", "40": "40 EU", "41": "41 EU", 
+                            "42": "42 EU", "43": "43 EU", "44": "44 EU", "45": "45 EU", "46": "46 EU", "other": "Ostalo" 
+                        } 
+                    },
                     furniture_type: { label: "Vrsta namještaja", opts: { sofa: "Sofe i fotelje", table: "Stolovi i stolice", bed: "Kreveti i dušeci", wardrobe: "Ormari i komode", office: "Kancelarijski namještaj", other: "Ostalo" } },
                     brand: { label: "Marka / Proizvođač" },
                     year: { label: "Godina proizvodnje" },
@@ -192,7 +246,7 @@
         let currentLang = localStorage.getItem('mne_lang') || 'ru';
         let selectedFiles = [];
         let existingImages = [];
-        let currentPostAttributes = {}; // Хранилище загруженных параметров при редактировании
+        let currentPostAttributes = {}; 
 
         function initCitiesSelect(selectedCity = 'budva') {
             const citySelect = document.getElementById('postCity');
@@ -202,7 +256,6 @@
             `).join('');
         }
 
-        // Рендеринг дополнительных полей в зависимости от выбранной категории
         function renderCategoryAttributes(savedValues = {}) {
             const category = document.getElementById('postCategory').value;
             const container = document.getElementById('categoryAttributesContainer');
@@ -210,13 +263,15 @@
             let html = '';
 
             if (category === 'clothes') {
+                const currentClothesType = savedValues.clothes_type || 'top';
                 html += `
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.size.label}</label>
-                        <select id="attr_size" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
-                            ${Object.keys(a.size.opts).map(k => `<option value="${k}" ${savedValues.size === k ? 'selected' : ''}>${a.size.opts[k]}</option>`).join('')}
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.clothes_type.label}</label>
+                        <select id="attr_clothes_type" onchange="updateClothesSizeDropdown()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.clothes_type.opts).map(k => `<option value="${k}" ${currentClothesType === k ? 'selected' : ''}>${a.clothes_type.opts[k]}</option>`).join('')}
                         </select>
                     </div>
+                    <div id="clothesSizeWrapper"></div>
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
                         <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
@@ -275,6 +330,42 @@
             }
 
             container.innerHTML = html;
+            if (category === 'clothes') {
+                updateClothesSizeDropdown(savedValues.size);
+            }
+        }
+
+        function updateClothesSizeDropdown(selectedSize = '') {
+            const typeEl = document.getElementById('attr_clothes_type');
+            const wrapper = document.getElementById('clothesSizeWrapper');
+            if (!typeEl || !wrapper) return;
+
+            const clothesType = typeEl.value;
+            const a = dict[currentLang].attrs;
+            let sizeObj, labelText, elementId;
+
+            if (clothesType === 'top') {
+                sizeObj = a.size_top.opts;
+                labelText = a.size_top.label;
+                elementId = 'attr_size_top';
+            } else if (clothesType === 'bottom') {
+                sizeObj = a.size_bottom.opts;
+                labelText = a.size_bottom.label;
+                elementId = 'attr_size_bottom';
+            } else {
+                sizeObj = a.size_shoes.opts;
+                labelText = a.size_shoes.label;
+                elementId = 'attr_size_shoes';
+            }
+
+            wrapper.innerHTML = `
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${labelText}</label>
+                    <select id="${elementId}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                        ${Object.keys(sizeObj).map(k => `<option value="${k}" ${selectedSize === k ? 'selected' : ''}>${sizeObj[k]}</option>`).join('')}
+                    </select>
+                </div>
+            `;
         }
 
         function changeLanguage(lang) {
@@ -301,22 +392,29 @@
             const currentCityValue = document.getElementById('postCity').value || 'budva';
             initCitiesSelect(currentCityValue);
             
-            // Сохраняем введенные/выбранные атрибуты при переключении языка
             const currentAttrs = collectAttributesFromDOM();
             renderCategoryAttributes(currentAttrs);
         }
 
         function collectAttributesFromDOM() {
             const attrs = {};
-            const sizeEl = document.getElementById('attr_size');
             const condEl = document.getElementById('attr_condition');
+            const clothesTypeEl = document.getElementById('attr_clothes_type');
+            const sizeTopEl = document.getElementById('attr_size_top');
+            const sizeBottomEl = document.getElementById('attr_size_bottom');
+            const sizeShoesEl = document.getElementById('attr_size_shoes');
             const furnEl = document.getElementById('attr_furniture_type');
             const brandEl = document.getElementById('attr_brand');
             const yearEl = document.getElementById('attr_year');
             const milEl = document.getElementById('attr_mileage');
 
-            if (sizeEl) attrs.size = sizeEl.value;
             if (condEl) attrs.condition = condEl.value;
+            if (clothesTypeEl) {
+                attrs.clothes_type = clothesTypeEl.value;
+                if (sizeTopEl) attrs.size = sizeTopEl.value;
+                if (sizeBottomEl) attrs.size = sizeBottomEl.value;
+                if (sizeShoesEl) attrs.size = sizeShoesEl.value;
+            }
             if (furnEl) attrs.furniture_type = furnEl.value;
             if (brandEl) attrs.brand = brandEl.value;
             if (yearEl) attrs.year = yearEl.value;
@@ -557,7 +655,7 @@
                     title: document.getElementById('postTitle').value.trim(),
                     category: document.getElementById('postCategory').value,
                     city: document.getElementById('postCity').value,
-                    attributes: collectAttributesFromDOM(), // Сохраняем дополнительные плашки параметров в jsonb поле
+                    attributes: collectAttributesFromDOM(),
                     price: Number(document.getElementById('postPrice').value || 0),
                     description: document.getElementById('postDesc').value.trim(),
                     telegram: document.getElementById('postTelegram').value.trim(),
