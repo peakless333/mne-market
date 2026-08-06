@@ -74,7 +74,11 @@
                         <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="passwordLabel">Пароль</label>
                         <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all">
                     </div>
-                    <button type="submit" id="authSubmitBtn" class="w-full bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-xl text-xs transition-all shadow-sm cursor-pointer mt-2" data-i18n="loginBtn">Войти</button>
+                    <!-- Ссылка "Забыли данные?" на телеграм -->
+                    <div class="flex justify-end">
+                        <a href="https://t.me/peakless333" target="_blank" class="text-[11px] text-[#009cf0] hover:underline font-medium" data-i18n="forgotData">Забыли данные?</a>
+                    </div>
+                    <button type="submit" id="authSubmitBtn" class="w-full bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-xl text-xs transition-all shadow-sm cursor-pointer mt-1" data-i18n="loginBtn">Войти</button>
                 </form>
             </div>
 
@@ -364,6 +368,7 @@
                 modalEditTitle: "Редактировать объявление", myBadgeText: "Мое", noPhoto: "Без фото",
                 accountTitle: "Аккаунт", authSub: "Авторизация", tabLogin: "Вход", tabRegister: "Регистрация",
                 usernameLabel: "Логин / Имя", passwordLabel: "Пароль", loginBtn: "Войти", registerBtn: "Зарегистрироваться",
+                forgotData: "Забыли данные?",
                 yourAdsCount: "Ваших объявлений:", statusLabel: "Статус:", authorizedStatus: "Авторизован",
                 logoutBtn: "Выйти из аккаунта", closeBtn: "Закрыть", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
                 nameLabel: "Название", categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
@@ -396,6 +401,7 @@
                 modalEditTitle: "Edit listing", myBadgeText: "My", noPhoto: "No photo",
                 accountTitle: "Account", authSub: "Authorization", tabLogin: "Login", tabRegister: "Register",
                 usernameLabel: "Username / Name", passwordLabel: "Password", loginBtn: "Log in", registerBtn: "Register",
+                forgotData: "Forgot data?",
                 yourAdsCount: "Your listings:", statusLabel: "Status:", authorizedStatus: "Authorized",
                 logoutBtn: "Log out", closeBtn: "Close", cancelBtn: "Cancel", deleteBtn: "Delete", saveBtn: "Save",
                 nameLabel: "Title", categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
@@ -428,6 +434,7 @@
                 modalEditTitle: "Izmjena oglasa", myBadgeText: "Moj", noPhoto: "Bez fotografije",
                 accountTitle: "Nalog", authSub: "Autorizacija", tabLogin: "Prijava", tabRegister: "Registracija",
                 usernameLabel: "Korisničko ime / Ime", passwordLabel: "Lozinka", loginBtn: "Prijavi se", registerBtn: "Registruj se",
+                forgotData: "Zaboravili ste podatke?",
                 yourAdsCount: "Vaši oglasi:", statusLabel: "Status:", authorizedStatus: "Autorizovan",
                 logoutBtn: "Odjavi se", closeBtn: "Zatvori", cancelBtn: "Otkaži", deleteBtn: "Obriši", saveBtn: "Sačuvaj",
                 nameLabel: "Naziv", categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
