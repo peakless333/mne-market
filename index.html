@@ -201,12 +201,18 @@
                     <option value="en">EN</option>
                     <option value="cnr">CNR</option>
                 </select>
-                <button onclick="handlePostAdClick()" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0 cursor-pointer">
+                <!-- Кнопка размещения в шапке (автоматически скрывается внутри Telegram Mini App) -->
+                <button id="headerPostBtn" onclick="handlePostAdClick()" class="bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white font-medium px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm transition-all shadow-sm shadow-blue-500/20 flex items-center gap-1 shrink-0 cursor-pointer">
                     <i data-lucide="plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> <span data-i18n="postAd">Разместить</span>
                 </button>
             </div>
         </div>
     </header>
+
+    <!-- Плавающая кнопка «Плюс» для Telegram Mini App (появляется только в TMA) -->
+    <button id="tmaFloatingBtn" onclick="handlePostAdClick()" class="fixed right-4 bottom-6 z-40 bg-[#009cf0] hover:bg-[#0089d1] active:scale-95 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all cursor-pointer hidden">
+        <i data-lucide="plus" class="w-7 h-7"></i>
+    </button>
 
     <main class="max-w-6xl mx-auto px-4 pt-6 space-y-5">
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
@@ -326,6 +332,18 @@
 
     <script>
         lucide.createIcons();
+
+        // Проверяем, открыт ли сайт внутри Telegram WebApp
+        const isInTelegram = Boolean(window.Telegram?.WebApp?.initData || window.Telegram?.WebApp?.version);
+        if (isInTelegram) {
+            // Если в Телеграме, скрываем кнопку из хедера и показываем плавающую кнопку
+            document.addEventListener('DOMContentLoaded', () => {
+                const headerBtn = document.getElementById('headerPostBtn');
+                const tmaFloatBtn = document.getElementById('tmaFloatingBtn');
+                if (headerBtn) headerBtn.classList.add('hidden');
+                if (tmaFloatBtn) tmaFloatBtn.classList.remove('hidden');
+            });
+        }
 
         const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
