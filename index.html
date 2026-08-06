@@ -1016,9 +1016,9 @@
                 const isMine = isMyPost(post);
                 const cityName = citiesMap[post.city] || post.city;
                 
-                // Форматирование числа с пробелами через toLocaleString('ru-RU') -> 18 000, 100 000, 1 000
+                // Форматирование числа с узким неразрывным пробелом перед знаком евро
                 const formattedNumber = Number(post.price || 0).toLocaleString('ru-RU');
-                const priceText = post.price > 0 ? `${formattedNumber}&nbsp;€` : dict[currentLang].free;
+                const priceText = post.price > 0 ? `${formattedNumber}&thinsp;€` : dict[currentLang].free;
                 
                 let rawImage = post.image_url || (post.images && post.images[0]);
                 const hasValidImage = rawImage && rawImage.trim() !== '' && !rawImage.includes('images.unsplash.com') && !rawImage.startsWith('data:image/svg+xml');
