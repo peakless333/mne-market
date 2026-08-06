@@ -13,7 +13,6 @@
 <body class="bg-gray-50 text-gray-800 pb-20">
 
     <script>
-        // Проверка авторизации: если нет аккаунта в localStorage, перенаправляем на главную
         const currentLoggedUser = localStorage.getItem('mne_logged_user');
         if (!currentLoggedUser) {
             alert('Для создания объявления необходимо авторизоваться!');
@@ -64,7 +63,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="categoryLabel">Категория</label>
-                        <select id="postCategory" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                        <select id="postCategory" onchange="renderCategoryAttributes()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
                             <option value="furniture" data-i18n="cat_furniture">Мебель</option>
                             <option value="tech" data-i18n="cat_tech">Техника</option>
                             <option value="auto" data-i18n="cat_auto">Авто</option>
@@ -79,6 +78,9 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Контейнер для динамических параметров категории -->
+                <div id="categoryAttributesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="priceLabel">Цена (€)</label>
@@ -135,7 +137,15 @@
                 ph_title: "Например: iPhone 13 Pro 128GB",
                 ph_price: "0 (если бесплатно)",
                 ph_desc: "Опишите состояние, комплектацию и детали...",
-                cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" }
+                cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
+                attrs: {
+                    condition: { label: "Состояние", opts: { new: "Новое", used: "Б/У" } },
+                    size: { label: "Размер", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Другой" } },
+                    material: { label: "Материал", opts: { wood: "Дерево", metal: "Металл", glass: "Стекло", fabric: "Ткань", other: "Другой" } },
+                    brand: { label: "Бренд / Производитель" },
+                    year: { label: "Год выпуска" },
+                    mileage: { label: "Пробег (км)" }
+                }
             },
             en: {
                 back: "Back", titleNew: "New Listing", titleEdit: "Edit Listing", photosLabel: "Photos (up to 10)",
@@ -147,7 +157,15 @@
                 ph_title: "e.g. iPhone 13 Pro 128GB",
                 ph_price: "0 (if free)",
                 ph_desc: "Describe condition, package and details...",
-                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
+                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                attrs: {
+                    condition: { label: "Condition", opts: { new: "New", used: "Used" } },
+                    size: { label: "Size", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Other" } },
+                    material: { label: "Material", opts: { wood: "Wood", metal: "Metal", glass: "Glass", fabric: "Fabric", other: "Other" } },
+                    brand: { label: "Brand / Manufacturer" },
+                    year: { label: "Year" },
+                    mileage: { label: "Mileage (km)" }
+                }
             },
             cnr: {
                 back: "Nazad", titleNew: "Novi oglas", titleEdit: "Izmjena oglasa", photosLabel: "Fotografije (do 10)",
@@ -159,13 +177,22 @@
                 ph_title: "npr. iPhone 13 Pro 128GB",
                 ph_price: "0 (ako je besplatno)",
                 ph_desc: "Opišite stanje, opremu i detalje...",
-                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" }
+                cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
+                attrs: {
+                    condition: { label: "Stanje", opts: { new: "Novo", used: "Korišćeno" } },
+                    size: { label: "Veličina", opts: { xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL", other: "Ostalo" } },
+                    material: { label: "Materijal", opts: { wood: "Drvo", metal: "Metal", glass: "Staklo", fabric: "Tkanina", other: "Ostalo" } },
+                    brand: { label: "Marka / Proizvođač" },
+                    year: { label: "Godina proizvodnje" },
+                    mileage: { label: "Kilometraža (km)" }
+                }
             }
         };
 
         let currentLang = localStorage.getItem('mne_lang') || 'ru';
         let selectedFiles = [];
         let existingImages = [];
+        let currentPostAttributes = {}; // Хранилище загруженных параметров при редактировании
 
         function initCitiesSelect(selectedCity = 'budva') {
             const citySelect = document.getElementById('postCity');
@@ -173,6 +200,81 @@
             citySelect.innerHTML = Object.keys(citiesObj).map(code => `
                 <option value="${code}" ${code === selectedCity ? 'selected' : ''}>${citiesObj[code]}</option>
             `).join('');
+        }
+
+        // Рендеринг дополнительных полей в зависимости от выбранной категории
+        function renderCategoryAttributes(savedValues = {}) {
+            const category = document.getElementById('postCategory').value;
+            const container = document.getElementById('categoryAttributesContainer');
+            const a = dict[currentLang].attrs;
+            let html = '';
+
+            if (category === 'clothes') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.size.label}</label>
+                        <select id="attr_size" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.size.opts).map(k => `<option value="${k}" ${savedValues.size === k ? 'selected' : ''}>${a.size.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            } else if (category === 'tech') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.brand.label}</label>
+                        <input type="text" id="attr_brand" value="${savedValues.brand || ''}" placeholder="Apple, Samsung..." class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            } else if (category === 'auto') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.year.label}</label>
+                        <input type="number" id="attr_year" value="${savedValues.year || ''}" placeholder="2018" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.mileage.label}</label>
+                        <input type="number" id="attr_mileage" value="${savedValues.mileage || ''}" placeholder="150000" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    </div>
+                `;
+            } else if (category === 'furniture') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.material.label}</label>
+                        <select id="attr_material" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.material.opts).map(k => `<option value="${k}" ${savedValues.material === k ? 'selected' : ''}>${a.material.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
         }
 
         function changeLanguage(lang) {
@@ -198,10 +300,34 @@
 
             const currentCityValue = document.getElementById('postCity').value || 'budva';
             initCitiesSelect(currentCityValue);
+            
+            // Сохраняем введенные/выбранные атрибуты при переключении языка
+            const currentAttrs = collectAttributesFromDOM();
+            renderCategoryAttributes(currentAttrs);
+        }
+
+        function collectAttributesFromDOM() {
+            const attrs = {};
+            const sizeEl = document.getElementById('attr_size');
+            const condEl = document.getElementById('attr_condition');
+            const matEl = document.getElementById('attr_material');
+            const brandEl = document.getElementById('attr_brand');
+            const yearEl = document.getElementById('attr_year');
+            const milEl = document.getElementById('attr_mileage');
+
+            if (sizeEl) attrs.size = sizeEl.value;
+            if (condEl) attrs.condition = condEl.value;
+            if (matEl) attrs.material = matEl.value;
+            if (brandEl) attrs.brand = brandEl.value;
+            if (yearEl) attrs.year = yearEl.value;
+            if (milEl) attrs.mileage = milEl.value;
+
+            return attrs;
         }
 
         document.getElementById('langSelect').value = currentLang;
         initCitiesSelect();
+        renderCategoryAttributes();
         changeLanguage(currentLang);
 
         if (editPostId) {
@@ -219,6 +345,10 @@
                 document.getElementById('postTitle').value = data.title || '';
                 document.getElementById('postCategory').value = data.category || 'other';
                 initCitiesSelect(data.city || 'budva');
+                
+                currentPostAttributes = data.attributes || {};
+                renderCategoryAttributes(currentPostAttributes);
+
                 document.getElementById('postPrice').value = data.price || 0;
                 document.getElementById('postDesc').value = data.description || '';
                 document.getElementById('postTelegram').value = data.telegram || data.contact || '';
@@ -427,6 +557,7 @@
                     title: document.getElementById('postTitle').value.trim(),
                     category: document.getElementById('postCategory').value,
                     city: document.getElementById('postCity').value,
+                    attributes: collectAttributesFromDOM(), // Сохраняем дополнительные плашки параметров в jsonb поле
                     price: Number(document.getElementById('postPrice').value || 0),
                     description: document.getElementById('postDesc').value.trim(),
                     telegram: document.getElementById('postTelegram').value.trim(),
