@@ -210,17 +210,17 @@
                 </button>
             </div>
             
-            <!-- Поля ввода цены (От и До) -->
+            <!-- Поля ввода цены (От и До) с защитой от ввода отрицательных значений -->
             <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-gray-100">
                 <div class="flex flex-wrap items-center gap-2">
                     <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-1.5 rounded-xl">
                         <span class="text-xs font-semibold text-gray-500" data-i18n="priceFrom">От</span>
-                        <input type="number" id="minPriceInput" oninput="handlePriceFilterInput()" placeholder="0" class="w-16 bg-transparent text-xs font-semibold text-gray-800 outline-none">
+                        <input type="number" id="minPriceInput" min="0" onkeydown="if(event.key==='-')event.preventDefault();" oninput="handlePriceFilterInput()" placeholder="0" class="w-16 bg-transparent text-xs font-semibold text-gray-800 outline-none">
                         <span class="text-xs text-gray-400">€</span>
                     </div>
                     <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-1.5 rounded-xl">
                         <span class="text-xs font-semibold text-gray-500" data-i18n="priceTo">До</span>
-                        <input type="number" id="maxPriceInput" oninput="handlePriceFilterInput()" placeholder="∞" class="w-16 bg-transparent text-xs font-semibold text-gray-800 outline-none">
+                        <input type="number" id="maxPriceInput" min="0" onkeydown="if(event.key==='-')event.preventDefault();" oninput="handlePriceFilterInput()" placeholder="∞" class="w-16 bg-transparent text-xs font-semibold text-gray-800 outline-none">
                         <span class="text-xs text-gray-400">€</span>
                     </div>
                     <button id="resetFiltersBtn" onclick="resetAllFilters()" class="hidden text-xs font-semibold text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1 animate-fade-in shrink-0">
