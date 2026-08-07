@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MNE Market — Доска объявлений в Черногории</title>
     <meta name="description" content="Удобная доска объявлений в Черногории. Поиск и размещение объявлений: недвижимость, авто, электроника, услуги и товары от частных лиц.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇲🇪</text></svg>">
+    <link rel="icon" type="image/png" href="https://kxrdujitnswuajtbdgar.supabase.co/storage/v1/object/public/images/avatar.png">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -40,6 +40,44 @@
             <div class="flex gap-2 pt-2">
                 <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-2xl text-xs transition-all cursor-pointer" data-i18n="cancelBtn">Отмена</button>
                 <button id="confirmDeleteBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-2xl text-xs transition-all shadow-sm shadow-rose-500/20 cursor-pointer" data-i18n="deleteBtn">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка фильтрации по цене -->
+    <div id="priceFilterModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 animate-fade-in">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-blue-50 text-[#009cf0] rounded-xl flex items-center justify-center font-bold">
+                        <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-950 text-sm" data-i18n="priceFilterTitle">Фильтр по цене</h3>
+                        <p class="text-[11px] text-gray-400" data-i18n="priceFilterSub">Укажите диапазон в евро</p>
+                    </div>
+                </div>
+                <button onclick="closePriceModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-xl cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="minPriceLabel">Мин. цена</label>
+                        <input type="number" id="minPriceInput" placeholder="0" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="maxPriceLabel">Макс. цена</label>
+                        <input type="number" id="maxPriceInput" placeholder="Не ограничено" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-[#009cf0] focus:bg-white transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-1">
+                <button onclick="resetPriceFilterModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl text-xs transition-all cursor-pointer" data-i18n="resetBtn">Сбросить</button>
+                <button onclick="applyPriceFilterModal()" class="flex-1 bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold py-3 rounded-xl text-xs transition-all shadow-sm cursor-pointer" data-i18n="applyBtn">Применить</button>
             </div>
         </div>
     </div>
@@ -107,7 +145,7 @@
     <header class="bg-white border-b border-gray-200/80 sticky top-0 z-50 shadow-xs">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-3">
             <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 shrink-0 tracking-tight group">
-                <span class="text-xl group-hover:scale-110 transition-transform">🇲🇪</span> 
+                <img src="https://kxrdujitnswuajtbdgar.supabase.co/storage/v1/object/public/images/avatar.png" alt="Logo" class="w-9 h-9 object-cover rounded-xl shadow-xs group-hover:scale-110 transition-transform">
                 <span class="hidden sm:inline text-gray-900">MNE<span class="text-[#009cf0]">Market</span></span>
             </a>
             <div class="flex-1 max-w-xl relative flex items-center min-w-[120px] sm:min-w-[200px]">
@@ -211,8 +249,10 @@
             </div>
             <div class="flex items-center justify-between pt-2 border-t border-gray-100">
                 <div class="flex items-center gap-2">
-                    <button id="freeFilterBtn" onclick="toggleFreeFilter()" class="text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shrink-0">
-                        <i data-lucide="gift" class="w-3.5 h-3.5 text-emerald-600"></i> <span data-i18n="freeOnly">Бесплатно</span>
+                    <!-- Заменено на динамическую кнопку Цена / Бесплатно -->
+                    <button id="dynamicPriceFilterBtn" onclick="handlePriceFilterClick()" class="text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shrink-0">
+                        <i id="priceFilterIcon" data-lucide="gift" class="w-3.5 h-3.5 text-emerald-600"></i> 
+                        <span id="priceFilterBtnText" data-i18n="freeOnly">Бесплатно</span>
                     </button>
                     <button id="resetFiltersBtn" onclick="resetAllFilters()" class="hidden text-xs font-semibold text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1 animate-fade-in shrink-0">
                         <i data-lucide="x" class="w-3.5 h-3.5"></i> <span data-i18n="resetFilters">Сбросить</span>
@@ -288,12 +328,14 @@
                 recommendations: "Объявления",
                 cat_auto: "Авто", cat_realestate: "Недвижимость", cat_furniture: "Мебель", cat_tech: "Техника", cat_clothes: "Одежда", cat_other: "Разное",
                 sort_newest: "Сначала новые", sort_cheap: "Сначала дешевле", sort_expensive: "Сначала дороже",
-                resetFilters: "Сбросить", freeOnly: "Бесплатно", emptyTitle: "Ничего не найдено", emptyDesc: "Попробуйте изменить параметры поиска или сбросить фильтры.",
+                resetFilters: "Сбросить", freeOnly: "Бесплатно", priceBtnText: "Цена", emptyTitle: "Ничего не найдено", emptyDesc: "Попробуйте изменить параметры поиска или сбросить фильтры.",
                 free: "Бесплатно", newBadge: "NEW", deletePost: "Удалить", editPost: "Редактировать", confirmDelete: "Объявление успешно удалено",
                 confirmEdit: "Объявление успешно обновлено",
                 addedToFav: "Добавлено в избранное ❤️", removedFromFav: "Удалено из избранного",
                 myPostsModeTitle: "Управление вашими объявлениями", myPostsModeDesc: "Здесь отображаются только созданные вами товары.", closeMode: "Закрыть",
                 modalDeleteTitle: "Удалить объявление?", modalDeleteDesc: "Это действие нельзя будет отменить.",
+                priceFilterTitle: "Фильтр по цене", priceFilterSub: "Укажите диапазон в евро",
+                minPriceLabel: "Мин. цена", maxPriceLabel: "Макс. цена", applyBtn: "Применить", resetBtn: "Сбросить",
                 modalEditTitle: "Редактировать объявление", myBadgeText: "Мое", noPhoto: "Без фото",
                 accountTitle: "Аккаунт", authSub: "Авторизация", tabLogin: "Вход", tabRegister: "Регистрация",
                 usernameLabel: "Логин / Имя", passwordLabel: "Пароль", loginBtn: "Войти", registerBtn: "Зарегистрироваться",
@@ -323,12 +365,14 @@
                 recommendations: "Listings",
                 cat_auto: "Vehicles", cat_realestate: "Real estate", cat_furniture: "Furniture", cat_tech: "Electronics", cat_clothes: "Clothing", cat_other: "Other",
                 sort_newest: "Newest first", sort_cheap: "Cheapest first", sort_expensive: "Most expensive",
-                resetFilters: "Reset", freeOnly: "Free", emptyTitle: "No items found", emptyDesc: "Try changing search parameters.",
+                resetFilters: "Reset", freeOnly: "Free", priceBtnText: "Price", emptyTitle: "No items found", emptyDesc: "Try changing search parameters.",
                 free: "Free", newBadge: "NEW", deletePost: "Delete", editPost: "Edit", confirmDelete: "Listing successfully deleted",
                 confirmEdit: "Listing successfully updated",
                 addedToFav: "Added to favorites ❤️", removedFromFav: "Removed from favorites",
                 myPostsModeTitle: "Manage your listings", myPostsModeDesc: "Only listings created by you are displayed here.", closeMode: "Close",
                 modalDeleteTitle: "Delete listing?", modalDeleteDesc: "This action cannot be undone.",
+                priceFilterTitle: "Price filter", priceFilterSub: "Enter range in EUR",
+                minPriceLabel: "Min price", maxPriceLabel: "Max price", applyBtn: "Apply", resetBtn: "Reset",
                 modalEditTitle: "Edit listing", myBadgeText: "My", noPhoto: "No photo",
                 accountTitle: "Account", authSub: "Authorization", tabLogin: "Login", tabRegister: "Register",
                 usernameLabel: "Username / Name", passwordLabel: "Password", loginBtn: "Log in", registerBtn: "Register",
@@ -358,12 +402,14 @@
                 recommendations: "Oglasi",
                 cat_auto: "Auto", cat_realestate: "Nekretnine", cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_clothes: "Odjeća", cat_other: "Razno",
                 sort_newest: "Najnovije", sort_cheap: "Najjeftinije", sort_expensive: "Najskuplje",
-                resetFilters: "Resetuj", freeOnly: "Besplatno", emptyTitle: "Nema rezultata", emptyDesc: "Pokušajte da promijenite parametre pretrage.",
+                resetFilters: "Resetuj", freeOnly: "Besplatno", priceBtnText: "Cijena", emptyTitle: "Nema rezultata", emptyDesc: "Pokušajte da promijenite parametre pretrage.",
                 free: "Besplatno", newBadge: "NOVO", deletePost: "Obriši", editPost: "Izmjeni", confirmDelete: "Oglas je uspješno obrisan",
                 confirmEdit: "Oglas je uspješno ažuriran",
                 addedToFav: "Dodato u omiljene ❤️", removedFromFav: "Uklonjeno iz omiljenih",
                 myPostsModeTitle: "Upravljanje vašim oglasima", myPostsModeDesc: "Ovdje se prikazuju samo vaši oglasi.", closeMode: "Zatvori",
                 modalDeleteTitle: "Obrisati oglas?", modalDeleteDesc: "Ova akcija se ne može opozvati.",
+                priceFilterTitle: "Filter cijene", priceFilterSub: "Unesite raspon u EUR",
+                minPriceLabel: "Min cijena", maxPriceLabel: "Max cijena", applyBtn: "Primijeni", resetBtn: "Resetuj",
                 modalEditTitle: "Izmjena oglasa", myBadgeText: "Moj", noPhoto: "Bez fotografije",
                 accountTitle: "Nalog", authSub: "Autorizacija", tabLogin: "Prijava", tabRegister: "Registracija",
                 usernameLabel: "Korisničko ime / Ime", passwordLabel: "Lozinka", loginBtn: "Prijavi se", registerBtn: "Registruj se",
@@ -398,7 +444,12 @@
         let searchQuery = '';
         let showOnlyFavorites = false;
         let showOnlyMyPosts = false;
+        
+        // Новые переменные состояния для цен
         let showOnlyFree = false;
+        let minPriceFilter = null;
+        let maxPriceFilter = null;
+
         let postToDeleteId = null;
         
         let rawFavorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
@@ -490,6 +541,7 @@
                 submitBtn.innerText = (authMode === 'login') ? dict[lang].loginBtn : dict[lang].registerBtn;
             }
 
+            updatePriceButtonUI();
             renderDynamicCategoryFilters();
             renderPosts();
         }
@@ -716,14 +768,82 @@
             renderPosts();
         }
 
-        function toggleFreeFilter() {
-            showOnlyFree = !showOnlyFree;
-            const btn = document.getElementById('freeFilterBtn');
-            if (showOnlyFree) {
-                btn.classList.add('bg-emerald-50', 'border', 'border-emerald-200', 'text-emerald-700');
+        // Логика кнопки Цена / Бесплатно в зависимости от выбранной категории
+        function updatePriceButtonUI() {
+            const btnSpan = document.getElementById('priceFilterBtnText');
+            const icon = document.getElementById('priceFilterIcon');
+            const btn = document.getElementById('dynamicPriceFilterBtn');
+
+            const hasActivePrice = showOnlyFree || minPriceFilter !== null || maxPriceFilter !== null;
+
+            if (hasActivePrice) {
+                btn.className = "text-xs font-semibold px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shrink-0 bg-emerald-50 border border-emerald-200 text-emerald-700";
             } else {
-                btn.classList.remove('bg-emerald-50', 'border', 'border-emerald-200', 'text-emerald-700');
+                btn.className = "text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shrink-0";
             }
+
+            if (selectedCategory === 'all') {
+                btnSpan.innerText = dict[currentLang].freeOnly;
+                icon.setAttribute('data-lucide', 'gift');
+                icon.className = "w-3.5 h-3.5 text-emerald-600";
+            } else {
+                btnSpan.innerText = dict[currentLang].priceBtnText;
+                icon.setAttribute('data-lucide', 'sliders-horizontal');
+                icon.className = "w-3.5 h-3.5 text-[#009cf0]";
+            }
+            lucide.createIcons();
+        }
+
+        function handlePriceFilterClick() {
+            if (selectedCategory === 'all') {
+                // Если категория ВСЕ — работает как раньше (показ только бесплатных)
+                showOnlyFree = !showOnlyFree;
+                minPriceFilter = null;
+                maxPriceFilter = null;
+            } else {
+                // Если выбрана категория (например Авто) — открываем модальное окно для ввода цен
+                openPriceModal();
+                return;
+            }
+            updatePriceButtonUI();
+            checkResetButtonVisibility();
+            renderPosts();
+        }
+
+        function openPriceModal() {
+            document.getElementById('minPriceInput').value = minPriceFilter !== null ? minPriceFilter : '';
+            document.getElementById('maxPriceInput').value = maxPriceFilter !== null ? maxPriceFilter : '';
+            const modal = document.getElementById('priceFilterModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePriceModal() {
+            const modal = document.getElementById('priceFilterModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function applyPriceFilterModal() {
+            const minVal = document.getElementById('minPriceInput').value.trim();
+            const maxVal = document.getElementById('maxPriceInput').value.trim();
+
+            minPriceFilter = minVal !== '' ? Number(minVal) : null;
+            maxPriceFilter = maxVal !== '' ? Number(maxVal) : null;
+            showOnlyFree = false;
+
+            closePriceModal();
+            updatePriceButtonUI();
+            checkResetButtonVisibility();
+            renderPosts();
+        }
+
+        function resetPriceFilterModal() {
+            minPriceFilter = null;
+            maxPriceFilter = null;
+            showOnlyFree = false;
+            closePriceModal();
+            updatePriceButtonUI();
             checkResetButtonVisibility();
             renderPosts();
         }
@@ -787,6 +907,10 @@
             } else {
                 selectedCategory = cat;
                 categoryFiltersState = {};
+                // Сбрасываем старые ценовые фильтры при переключении категории для чистоты поиска
+                showOnlyFree = false;
+                minPriceFilter = null;
+                maxPriceFilter = null;
             }
 
             document.querySelectorAll('.category-tile').forEach(tile => {
@@ -797,6 +921,7 @@
                 e.currentTarget.classList.add('ring-2', 'ring-[#009cf0]', 'bg-blue-50/50');
             }
 
+            updatePriceButtonUI();
             renderDynamicCategoryFilters();
             checkResetButtonVisibility();
             renderPosts();
@@ -907,7 +1032,9 @@
         function checkResetButtonVisibility() {
             const resetBtn = document.getElementById('resetFiltersBtn');
             const hasActiveAttrFilters = Object.keys(categoryFiltersState).length > 0;
-            if (selectedCity !== 'all' || selectedCategory !== 'all' || hasActiveAttrFilters || searchQuery !== '' || showOnlyFavorites || showOnlyMyPosts || showOnlyFree) {
+            const hasActivePrice = showOnlyFree || minPriceFilter !== null || maxPriceFilter !== null;
+
+            if (selectedCity !== 'all' || selectedCategory !== 'all' || hasActiveAttrFilters || searchQuery !== '' || showOnlyFavorites || showOnlyMyPosts || hasActivePrice) {
                 resetBtn.classList.remove('hidden');
                 resetBtn.classList.add('flex');
             } else {
@@ -924,18 +1051,21 @@
             showOnlyFavorites = false;
             showOnlyMyPosts = false;
             showOnlyFree = false;
+            minPriceFilter = null;
+            maxPriceFilter = null;
+
             const input = document.getElementById('searchInput');
             input.value = '';
             document.getElementById('clearSearchBtn').classList.add('hidden');
             document.getElementById('favoritesHeaderBtn').classList.remove('bg-rose-50', 'border', 'border-rose-200');
             document.getElementById('myPostsHeaderBtn').classList.remove('bg-blue-50', 'border', 'border-blue-200');
             document.getElementById('myPostsBanner').classList.add('hidden');
-            document.getElementById('freeFilterBtn').classList.remove('bg-emerald-50', 'border', 'border-emerald-200', 'text-emerald-700');
             
             document.querySelectorAll('.category-tile').forEach(tile => {
                 tile.classList.remove('ring-2', 'ring-[#009cf0]', 'bg-blue-50/50');
             });
 
+            updatePriceButtonUI();
             renderDynamicCategoryFilters();
             setCity('all');
             checkResetButtonVisibility();
@@ -985,7 +1115,13 @@
 
                 if (showOnlyFavorites && !favorites.includes(postIdStr)) return false;
                 if (showOnlyMyPosts && !isMyPost(post)) return false;
-                if (showOnlyFree && Number(post.price || 0) > 0) return false;
+                
+                // Фильтрация по ценам
+                const postPrice = Number(post.price || 0);
+                if (showOnlyFree && postPrice > 0) return false;
+                if (minPriceFilter !== null && postPrice < minPriceFilter) return false;
+                if (maxPriceFilter !== null && postPrice > maxPriceFilter) return false;
+
                 if (searchQuery && !post.title.toLowerCase().includes(searchQuery) && !(post.description && post.description.toLowerCase().includes(searchQuery))) return false;
                 return true;
             });
@@ -1053,7 +1189,7 @@
                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </button>
                                 ` : ''}
-                                <button onclick="toggleFavorite(event, '${post.id}')" class="bg-white/90 hover:bg-white p-2 rounded-full backdrop-blur-sm transition-all cursor-pointer shadow-sm active:scale-90">
+                                <button onclick="toggleFavorite(event, '${post.id}')` class="bg-white/90 hover:bg-white p-2 rounded-full backdrop-blur-sm transition-all cursor-pointer shadow-sm active:scale-90">
                                     <svg class="w-4 h-4 ${isFav ? 'text-rose-500 fill-rose-500' : 'text-gray-600'}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                                 </button>
                             </div>
