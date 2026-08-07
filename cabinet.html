@@ -28,7 +28,7 @@
                 <div class="flex bg-gray-100 p-1 rounded-xl text-xs font-semibold">
                     <button onclick="setLang('ru')" id="langRu" class="px-2.5 py-1.5 rounded-lg transition-all">RU</button>
                     <button onclick="setLang('en')" id="langEn" class="px-2.5 py-1.5 rounded-lg transition-all">EN</button>
-                    <button onclick="setLang('me')" id="langMe" class="px-2.5 py-1.5 rounded-lg transition-all">ME</button>
+                    <button onclick="setLang('cnr')" id="langCnr" class="px-2.5 py-1.5 rounded-lg transition-all">ME</button>
                 </div>
                 <a href="index.html" id="navHome" class="text-xs font-semibold text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-xl transition-all">
                     На главную
@@ -206,7 +206,7 @@
                     "other": "Other"
                 }
             },
-            me: {
+            cnr: {
                 pageTitle: "Korisnički profil — MNE Market",
                 navHome: "Početna",
                 profileSubtitle: "Upravljajte svojim oglasima u Crnoj Gori",
@@ -242,6 +242,12 @@
         };
 
         let currentLang = localStorage.getItem('mne_lang') || 'ru';
+        // Если вдруг где-то сохранилось 'me', приводим к 'cnr' для консистентности с другими страницами
+        if (currentLang === 'me') {
+            currentLang = 'cnr';
+            localStorage.setItem('mne_lang', 'cnr');
+        }
+
         let allUserPosts = [];
         let currentModalImages = [];
         let currentImageIndex = 0;
@@ -254,7 +260,7 @@
         }
 
         function updateLocalization() {
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ru;
             document.getElementById('pageTitle').innerText = t.pageTitle;
             document.getElementById('navHome').innerText = t.navHome;
             document.getElementById('profileSubtitle').innerText = t.profileSubtitle;
@@ -269,12 +275,15 @@
             document.getElementById('textEditBtn').innerText = t.editBtn;
             document.getElementById('textDeleteBtn').innerText = t.deleteBtn;
 
-            ['ru', 'en', 'me'].forEach(l => {
-                const btn = document.getElementById(`lang${l.charAt(0).toUpperCase() + l.slice(1)}`);
-                if (l === currentLang) {
-                    btn.className = "px-2.5 py-1.5 rounded-lg bg-white text-gray-950 shadow-xs transition-all";
-                } else {
-                    btn.className = "px-2.5 py-1.5 rounded-lg text-gray-500 hover:text-gray-900 transition-all";
+            ['ru', 'en', 'cnr'].forEach(l => {
+                const btnId = l === 'cnr' ? 'langCnr' : `lang${l.charAt(0).toUpperCase() + l.slice(1)}`;
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    if (l === currentLang) {
+                        btn.className = "px-2.5 py-1.5 rounded-lg bg-white text-gray-950 shadow-xs transition-all";
+                    } else {
+                        btn.className = "px-2.5 py-1.5 rounded-lg text-gray-500 hover:text-gray-900 transition-all";
+                    }
                 }
             });
         }
@@ -310,13 +319,13 @@
 
         function getCategoryName(catKey) {
             if (!catKey) return 'MNE Market';
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ru;
             const lowerKey = String(catKey).toLowerCase().trim();
             return t.categories[lowerKey] || catKey;
         }
 
         async function fetchUserPosts() {
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ru;
             try {
                 const { data, error } = await supabaseClient
                     .from('posts')
@@ -390,7 +399,7 @@
             const post = allUserPosts.find(p => String(p.id) === String(id));
             if (!post) return;
 
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ru;
             document.getElementById('modalCategory').innerText = getCategoryName(post.category);
             document.getElementById('modalTitle').innerText = post.title || '';
             document.getElementById('modalPrice').innerText = post.price ? post.price + ' €' : t.free;
@@ -428,7 +437,7 @@
 
         function renderModalImage() {
             const imagesContainer = document.getElementById('modalImagesContainer');
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ru;
 
             if (currentModalImages.length > 0) {
                 let arrowsHtml = '';
@@ -486,7 +495,7 @@
         });
 
         async function deletePost(id) {
-            const t = translations[currentLang];
+            const t = translations[currentLang] || translations.ru;
             if (!confirm(t.confirmDelete)) return;
             try {
                 const { error } = await supabaseClient.from('posts').delete().eq('id', id);
