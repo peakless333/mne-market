@@ -47,8 +47,15 @@
                         <i id="favIcon" data-lucide="heart" class="w-5 h-5"></i>
                     </button>
 
-                    <div id="mainImageWrapper" class="relative h-[380px] bg-gray-100 rounded-xl overflow-hidden group">
-                        <!-- Само изображение (клик открывает полный экран) -->
+                    <div id="mainImageWrapper" class="relative h-[380px] bg-gray-50 rounded-xl overflow-hidden group flex items-center justify-center">
+                        <!-- Само изображение или Заглушка Без фото -->
+                        <div id="noImagePlaceholder" class="hidden flex flex-col items-center justify-center text-gray-400 select-none w-full h-full">
+                            <div class="w-20 h-20 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-2 border border-gray-100">
+                                <i data-lucide="camera" class="w-10 h-10 text-blue-500"></i>
+                            </div>
+                            <span class="text-xs font-bold tracking-wider text-gray-400" data-i18n="noPhoto">БЕЗ ФОТО</span>
+                        </div>
+                        
                         <img id="mainProductImage" src="" onclick="openFullscreen()" class="w-full h-full object-contain cursor-zoom-in" alt="Product">
                         
                         <!-- Компактные стрелки переключения прямо на превью -->
@@ -59,7 +66,7 @@
                             <i data-lucide="chevron-right" class="w-5 h-5"></i>
                         </button>
 
-                        <div class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-1.5 shadow-md pointer-events-none">
+                        <div id="zoomBadge" class="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-3 py-1.5 rounded-xl backdrop-blur-md flex items-center gap-1.5 shadow-md pointer-events-none">
                             <i data-lucide="maximize-2" class="w-4 h-4"></i> <span data-i18n="zoomText">Нажмите для увеличения</span>
                         </div>
                     </div>
@@ -95,10 +102,8 @@
                     </div>
 
                     <div class="space-y-2 pt-2">
-                        <!-- Кнопка связи с продавцом -->
-                        <a id="postTelegramBtn" href="#" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
-                            <i data-lucide="send" class="w-4 h-4"></i> <span data-i18n="contactBtn">Написать продавцу</span>
-                        </a>
+                        <!-- Кнопка связи с продавцом (Telegram / Телефон) -->
+                        <div id="contactButtonContainer"></div>
 
                         <!-- Кнопка Поделиться в Telegram -->
                         <button onclick="shareToTelegram()" class="w-full bg-sky-50 hover:bg-sky-100 text-sky-600 font-medium py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs cursor-pointer">
@@ -161,8 +166,9 @@
             ru: {
                 back: "Назад к объявлениям", loading: "Загрузка...", free: "Бесплатно",
                 price: "Цена", city: "Город", desc: "ОПИСАНИЕ", contactBtn: "Написать продавцу",
+                phoneBtn: "Номер телефона", phoneCopied: "Номер скопирован!",
                 shareBtn: "Поделиться в Telegram", copyBtn: "Скопировать ссылку",
-                zoomText: "Нажмите для увеличения",
+                zoomText: "Нажмите для увеличения", noPhoto: "БЕЗ ФОТО",
                 similarTitle: "Похожие объявления", noSimilar: "Нет похожих объявлений",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 categories: { 
@@ -203,8 +209,9 @@
             en: {
                 back: "Back to listings", loading: "Loading...", free: "Free",
                 price: "Price", city: "City", desc: "DESCRIPTION", contactBtn: "Contact seller",
+                phoneBtn: "Phone number", phoneCopied: "Number copied!",
                 shareBtn: "Share to Telegram", copyBtn: "Copy link",
-                zoomText: "Click to zoom",
+                zoomText: "Click to zoom", noPhoto: "NO PHOTO",
                 similarTitle: "Related listings", noSimilar: "No related listings",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { 
@@ -245,8 +252,9 @@
             cnr: {
                 back: "Nazad na oglase", loading: "Učitavanje...", free: "Besplatno",
                 price: "Cijena", city: "Grad", desc: "OPIS", contactBtn: "Kontaktiraj prodavca",
+                phoneBtn: "Broj telefona", phoneCopied: "Broj kopiran!",
                 shareBtn: "Podijeli na Telegram", copyBtn: "Kopiraj link",
-                zoomText: "Klikni za uvećanje",
+                zoomText: "Klikni za uvećanje", noPhoto: "BEZ SLIKE",
                 similarTitle: "Slični oglasi", noSimilar: "Nema sličnih oglasa",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { 
@@ -298,7 +306,7 @@
 
         async function initPage() {
             document.getElementById('langSelect').value = currentLang;
-            changeLanguage(currentLang); // Применяем язык сразу при инициализации
+            changeLanguage(currentLang);
             
             const { data: postData, error } = await supabaseClient.from('posts').select('*').eq('id', postId).single();
             const { data: allData } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
@@ -317,7 +325,6 @@
 
             postImages = currentPost.images && currentPost.images.length > 0 ? currentPost.images : [];
             if (postImages.length === 0 && currentPost.image_url) postImages.push(currentPost.image_url);
-            if (postImages.length === 0) postImages.push('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
 
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('postContent').classList.remove('hidden');
@@ -365,15 +372,21 @@
 
         function copyLink() {
             navigator.clipboard.writeText(window.location.href).then(() => {
-                const toast = document.getElementById('toast');
-                toast.classList.remove('opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    toast.classList.add('opacity-0', 'pointer-events-none');
-                }, 2000);
+                showToast(dict[currentLang].copyBtn === 'Скопировать ссылку' ? 'Ссылка скопирована в буфер обмена!' : 'Link copied!');
             });
         }
 
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            toast.innerText = text;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2000);
+        }
+
         function switchMainImage(index) {
+            if (postImages.length === 0) return;
             currentImageIndex = index;
             document.getElementById('mainProductImage').src = postImages[currentImageIndex];
             
@@ -419,6 +432,7 @@
         }
 
         function openFullscreen() {
+            if (postImages.length === 0) return;
             const modal = document.getElementById('imageModal');
             document.getElementById('fullscreenImage').src = postImages[currentImageIndex];
             updateCounter();
@@ -431,12 +445,14 @@
 
         function nextImage(e) {
             if (e) e.stopPropagation();
+            if (postImages.length === 0) return;
             currentImageIndex = (currentImageIndex + 1) % postImages.length;
             updateFullscreenView();
         }
 
         function prevImage(e) {
             if (e) e.stopPropagation();
+            if (postImages.length === 0) return;
             currentImageIndex = (currentImageIndex - 1 + postImages.length) % postImages.length;
             updateFullscreenView();
         }
@@ -490,7 +506,6 @@
 
             let html = '';
             
-            // Состояние
             if (attrs.condition && aDict.condition.opts[attrs.condition]) {
                 html += `
                     <div class="flex justify-between text-xs py-1 border-b border-gray-50">
@@ -500,7 +515,6 @@
                 `;
             }
 
-            // Вид услуги
             if (attrs.services_type && aDict.services_type.opts[attrs.services_type]) {
                 html += `
                     <div class="flex justify-between text-xs py-1 border-b border-gray-50">
@@ -510,7 +524,6 @@
                 `;
             }
 
-            // Тип одежды
             if (attrs.clothes_type && aDict.clothes_type.opts[attrs.clothes_type]) {
                 html += `
                     <div class="flex justify-between text-xs py-1 border-b border-gray-50">
@@ -520,7 +533,6 @@
                 `;
             }
 
-            // Размер
             if (attrs.size) {
                 let sizeLabel = "Размер";
                 let sizeVal = attrs.size;
@@ -536,7 +548,6 @@
                 `;
             }
 
-            // Вид мебели
             if (attrs.furniture_type && aDict.furniture_type.opts[attrs.furniture_type]) {
                 html += `
                     <div class="flex justify-between text-xs py-1 border-b border-gray-50">
@@ -546,7 +557,6 @@
                 `;
             }
 
-            // Бренд
             if (attrs.brand) {
                 html += `
                     <div class="flex justify-between text-xs py-1 border-b border-gray-50">
@@ -556,7 +566,6 @@
                 `;
             }
 
-            // Год выпуска (Авто)
             if (attrs.year) {
                 html += `
                     <div class="flex justify-between text-xs py-1 border-b border-gray-50">
@@ -566,7 +575,6 @@
                 `;
             }
 
-            // Пробег (Авто)
             if (attrs.mileage) {
                 html += `
                     <div class="flex justify-between text-xs py-1 border-b border-gray-50">
@@ -597,12 +605,45 @@
             
             renderAttributes();
 
-            const tgClean = currentPost.telegram.replace('@', '');
-            document.getElementById('postTelegramBtn').href = `https://t.me/${tgClean}`;
+            // Обработка контактов (если указан только телефон или телеграм)
+            const contactContainer = document.getElementById('contactButtonContainer');
+            if (currentPost.phone && !currentPost.telegram) {
+                contactContainer.innerHTML = `
+                    <button onclick="copyPhone('${currentPost.phone}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                        <i data-lucide="phone" class="w-4 h-4"></i> <span>${currentPost.phone}</span>
+                    </button>
+                `;
+            } else {
+                const tgClean = currentPost.telegram ? currentPost.telegram.replace('@', '') : '';
+                contactContainer.innerHTML = `
+                    <a id="postTelegramBtn" href="https://t.me/${tgClean}" target="_blank" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i> <span data-i18n="contactBtn">${dict[currentLang].contactBtn}</span>
+                    </a>
+                `;
+            }
 
             updateFavIcon();
-            document.getElementById('mainProductImage').src = postImages[0];
-            updateInlineButtonsVisibility();
+
+            // Отображение фото или заглушки "Без фото"
+            const imgElement = document.getElementById('mainProductImage');
+            const placeholderElement = document.getElementById('noImagePlaceholder');
+            const zoomBadge = document.getElementById('zoomBadge');
+            const prevBtn = document.getElementById('prevImgBtn');
+            const nextBtn = document.getElementById('nextImgBtn');
+
+            if (postImages.length > 0) {
+                placeholderElement.classList.add('hidden');
+                imgElement.classList.remove('hidden');
+                zoomBadge.style.display = 'flex';
+                imgElement.src = postImages[0];
+                updateInlineButtonsVisibility();
+            } else {
+                imgElement.classList.add('hidden');
+                placeholderElement.classList.remove('hidden');
+                zoomBadge.style.display = 'none';
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+            }
 
             const thumbsContainer = document.getElementById('thumbnailsContainer');
             if (postImages.length > 1) {
@@ -621,11 +662,11 @@
             
             if (similar.length > 0) {
                 similarContainer.innerHTML = similar.map(p => {
-                    const sImg = (p.images && p.images.length > 0) ? p.images[0] : (p.image_url || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+                    const sImg = (p.images && p.images.length > 0) ? p.images[0] : (p.image_url || '');
                     const sPrice = formatPrice(p.price);
                     return `
                         <a href="post.html?id=${p.id}" class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
-                            <img src="${sImg}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="Similar">
+                            ${sImg ? `<img src="${sImg}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="Similar">` : `<div class="w-16 h-16 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100"><i data-lucide="camera" class="w-6 h-6 text-gray-300"></i></div>`}
                             <div class="min-w-0 flex-1">
                                 <h4 class="font-semibold text-xs text-gray-900 truncate group-hover:text-blue-600 transition-colors">${p.title}</h4>
                                 <p class="text-[11px] text-gray-400 mt-0.5">${dict[currentLang].cities[p.city] || p.city}</p>
@@ -638,6 +679,12 @@
                 similarContainer.innerHTML = `<p class="text-xs text-gray-400">${dict[currentLang].noSimilar}</p>`;
             }
             lucide.createIcons();
+        }
+
+        function copyPhone(phone) {
+            navigator.clipboard.writeText(phone).then(() => {
+                showToast(dict[currentLang].phoneCopied);
+            });
         }
 
         initPage();
