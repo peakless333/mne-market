@@ -49,9 +49,17 @@
                     <p id="profileSubtitle" class="text-xs text-gray-400 mt-0.5">Управление вашими объявлениями в Черногории</p>
                 </div>
             </div>
-            <button onclick="logout()" id="logoutBtn" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer">
-                Выйти из аккаунта
-            </button>
+            
+            <!-- Кнопки действий в профиле -->
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <a href="https://t.me/peakless333" target="_blank" id="supportBtn" class="flex-1 sm:flex-none bg-blue-50 hover:bg-blue-100 text-[#009cf0] font-semibold px-4 py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span id="supportBtnText">Поддержка</span>
+                </a>
+                <button onclick="logout()" id="logoutBtn" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer">
+                    Выйти
+                </button>
+            </div>
         </div>
 
         <h2 id="sectionTitle" class="text-lg font-extrabold text-gray-900">Ваши объявления</h2>
@@ -132,7 +140,8 @@
                 pageTitle: "Личный кабинет — MNE Market",
                 navHome: "На главную",
                 profileSubtitle: "Управление вашими объявлениями в Черногории",
-                logoutBtn: "Выйти из аккаунта",
+                logoutBtn: "Выйти",
+                supportBtn: "Поддержка",
                 sectionTitle: "Ваши объявления",
                 emptyTitle: "У вас пока нет объявлений",
                 emptyDesc: "Разместите свой первый товар или услугу на платформе.",
@@ -152,6 +161,7 @@
                 navHome: "Home",
                 profileSubtitle: "Manage your listings in Montenegro",
                 logoutBtn: "Log out",
+                supportBtn: "Support",
                 sectionTitle: "Your Listings",
                 emptyTitle: "You don't have any listings yet",
                 emptyDesc: "Post your first item or service on the platform.",
@@ -171,6 +181,7 @@
                 navHome: "Početna",
                 profileSubtitle: "Upravljajte svojim oglasima u Crnoj Gori",
                 logoutBtn: "Odjavite se",
+                supportBtn: "Podrška",
                 sectionTitle: "Vaši oglasi",
                 emptyTitle: "Još nemate oglasa",
                 emptyDesc: "Objavite svoj prvi proizvod ili uslugu na platformi.",
@@ -203,6 +214,7 @@
             document.getElementById('navHome').innerText = t.navHome;
             document.getElementById('profileSubtitle').innerText = t.profileSubtitle;
             document.getElementById('logoutBtn').innerText = t.logoutBtn;
+            document.getElementById('supportBtnText').innerText = t.supportBtn;
             document.getElementById('sectionTitle').innerText = t.sectionTitle;
             document.getElementById('emptyTitle').innerText = t.emptyTitle;
             document.getElementById('emptyDesc').innerText = t.emptyDesc;
@@ -330,7 +342,6 @@
             document.getElementById('modalTitle').innerText = post.title || '';
             document.getElementById('modalPrice').innerText = post.price ? post.price + ' €' : t.free;
             
-            // Отображение конкретного города или скрытие, если не указан
             const locationEl = document.getElementById('modalLocation');
             if (post.location && post.location.trim() !== '') {
                 document.getElementById('modalLocationText').innerText = post.location;
@@ -343,11 +354,9 @@
             document.getElementById('modalDate').innerText = post.created_at ? new Date(post.created_at).toLocaleDateString() : '';
             document.getElementById('modalContact').innerText = post.contact ? `${t.descTitle === 'Описание' ? 'Связь:' : 'Contact:'} ${post.contact}` : '';
 
-            // Кнопки в модалке
             document.getElementById('modalEditBtn').onclick = () => { window.location.href = `create.html?edit=${post.id}`; };
             document.getElementById('modalDeleteBtn').onclick = () => { closeModal(); deletePost(post.id); };
 
-            // Картинки
             const imagesContainer = document.getElementById('modalImagesContainer');
             const images = post.images && post.images.length > 0 ? post.images : (post.image_url ? [post.image_url] : []);
             const validImages = images.filter(img => img && img.trim() !== '' && !img.includes('images.unsplash.com'));
@@ -379,7 +388,6 @@
             }, 300);
         }
 
-        // Закрытие по клику вне модалки
         document.getElementById('postModal').addEventListener('click', (e) => {
             if (e.target.id === 'postModal') closeModal();
         });
