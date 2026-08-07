@@ -101,7 +101,7 @@
             </div>
             <div class="p-6 space-y-5">
                 <!-- Галерея фото в модалке -->
-                <div id="modalImagesContainer" class="rounded-2xl overflow-hidden bg-gray-100 max-h-80 flex items-center justify-center"></div>
+                <div id="modalImagesContainer" class="relative rounded-2xl overflow-hidden bg-gray-100 h-80 flex items-center justify-center"></div>
 
                 <div class="space-y-2">
                     <div class="flex items-baseline justify-between">
@@ -159,7 +159,19 @@
                 toastLoadError: "Ошибка загрузки объявлений",
                 confirmDelete: "Точно удалить это объявление?",
                 toastDeleted: "Объявление удалено",
-                toastDeleteError: "Не удалось удалить"
+                toastDeleteError: "Не удалось удалить",
+                categories: {
+                    "tech": "Техника",
+                    "furniture": "Мебель",
+                    "kids": "Детские товары",
+                    "property": "Недвижимость",
+                    "auto": "Автомобили",
+                    "services": "Услуги",
+                    "jobs": "Работа",
+                    "clothes": "Одежда и обувь",
+                    "sport": "Спорт и отдых",
+                    "other": "Другое"
+                }
             },
             en: {
                 pageTitle: "Dashboard — MNE Market",
@@ -180,7 +192,19 @@
                 toastLoadError: "Error loading listings",
                 confirmDelete: "Are you sure you want to delete this listing?",
                 toastDeleted: "Listing deleted",
-                toastDeleteError: "Failed to delete"
+                toastDeleteError: "Failed to delete",
+                categories: {
+                    "tech": "Tech",
+                    "furniture": "Furniture",
+                    "kids": "Kids",
+                    "property": "Property",
+                    "auto": "Cars",
+                    "services": "Services",
+                    "jobs": "Jobs",
+                    "clothes": "Clothes",
+                    "sport": "Sport",
+                    "other": "Other"
+                }
             },
             me: {
                 pageTitle: "Korisnički profil — MNE Market",
@@ -201,12 +225,26 @@
                 toastLoadError: "Greška pri učitavanju oglasa",
                 confirmDelete: "Da li ste sigurni da želite da obrišete ovaj oglas?",
                 toastDeleted: "Oglas je obrisan",
-                toastDeleteError: "Brisanje nije uspjelo"
+                toastDeleteError: "Brisanje nije uspjelo",
+                categories: {
+                    "tech": "Tehnika",
+                    "furniture": "Namještaj",
+                    "kids": "Za djecu",
+                    "property": "Nekretnine",
+                    "auto": "Automobili",
+                    "services": "Usluge",
+                    "jobs": "Poslovi",
+                    "clothes": "Odjeća i obuća",
+                    "sport": "Sport i rekreacija",
+                    "other": "Ostalo"
+                }
             }
         };
 
         let currentLang = localStorage.getItem('mne_lang') || 'ru';
         let allUserPosts = [];
+        let currentModalImages = [];
+        let currentImageIndex = 0;
 
         function setLang(lang) {
             currentLang = lang;
@@ -268,6 +306,13 @@
         function logout() {
             localStorage.removeItem('mne_logged_user');
             window.location.href = 'index.html';
+        }
+
+        function getCategoryName(catKey) {
+            if (!catKey) return 'MNE Market';
+            const t = translations[currentLang];
+            const lowerKey = String(catKey).toLowerCase().trim();
+            return t.categories[lowerKey] || catKey;
         }
 
         async function fetchUserPosts() {
@@ -346,7 +391,7 @@
             if (!post) return;
 
             const t = translations[currentLang];
-            document.getElementById('modalCategory').innerText = post.category || 'MNE Market';
+            document.getElementById('modalCategory').innerText = getCategoryName(post.category);
             document.getElementById('modalTitle').innerText = post.title || '';
             document.getElementById('modalPrice').innerText = post.price ? post.price + ' €' : t.free;
             
@@ -365,15 +410,11 @@
             document.getElementById('modalEditBtn').onclick = () => { window.location.href = `create.html?edit=${post.id}`; };
             document.getElementById('modalDeleteBtn').onclick = () => { closeModal(); deletePost(post.id); };
 
-            const imagesContainer = document.getElementById('modalImagesContainer');
             const images = post.images && post.images.length > 0 ? post.images : (post.image_url ? [post.image_url] : []);
-            const validImages = images.filter(img => img && img.trim() !== '' && !img.includes('images.unsplash.com'));
+            currentModalImages = images.filter(img => img && img.trim() !== '' && !img.includes('images.unsplash.com'));
+            currentImageIndex = 0;
 
-            if (validImages.length > 0) {
-                imagesContainer.innerHTML = `<img src="${validImages[0]}" class="w-full h-full object-contain max-h-80">`;
-            } else {
-                imagesContainer.innerHTML = `<div class="w-full h-48 bg-blue-50 flex items-center justify-center text-gray-400 text-sm">${t.noPhoto}</div>`;
-            }
+            renderModalImage();
 
             const modal = document.getElementById('postModal');
             const box = document.getElementById('modalContentBox');
@@ -383,6 +424,50 @@
                 box.classList.remove('scale-95');
                 box.classList.add('scale-100');
             }, 10);
+        }
+
+        function renderModalImage() {
+            const imagesContainer = document.getElementById('modalImagesContainer');
+            const t = translations[currentLang];
+
+            if (currentModalImages.length > 0) {
+                let arrowsHtml = '';
+                if (currentModalImages.length > 1) {
+                    arrowsHtml = `
+                        <button onclick="prevImage(event)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all cursor-pointer z-10">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="nextImage(event)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all cursor-pointer z-10">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                        <div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full z-10">
+                            ${currentImageIndex + 1} / ${currentModalImages.length}
+                        </div>
+                    `;
+                }
+
+                imagesContainer.innerHTML = `
+                    <img src="${currentModalImages[currentImageIndex]}" class="w-full h-full object-contain max-h-80 transition-all duration-200">
+                    ${arrowsHtml}
+                `;
+                lucide.createIcons();
+            } else {
+                imagesContainer.innerHTML = `<div class="w-full h-48 bg-blue-50 flex items-center justify-center text-gray-400 text-sm">${t.noPhoto}</div>`;
+            }
+        }
+
+        function prevImage(e) {
+            e.stopPropagation();
+            if (currentModalImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex - 1 + currentModalImages.length) % currentModalImages.length;
+            renderModalImage();
+        }
+
+        function nextImage(e) {
+            e.stopPropagation();
+            if (currentModalImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex + 1) % currentModalImages.length;
+            renderModalImage();
         }
 
         function closeModal() {
