@@ -96,10 +96,21 @@
 
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="tgLabel">Telegram для связи</label>
-                    <input type="text" id="postTelegram" required placeholder="@username" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                    <input type="text" id="postTelegram" oninput="checkFormValidity()" placeholder="@username" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
                 </div>
 
-                <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer mt-4">
+                <div>
+                    <button type="button" onclick="toggleOtherContact()" class="text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer flex items-center gap-1">
+                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> <span data-i18n="otherMethodsBtn">Другие методы</span>
+                    </button>
+                </div>
+
+                <div id="phoneContainer" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="phoneLabel">Номер телефона</label>
+                    <input type="text" id="postPhone" oninput="checkFormValidity()" placeholder="+382 XX XXX XXX" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
+                </div>
+
+                <button type="submit" id="submitBtn" disabled class="w-full bg-gray-300 text-white font-medium py-3.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-not-allowed mt-4">
                     <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="publishBtn">Опубликовать объявление</span>
                 </button>
             </form>
@@ -133,7 +144,7 @@
                 back: "Назад", titleNew: "Новое объявление", titleEdit: "Редактировать объявление", photosLabel: "Фотографии (до 10 шт.)",
                 addPhotoBtn: "Нажмите или перетащите фото сюда", nameLabel: "Название",
                 categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
-                descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
+                descLabel: "Описание", tgLabel: "Telegram для связи", otherMethodsBtn: "Другие методы", phoneLabel: "Номер телефона", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
                 cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_kids: "Детские товары", cat_services: "Услуги", cat_other: "Разное",
                 publishing: "Сохранение...", maxPhotos: "Максимально можно загрузить 10 фотографий",
                 ph_title: "Например: iPhone 13 Pro 128GB",
@@ -191,7 +202,7 @@
                 back: "Back", titleNew: "New Listing", titleEdit: "Edit Listing", photosLabel: "Photos (up to 10)",
                 addPhotoBtn: "Click or drag photos here", nameLabel: "Title",
                 categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
-                descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing", saveBtn: "Save changes",
+                descLabel: "Description", tgLabel: "Telegram username", otherMethodsBtn: "Other methods", phoneLabel: "Phone number", publishBtn: "Publish listing", saveBtn: "Save changes",
                 cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_kids: "Kids items", cat_services: "Services", cat_other: "Other",
                 publishing: "Saving...", maxPhotos: "Maximum 10 photos allowed",
                 ph_title: "e.g. iPhone 13 Pro 128GB",
@@ -249,7 +260,7 @@
                 back: "Nazad", titleNew: "Novi oglas", titleEdit: "Izmjena oglasa", photosLabel: "Fotografije (do 10)",
                 addPhotoBtn: "Kliknite ili prevucite fotografije ovdje", nameLabel: "Naziv",
                 categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
-                descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
+                descLabel: "Opis", tgLabel: "Telegram za kontakt", otherMethodsBtn: "Ostale metode", phoneLabel: "Broj telefona", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
                 cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_kids: "Za djecu", cat_services: "Usluge", cat_other: "Razno",
                 publishing: "Čuvanje...", maxPhotos: "Možete otpremiti najviše 10 fotografija",
                 ph_title: "npr. iPhone 13 Pro 128GB",
@@ -309,6 +320,27 @@
         let selectedFiles = [];
         let existingImages = [];
         let currentPostAttributes = {}; 
+
+        function toggleOtherContact() {
+            const phoneContainer = document.getElementById('phoneContainer');
+            phoneContainer.classList.toggle('hidden');
+        }
+
+        function checkFormValidity() {
+            const tgVal = document.getElementById('postTelegram').value.trim();
+            const phoneVal = document.getElementById('postPhone').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (tgVal !== '' || phoneVal !== '') {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+                submitBtn.classList.add('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'cursor-pointer');
+                submitBtn.classList.add('bg-gray-300', 'cursor-not-allowed');
+            }
+        }
 
         function initCitiesSelect(selectedCity = 'budva') {
             const citySelect = document.getElementById('postCity');
@@ -523,6 +555,7 @@
         initCitiesSelect();
         renderCategoryAttributes();
         changeLanguage(currentLang);
+        checkFormValidity();
 
         if (editPostId) {
             document.getElementById('pageTitle').innerText = dict[currentLang].titleEdit;
@@ -545,7 +578,12 @@
 
                 document.getElementById('postPrice').value = data.price || 0;
                 document.getElementById('postDesc').value = data.description || '';
-                document.getElementById('postTelegram').value = data.telegram || data.contact || '';
+                document.getElementById('postTelegram').value = data.telegram || '';
+                if (data.phone) {
+                    document.getElementById('postPhone').value = data.phone;
+                    document.getElementById('phoneContainer').classList.remove('hidden');
+                }
+                checkFormValidity();
 
                 existingImages = data.images && Array.isArray(data.images) ? [...data.images] : (data.image_url ? [data.image_url] : []);
                 renderPreviews();
@@ -747,6 +785,9 @@
                     imageUrls.push('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
                 }
 
+                const telegramVal = document.getElementById('postTelegram').value.trim();
+                const phoneVal = document.getElementById('postPhone').value.trim();
+
                 const postData = {
                     title: document.getElementById('postTitle').value.trim(),
                     category: document.getElementById('postCategory').value,
@@ -754,8 +795,9 @@
                     attributes: collectAttributesFromDOM(),
                     price: Number(document.getElementById('postPrice').value || 0),
                     description: document.getElementById('postDesc').value.trim(),
-                    telegram: document.getElementById('postTelegram').value.trim(),
-                    contact: document.getElementById('postTelegram').value.trim(),
+                    telegram: telegramVal,
+                    phone: phoneVal,
+                    contact: telegramVal || phoneVal,
                     images: imageUrls,
                     image_url: imageUrls[0],
                     username: usernameToken,
