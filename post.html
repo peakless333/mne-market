@@ -300,6 +300,7 @@
         let postImages = [];
         let currentImageIndex = 0;
         let favorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
+        let phoneRevealed = false; // Состояние открыт ли номер
 
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
@@ -608,20 +609,7 @@
             // Обработка контактов (если указан только телефон или телеграм)
             const contactContainer = document.getElementById('contactButtonContainer');
             if (currentPost.phone && !currentPost.telegram) {
-                // Цензурируем большую часть номера телефона (оставляем код страны или первые пару цифр и последние 2)
-                const phone = currentPost.phone;
-                let maskedPhone = phone;
-                if (phone.length > 6) {
-                    maskedPhone = phone.slice(0, 4) + '*******' + phone.slice(-2);
-                } else {
-                    maskedPhone = '*******';
-                }
-
-                contactContainer.innerHTML = `
-                    <button onclick="copyPhone('${currentPost.phone}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
-                        <i data-lucide="phone" class="w-4 h-4"></i> <span>${maskedPhone}</span>
-                    </button>
-                `;
+                updatePhoneButtonUI();
             } else {
                 const tgClean = currentPost.telegram ? currentPost.telegram.replace('@', '') : '';
                 contactContainer.innerHTML = `
@@ -690,10 +678,38 @@
             lucide.createIcons();
         }
 
-        function copyPhone(phone) {
-            navigator.clipboard.writeText(phone).then(() => {
-                showToast(dict[currentLang].phoneCopied);
-            });
+        function updatePhoneButtonUI() {
+            const contactContainer = document.getElementById('contactButtonContainer');
+            const phone = currentPost.phone;
+
+            if (!phone) return;
+
+            let displayText = phone;
+            if (!phoneRevealed) {
+                if (phone.length > 6) {
+                    displayText = phone.slice(0, 4) + '*******' + phone.slice(-2);
+                } else {
+                    displayText = '*******';
+                }
+            }
+
+            contactContainer.innerHTML = `
+                <button onclick="handlePhoneClick('${phone}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                    <i data-lucide="phone" class="w-4 h-4"></i> <span>${displayText}</span>
+                </button>
+            `;
+            lucide.createIcons();
+        }
+
+        function handlePhoneClick(phone) {
+            if (!phoneRevealed) {
+                // Первый клик: убираем цензуру (показываем полный номер)
+                phoneRevealed = true;
+                updatePhoneButtonUI();
+            } else {
+                // Второй клик: переводим на звонилку устройства
+                window.location.href = `tel:${phone}`;
+            }
         }
 
         initPage();
