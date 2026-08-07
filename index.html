@@ -103,7 +103,8 @@
         </div>
     </div>
 
-    <header class="bg-white border-b border-gray-200/80 sticky top-0 z-35 transition-transform duration-300 shadow-xs">
+    <!-- Шапка сайта закреплена сверху и поверх всех элементов -->
+    <header class="bg-white border-b border-gray-200/80 sticky top-0 z-50 shadow-xs">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2 sm:gap-3">
             <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 shrink-0 tracking-tight group">
                 <span class="text-xl group-hover:scale-110 transition-transform">🇲🇪</span> 
@@ -1016,7 +1017,6 @@
                 const isMine = isMyPost(post);
                 const cityName = citiesMap[post.city] || post.city;
                 
-                // Форматирование числа с узким неразрывным пробелом перед знаком евро
                 const formattedNumber = Number(post.price || 0).toLocaleString('ru-RU');
                 const priceText = post.price > 0 ? `${formattedNumber}&thinsp;€` : dict[currentLang].free;
                 
@@ -1079,19 +1079,6 @@
         }
 
         fetchPosts();
-
-        const header = document.querySelector('header');
-        const scrollThreshold = 50;
-
-        window.addEventListener('scroll', function() {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            if (scrollTop <= 10) {
-                header.style.transform = 'translateY(0)';
-            } else if (scrollTop > scrollThreshold) {
-                header.style.transform = 'translateY(-100%)';
-            }
-        }, { passive: true });
     </script>
 </body>
 </html>
