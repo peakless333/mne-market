@@ -52,6 +52,10 @@
             
             <!-- Кнопки действий в профиле -->
             <div class="flex items-center gap-2 w-full sm:w-auto">
+                <a href="create.html" id="createBtn" class="flex-1 sm:flex-none bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold px-4 py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span id="createBtnText">Разместить</span>
+                </a>
                 <a href="https://t.me/peakless333" target="_blank" id="supportBtn" class="flex-1 sm:flex-none bg-blue-50 hover:bg-blue-100 text-[#009cf0] font-semibold px-4 py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
                     <span id="supportBtnText">Поддержка</span>
@@ -142,6 +146,7 @@
                 profileSubtitle: "Управление вашими объявлениями в Черногории",
                 logoutBtn: "Выйти",
                 supportBtn: "Поддержка",
+                createBtn: "Разместить",
                 sectionTitle: "Ваши объявления",
                 emptyTitle: "У вас пока нет объявлений",
                 emptyDesc: "Разместите свой первый товар или услугу на платформе.",
@@ -162,6 +167,7 @@
                 profileSubtitle: "Manage your listings in Montenegro",
                 logoutBtn: "Log out",
                 supportBtn: "Support",
+                createBtn: "Create",
                 sectionTitle: "Your Listings",
                 emptyTitle: "You don't have any listings yet",
                 emptyDesc: "Post your first item or service on the platform.",
@@ -182,6 +188,7 @@
                 profileSubtitle: "Upravljajte svojim oglasima u Crnoj Gori",
                 logoutBtn: "Odjavite se",
                 supportBtn: "Podrška",
+                createBtn: "Kreiraj",
                 sectionTitle: "Vaši oglasi",
                 emptyTitle: "Još nemate oglasa",
                 emptyDesc: "Objavite svoj prvi proizvod ili uslugu na platformi.",
@@ -215,6 +222,7 @@
             document.getElementById('profileSubtitle').innerText = t.profileSubtitle;
             document.getElementById('logoutBtn').innerText = t.logoutBtn;
             document.getElementById('supportBtnText').innerText = t.supportBtn;
+            document.getElementById('createBtnText').innerText = t.createBtn;
             document.getElementById('sectionTitle').innerText = t.sectionTitle;
             document.getElementById('emptyTitle').innerText = t.emptyTitle;
             document.getElementById('emptyDesc').innerText = t.emptyDesc;
