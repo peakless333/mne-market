@@ -298,6 +298,7 @@
 
         async function initPage() {
             document.getElementById('langSelect').value = currentLang;
+            changeLanguage(currentLang); // Применяем язык сразу при инициализации
             
             const { data: postData, error } = await supabaseClient.from('posts').select('*').eq('id', postId).single();
             const { data: allData } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
