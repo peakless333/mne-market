@@ -242,7 +242,6 @@
         };
 
         let currentLang = localStorage.getItem('mne_lang') || 'ru';
-        // Если вдруг где-то сохранилось 'me', приводим к 'cnr' для консистентности с другими страницами
         if (currentLang === 'me') {
             currentLang = 'cnr';
             localStorage.setItem('mne_lang', 'cnr');
@@ -414,7 +413,26 @@
 
             document.getElementById('modalDescription').innerText = post.description || '';
             document.getElementById('modalDate').innerText = post.created_at ? new Date(post.created_at).toLocaleDateString() : '';
-            document.getElementById('modalContact').innerText = post.contact ? `${t.descTitle === 'Описание' ? 'Связь:' : 'Contact:'} ${post.contact}` : '';
+            
+            // Обработка контактов (Telegram + опционально Телефон/WhatsApp)
+            const contactEl = document.getElementById('modalContact');
+            const contactVal = post.contact || post.telegram || '';
+            const altContactVal = post.phone || post.whatsapp || '';
+            
+            if (contactVal) {
+                let contactHtml = `<div class="flex flex-col gap-1.5">`;
+                const cleanTg = contactVal.replace(/^@/, '');
+                contactHtml += `<a href="https://t.me/${cleanTg}" target="_blank" class="inline-flex items-center gap-1.5 text-blue-600 hover:underline font-semibold"><i data-lucide="send" class="w-3.5 h-3.5"></i> @${cleanTg}</a>`;
+                
+                if (altContactVal) {
+                    contactHtml += `<button onclick="toggleAltContact(event)" class="text-[11px] text-gray-400 hover:text-gray-600 text-left transition-colors cursor-pointer flex items-center gap-1" id="altContactToggleBtn"><span>${currentLang === 'en' ? 'Other contact methods' : currentLang === 'cnr' ? 'Ostale metode kontakta' : 'Другие методы'}</span> <i data-lucide="chevron-down" class="w-3 h-3"></i></button>`;
+                    contactHtml += `<div id="altContactBox" class="hidden text-xs text-gray-700 font-medium mt-0.5 bg-gray-50 p-2 rounded-xl border border-gray-100 flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5 text-emerald-600"></i> <span>${altContactVal}</span></div>`;
+                }
+                contactHtml += `</div>`;
+                contactEl.innerHTML = contactHtml;
+            } else {
+                contactEl.innerHTML = '';
+            }
 
             document.getElementById('modalEditBtn').onclick = () => { window.location.href = `create.html?edit=${post.id}`; };
             document.getElementById('modalDeleteBtn').onclick = () => { closeModal(); deletePost(post.id); };
@@ -432,7 +450,16 @@
                 modal.classList.remove('opacity-0');
                 box.classList.remove('scale-95');
                 box.classList.add('scale-100');
+                lucide.createIcons();
             }, 10);
+        }
+
+        function toggleAltContact(e) {
+            e.stopPropagation();
+            const box = document.getElementById('altContactBox');
+            if (box) {
+                box.classList.toggle('hidden');
+            }
         }
 
         function renderModalImage() {
