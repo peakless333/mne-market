@@ -96,8 +96,8 @@
                         <h2 id="modalTitle" class="text-xl font-black text-gray-950">Название</h2>
                         <span id="modalPrice" class="text-2xl font-black text-gray-950">0 €</span>
                     </div>
-                    <p id="modalLocation" class="text-xs text-gray-500 flex items-center gap-1">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> <span>Город</span>
+                    <p id="modalLocation" class="text-xs text-gray-500 flex items-center gap-1 hidden">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> <span id="modalLocationText">Город</span>
                     </p>
                 </div>
 
@@ -329,7 +329,16 @@
             document.getElementById('modalCategory').innerText = post.category || 'MNE Market';
             document.getElementById('modalTitle').innerText = post.title || '';
             document.getElementById('modalPrice').innerText = post.price ? post.price + ' €' : t.free;
-            document.getElementById('modalLocation').lastElementChild.innerText = post.location || 'Черногория';
+            
+            // Отображение конкретного города или скрытие, если не указан
+            const locationEl = document.getElementById('modalLocation');
+            if (post.location && post.location.trim() !== '') {
+                document.getElementById('modalLocationText').innerText = post.location;
+                locationEl.classList.remove('hidden');
+            } else {
+                locationEl.classList.add('hidden');
+            }
+
             document.getElementById('modalDescription').innerText = post.description || '';
             document.getElementById('modalDate').innerText = post.created_at ? new Date(post.created_at).toLocaleDateString() : '';
             document.getElementById('modalContact').innerText = post.contact ? `${t.descTitle === 'Описание' ? 'Связь:' : 'Contact:'} ${post.contact}` : '';
