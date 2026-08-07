@@ -68,6 +68,7 @@
                             <option value="tech" data-i18n="cat_tech">Техника</option>
                             <option value="auto" data-i18n="cat_auto">Авто</option>
                             <option value="clothes" data-i18n="cat_clothes">Одежда</option>
+                            <option value="kids" data-i18n="cat_kids">Детские товары</option>
                             <option value="other" data-i18n="cat_other">Разное</option>
                         </select>
                     </div>
@@ -132,7 +133,7 @@
                 addPhotoBtn: "Нажмите или перетащите фото сюда", nameLabel: "Название",
                 categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
                 descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
-                cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_other: "Разное",
+                cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_kids: "Детские товары", cat_other: "Разное",
                 publishing: "Сохранение...", maxPhotos: "Максимально можно загрузить 10 фотографий",
                 ph_title: "Например: iPhone 13 Pro 128GB",
                 ph_price: "0 (если бесплатно)",
@@ -160,6 +161,17 @@
                         } 
                     },
                     furniture_type: { label: "Вид мебели", opts: { sofa: "Диваны и кресла", table: "Столы и стулья", bed: "Кровати и матрасы", wardrobe: "Шкафы и комоды", office: "Офисная мебель", other: "Другое" } },
+                    kids_type: { 
+                        label: "Категория товаров", 
+                        opts: { 
+                            strollers: "Коляски и автокресла", 
+                            toys: "Игрушки и игры", 
+                            clothes_kids: "Одежда и обувь", 
+                            furniture_kids: "Детская мебель", 
+                            feeding: "Кормление и уход", 
+                            other_kids: "Другое" 
+                        } 
+                    },
                     brand: { label: "Бренд / Производитель" },
                     year: { label: "Год выпуска" },
                     mileage: { label: "Пробег (км)" }
@@ -170,7 +182,7 @@
                 addPhotoBtn: "Click or drag photos here", nameLabel: "Title",
                 categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
                 descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing", saveBtn: "Save changes",
-                cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_other: "Other",
+                cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_kids: "Kids items", cat_other: "Other",
                 publishing: "Saving...", maxPhotos: "Maximum 10 photos allowed",
                 ph_title: "e.g. iPhone 13 Pro 128GB",
                 ph_price: "0 (if free)",
@@ -198,6 +210,17 @@
                         } 
                     },
                     furniture_type: { label: "Furniture Type", opts: { sofa: "Sofas & Armchairs", table: "Tables & Chairs", bed: "Beds & Mattresses", wardrobe: "Wardrobes & Dressers", office: "Office Furniture", other: "Other" } },
+                    kids_type: { 
+                        label: "Kids Item Type", 
+                        opts: { 
+                            strollers: "Strollers & Car Seats", 
+                            toys: "Toys & Games", 
+                            clothes_kids: "Clothing & Shoes", 
+                            furniture_kids: "Kids Furniture", 
+                            feeding: "Feeding & Care", 
+                            other_kids: "Other" 
+                        } 
+                    },
                     brand: { label: "Brand / Manufacturer" },
                     year: { label: "Year" },
                     mileage: { label: "Mileage (km)" }
@@ -208,7 +231,7 @@
                 addPhotoBtn: "Kliknite ili prevucite fotografije ovdje", nameLabel: "Naziv",
                 categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
                 descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
-                cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_other: "Razno",
+                cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_kids: "Za djecu", cat_other: "Razno",
                 publishing: "Čuvanje...", maxPhotos: "Možete otpremiti najviše 10 fotografija",
                 ph_title: "npr. iPhone 13 Pro 128GB",
                 ph_price: "0 (ako je besplatno)",
@@ -236,6 +259,17 @@
                         } 
                     },
                     furniture_type: { label: "Vrsta namještaja", opts: { sofa: "Sofe i fotelje", table: "Stolovi i stolice", bed: "Kreveti i dušeci", wardrobe: "Ormari i komode", office: "Kancelarijski namještaj", other: "Ostalo" } },
+                    kids_type: { 
+                        label: "Vrsta dječije robe", 
+                        opts: { 
+                            strollers: "Kolica i auto-sedišta", 
+                            toys: "Igračke i igre", 
+                            clothes_kids: "Odjeća i obuća", 
+                            furniture_kids: "Dječiji namještaj", 
+                            feeding: "Hranjenje i njega", 
+                            other_kids: "Ostalo" 
+                        } 
+                    },
                     brand: { label: "Marka / Proizvođač" },
                     year: { label: "Godina proizvodnje" },
                     mileage: { label: "Kilometraža (km)" }
@@ -315,6 +349,21 @@
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.furniture_type.label}</label>
                         <select id="attr_furniture_type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
                             ${Object.keys(a.furniture_type.opts).map(k => `<option value="${k}" ${savedValues.furniture_type === k ? 'selected' : ''}>${a.furniture_type.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.condition.label}</label>
+                        <select id="attr_condition" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.condition.opts).map(k => `<option value="${k}" ${savedValues.condition === k ? 'selected' : ''}>${a.condition.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            } else if (category === 'kids') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.kids_type.label}</label>
+                        <select id="attr_kids_type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.kids_type.opts).map(k => `<option value="${k}" ${savedValues.kids_type === k ? 'selected' : ''}>${a.kids_type.opts[k]}</option>`).join('')}
                         </select>
                     </div>
                     <div>
@@ -410,6 +459,7 @@
             const sizeBottomEl = document.getElementById('attr_size_bottom');
             const sizeShoesEl = document.getElementById('attr_size_shoes');
             const furnEl = document.getElementById('attr_furniture_type');
+            const kidsEl = document.getElementById('attr_kids_type');
             const brandEl = document.getElementById('attr_brand');
             const yearEl = document.getElementById('attr_year');
             const milEl = document.getElementById('attr_mileage');
@@ -422,6 +472,7 @@
                 if (sizeShoesEl) attrs.size = sizeShoesEl.value;
             }
             if (furnEl) attrs.furniture_type = furnEl.value;
+            if (kidsEl) attrs.kids_type = kidsEl.value;
             if (brandEl) attrs.brand = brandEl.value;
             if (yearEl) attrs.year = yearEl.value;
             if (milEl) attrs.mileage = milEl.value;
