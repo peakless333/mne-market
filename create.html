@@ -63,13 +63,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="categoryLabel">Категория</label>
-                        <select id="postCategory" onchange="onCategoryChange()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
-                        </select>
-                    </div>
-
-                    <div id="subCategoryWrapper" class="hidden">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="subcategoryLabel">Подкатегория</label>
-                        <select id="postSubCategory" onchange="renderCategoryAttributes()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                        <select id="postCategory" onchange="renderCategoryAttributes()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            <option value="furniture" data-i18n="cat_furniture">Мебель</option>
+                            <option value="tech" data-i18n="cat_tech">Техника</option>
+                            <option value="auto" data-i18n="cat_auto">Авто</option>
+                            <option value="clothes" data-i18n="cat_clothes">Одежда</option>
+                            <option value="kids" data-i18n="cat_kids">Детские товары</option>
+                            <option value="services" data-i18n="cat_services">Услуги</option>
+                            <option value="other" data-i18n="cat_other">Разное</option>
                         </select>
                     </div>
 
@@ -131,114 +132,14 @@
             ru: {
                 back: "Назад", titleNew: "Новое объявление", titleEdit: "Редактировать объявление", photosLabel: "Фотографии (до 10 шт.)",
                 addPhotoBtn: "Нажмите или перетащите фото сюда", nameLabel: "Название",
-                categoryLabel: "Категория", subcategoryLabel: "Подкатегория", cityLabel: "Город", priceLabel: "Цена (€)",
+                categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
                 descLabel: "Описание", tgLabel: "Telegram для связи", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
+                cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_kids: "Детские товары", cat_services: "Услуги", cat_other: "Разное",
                 publishing: "Сохранение...", maxPhotos: "Максимально можно загрузить 10 фотографий",
                 ph_title: "Например: iPhone 13 Pro 128GB",
                 ph_price: "0 (если бесплатно)",
                 ph_desc: "Опишите состояние, комплектацию и детали...",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
-                categories: {
-                    realty: {
-                        name: "Недвижимость",
-                        subs: {
-                            rent_long: "Аренда долгосрочная",
-                            rent_daily: "Аренда посуточно",
-                            sale_flat: "Продажа квартир/домов",
-                            commercial: "Коммерческая",
-                            room_sharing: "Поиск соседа / Коливинг"
-                        }
-                    },
-                    auto: {
-                        name: "Авто / Транспорт",
-                        subs: {
-                            cars: "Легковые автомобили",
-                            moto: "Мотоциклы / Скутеры",
-                            bikes: "Велосипеды / Самокаты",
-                            parts: "Запчасти и аксессуары",
-                            rent_car: "Аренда авто"
-                        }
-                    },
-                    jobs: {
-                        name: "Работа",
-                        subs: {
-                            offer: "Предлагаю работу (Вакансии)",
-                            search: "Ищу работу (Резюме)"
-                        }
-                    },
-                    services: {
-                        name: "Услуги",
-                        subs: {
-                            beauty: "Красота и здоровье",
-                            repair: "Ремонт и строительство",
-                            it_digital: "IT, дизайн, веб",
-                            photo_video: "Фото и видео",
-                            cleaning: "Уборка и клининг",
-                            moving: "Переезды и доставка",
-                            tutors: "Обучение и репетиторы",
-                            other_services: "Другие услуги"
-                        }
-                    },
-                    tech: {
-                        name: "Электроника",
-                        subs: {
-                            phones: "Телефоны и планшеты",
-                            computers: "Ноутбуки и компьютеры",
-                            tv_audio: "ТВ и аудиотехника",
-                            photo: "Фототехника",
-                            appliances: "Бытовая техника",
-                            gadgets: "Электронные гаджеты"
-                        }
-                    },
-                    clothes: {
-                        name: "Одежда и обувь",
-                        subs: {
-                            clothes_men: "Мужская одежда",
-                            clothes_women: "Женская одежда",
-                            shoes: "Обувь",
-                            accessories: "Аксессуары и сумки"
-                        }
-                    },
-                    kids: {
-                        name: "Детские товары",
-                        subs: {
-                            strollers: "Коляски и автокресла",
-                            toys: "Игрушки и игры",
-                            clothes_kids: "Детская одежда и обувь",
-                            furniture_kids: "Детская мебель",
-                            feeding: "Кормление и уход"
-                        }
-                    },
-                    furniture: {
-                        name: "Для дома и сада",
-                        subs: {
-                            furniture_home: "Мебель",
-                            appliances_home: "Бытовая техника",
-                            dishes: "Посуда и товары для кухни",
-                            plants_garden: "Растения и сад",
-                            decor: "Декор и освещение"
-                        }
-                    },
-                    hobby: {
-                        name: "Хобби и спорт",
-                        subs: {
-                            sport: "Спорт и отдых",
-                            books: "Книги и журналы",
-                            music: "Музыкальные инструменты",
-                            pets: "Животные и товары для них",
-                            tickets: "Билеты и мероприятия"
-                        }
-                    },
-                    other: {
-                        name: "Разное",
-                        subs: {
-                            free: "Отдам даром",
-                            exchange: "Обмен",
-                            lost_found: "Бюро находок",
-                            miscellaneous: "Прочее"
-                        }
-                    }
-                },
                 attrs: {
                     condition: { label: "Состояние", opts: { new: "Новое", used: "Б/У" } },
                     clothes_type: { 
@@ -272,6 +173,15 @@
                             other_kids: "Другое" 
                         } 
                     },
+                    services_type: {
+                        label: "Подкатегория",
+                        opts: {
+                            beauty: "Красота",
+                            repair: "Ремонт/Строительство",
+                            auto: "Авто",
+                            it: "Услуги / IT"
+                        }
+                    },
                     brand: { label: "Бренд / Производитель" },
                     year: { label: "Год выпуска" },
                     mileage: { label: "Пробег (км)" }
@@ -280,55 +190,14 @@
             en: {
                 back: "Back", titleNew: "New Listing", titleEdit: "Edit Listing", photosLabel: "Photos (up to 10)",
                 addPhotoBtn: "Click or drag photos here", nameLabel: "Title",
-                categoryLabel: "Category", subcategoryLabel: "Subcategory", cityLabel: "City", priceLabel: "Price (€)",
+                categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
                 descLabel: "Description", tgLabel: "Telegram username", publishBtn: "Publish listing", saveBtn: "Save changes",
+                cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_kids: "Kids items", cat_services: "Services", cat_other: "Other",
                 publishing: "Saving...", maxPhotos: "Maximum 10 photos allowed",
                 ph_title: "e.g. iPhone 13 Pro 128GB",
                 ph_price: "0 (if free)",
                 ph_desc: "Describe condition, package and details...",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
-                categories: {
-                    realty: {
-                        name: "Real Estate",
-                        subs: { rent_long: "Long-term Rent", rent_daily: "Daily Rent", sale_flat: "Sale (Flats/Houses)", commercial: "Commercial", room_sharing: "Roommate / Coliving" }
-                    },
-                    auto: {
-                        name: "Vehicles",
-                        subs: { cars: "Cars", moto: "Motorcycles / Scooters", bikes: "Bicycles / Scooters", parts: "Parts & Accessories", rent_car: "Car Rental" }
-                    },
-                    jobs: {
-                        name: "Jobs",
-                        subs: { offer: "Job Offers (Vacancies)", search: "Job Search (Resumes)" }
-                    },
-                    services: {
-                        name: "Services",
-                        subs: { beauty: "Beauty & Health", repair: "Repair & Construction", it_digital: "IT, Design, Web", photo_video: "Photo & Video", cleaning: "Cleaning", moving: "Moving & Delivery", tutors: "Education & Tutors", other_services: "Other Services" }
-                    },
-                    tech: {
-                        name: "Electronics",
-                        subs: { phones: "Phones & Tablets", computers: "Laptops & Computers", tv_audio: "TV & Audio", photo: "Photo Equipment", appliances: "Home Appliances", gadgets: "Gadgets" }
-                    },
-                    clothes: {
-                        name: "Clothing & Shoes",
-                        subs: { clothes_men: "Men's Clothing", clothes_women: "Women's Clothing", shoes: "Shoes", accessories: "Accessories & Bags" }
-                    },
-                    kids: {
-                        name: "Kids Items",
-                        subs: { strollers: "Strollers & Car Seats", toys: "Toys & Games", clothes_kids: "Kids Clothing & Shoes", furniture_kids: "Kids Furniture", feeding: "Feeding & Care" }
-                    },
-                    furniture: {
-                        name: "Home & Garden",
-                        subs: { furniture_home: "Furniture", appliances_home: "Home Appliances", dishes: "Dishes & Kitchen", plants_garden: "Plants & Garden", decor: "Decor & Lighting" }
-                    },
-                    hobby: {
-                        name: "Hobby & Sport",
-                        subs: { sport: "Sports & Outdoors", books: "Books & Magazines", music: "Musical Instruments", pets: "Pets & Supplies", tickets: "Tickets & Events" }
-                    },
-                    other: {
-                        name: "Other",
-                        subs: { free: "Free / Giveaway", exchange: "Exchange", lost_found: "Lost & Found", miscellaneous: "Miscellaneous" }
-                    }
-                },
                 attrs: {
                     condition: { label: "Condition", opts: { new: "New", used: "Used" } },
                     clothes_type: { 
@@ -362,6 +231,15 @@
                             other_kids: "Other" 
                         } 
                     },
+                    services_type: {
+                        label: "Subcategory",
+                        opts: {
+                            beauty: "Beauty",
+                            repair: "Repair/Construction",
+                            auto: "Auto",
+                            it: "Services / IT"
+                        }
+                    },
                     brand: { label: "Brand / Manufacturer" },
                     year: { label: "Year" },
                     mileage: { label: "Mileage (km)" }
@@ -370,55 +248,14 @@
             cnr: {
                 back: "Nazad", titleNew: "Novi oglas", titleEdit: "Izmjena oglasa", photosLabel: "Fotografije (do 10)",
                 addPhotoBtn: "Kliknite ili prevucite fotografije ovdje", nameLabel: "Naziv",
-                categoryLabel: "Kategorija", subcategoryLabel: "Potkategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
+                categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
                 descLabel: "Opis", tgLabel: "Telegram za kontakt", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
+                cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_kids: "Za djecu", cat_services: "Usluge", cat_other: "Razno",
                 publishing: "Čuvanje...", maxPhotos: "Možete otpremiti najviše 10 fotografija",
                 ph_title: "npr. iPhone 13 Pro 128GB",
                 ph_price: "0 (ako je besplatno)",
                 ph_desc: "Opišite stanje, opremu i detalje...",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
-                categories: {
-                    realty: {
-                        name: "Nekretnine",
-                        subs: { rent_long: "Dugoročni zakup", rent_daily: "Izdavanje na dan", sale_flat: "Prodaja stanova/kuća", commercial: "Komercijalne", room_sharing: "Cimeri / Koliving" }
-                    },
-                    auto: {
-                        name: "Vozila",
-                        subs: { cars: "Automobili", moto: "Motocikli / Skuteri", bikes: "Bicikli / Trotineti", parts: "Rezervni dijelovi", rent_car: "Rent a car" }
-                    },
-                    jobs: {
-                        name: "Posao",
-                        subs: { offer: "Ponude za posao (Slobodna radna mjesta)", search: "Tražim posao (CV)" }
-                    },
-                    services: {
-                        name: "Usluge",
-                        subs: { beauty: "Ljepota i zdravlje", repair: "Popravke i gradnja", it_digital: "IT, dizajn, web", photo_video: "Foto i video", cleaning: "Čišćenje", moving: "Selidbe i dostava", tutors: "Edukacija i časovi", other_services: "Ostale usluge" }
-                    },
-                    tech: {
-                        name: "Tehnika",
-                        subs: { phones: "Telefoni i tableti", computers: "Laptopi i računari", tv_audio: "TV i audio", photo: "Foto oprema", appliances: "Kućni aparati", gadgets: "Gadžeti" }
-                    },
-                    clothes: {
-                        name: "Odjeća i obuća",
-                        subs: { clothes_men: "Muška odjeća", clothes_women: "Ženska odjeća", shoes: "Obuća", accessories: "Modni dodaci i torbe" }
-                    },
-                    kids: {
-                        name: "Za djecu",
-                        subs: { strollers: "Kolica i auto-sedišta", toys: "Igračke i igre", clothes_kids: "Dječija odjeća i obuća", furniture_kids: "Dječiji namještaj", feeding: "Hranjenje i njega" }
-                    },
-                    furniture: {
-                        name: "Za dom i baštu",
-                        subs: { furniture_home: "Namještaj", appliances_home: "Kućni aparati", dishes: "Posuđe i kuhinja", plants_garden: "Biljke i bašta", decor: "Dekor i rasvjeta" }
-                    },
-                    hobby: {
-                        name: "Hobi i sport",
-                        subs: { sport: "Sport i rekreacija", books: "Knjige i časopisi", music: "Muzički instrumenti", pets: "Kućni ljubimci", tickets: "Ulaznice i događaji" }
-                    },
-                    other: {
-                        name: "Razno",
-                        subs: { free: "Poklanjam / Besplatno", exchange: "Zamjena", lost_found: "Izgubljeno - Nađeno", miscellaneous: "Ostalo" }
-                    }
-                },
                 attrs: {
                     condition: { label: "Stanje", opts: { new: "Novo", used: "Korišćeno" } },
                     clothes_type: { 
@@ -452,6 +289,15 @@
                             other_kids: "Ostalo" 
                         } 
                     },
+                    services_type: {
+                        label: "Podkategorija",
+                        opts: {
+                            beauty: "Ljepota",
+                            repair: "Renoviranje/Gradnja",
+                            auto: "Auto",
+                            it: "Usluge / IT"
+                        }
+                    },
                     brand: { label: "Marka / Proizvođač" },
                     year: { label: "Godina proizvodnje" },
                     mileage: { label: "Kilometraža (km)" }
@@ -463,40 +309,6 @@
         let selectedFiles = [];
         let existingImages = [];
         let currentPostAttributes = {}; 
-
-        function initCategoriesSelect(selectedCat = 'realty', selectedSub = '') {
-            const catSelect = document.getElementById('postCategory');
-            const catsObj = dict[currentLang].categories;
-            
-            catSelect.innerHTML = Object.keys(catsObj).map(code => `
-                <option value="${code}" ${code === selectedCat ? 'selected' : ''}>${catsObj[code].name}</option>
-            `).join('');
-
-            updateSubCategories(selectedCat, selectedSub);
-        }
-
-        function updateSubCategories(catCode, selectedSub = '') {
-            const subWrapper = document.getElementById('subCategoryWrapper');
-            const subSelect = document.getElementById('postSubCategory');
-            const catsObj = dict[currentLang].categories;
-            
-            if (catsObj[catCode] && catsObj[catCode].subs) {
-                const subsObj = catsObj[catCode].subs;
-                subSelect.innerHTML = Object.keys(subsObj).map(subCode => `
-                    <option value="${subCode}" ${subCode === selectedSub ? 'selected' : ''}>${subsObj[subCode]}</option>
-                `).join('');
-                subWrapper.classList.remove('hidden');
-            } else {
-                subSelect.innerHTML = '';
-                subWrapper.classList.add('hidden');
-            }
-        }
-
-        function onCategoryChange() {
-            const catCode = document.getElementById('postCategory').value;
-            updateSubCategories(catCode);
-            renderCategoryAttributes();
-        }
 
         function initCitiesSelect(selectedCity = 'budva') {
             const citySelect = document.getElementById('postCity');
@@ -589,6 +401,15 @@
                         </select>
                     </div>
                 `;
+            } else if (category === 'services') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.services_type.label}</label>
+                        <select id="attr_services_type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.services_type.opts).map(k => `<option value="${k}" ${savedValues.services_type === k ? 'selected' : ''}>${a.services_type.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
             } else {
                 html += `
                     <div>
@@ -660,10 +481,6 @@
             document.getElementById('postPrice').placeholder = dict[lang].ph_price;
             document.getElementById('postDesc').placeholder = dict[lang].ph_desc;
 
-            const currentCatValue = document.getElementById('postCategory').value || 'realty';
-            const currentSubValue = document.getElementById('postSubCategory') ? document.getElementById('postSubCategory').value : '';
-            initCategoriesSelect(currentCatValue, currentSubValue);
-
             const currentCityValue = document.getElementById('postCity').value || 'budva';
             initCitiesSelect(currentCityValue);
             
@@ -680,6 +497,7 @@
             const sizeShoesEl = document.getElementById('attr_size_shoes');
             const furnEl = document.getElementById('attr_furniture_type');
             const kidsEl = document.getElementById('attr_kids_type');
+            const servicesEl = document.getElementById('attr_services_type');
             const brandEl = document.getElementById('attr_brand');
             const yearEl = document.getElementById('attr_year');
             const milEl = document.getElementById('attr_mileage');
@@ -693,6 +511,7 @@
             }
             if (furnEl) attrs.furniture_type = furnEl.value;
             if (kidsEl) attrs.kids_type = kidsEl.value;
+            if (servicesEl) attrs.services_type = servicesEl.value;
             if (brandEl) attrs.brand = brandEl.value;
             if (yearEl) attrs.year = yearEl.value;
             if (milEl) attrs.mileage = milEl.value;
@@ -701,7 +520,6 @@
         }
 
         document.getElementById('langSelect').value = currentLang;
-        initCategoriesSelect();
         initCitiesSelect();
         renderCategoryAttributes();
         changeLanguage(currentLang);
@@ -719,11 +537,7 @@
                 if (!data) return;
 
                 document.getElementById('postTitle').value = data.title || '';
-                
-                const loadedCat = data.category || 'realty';
-                const loadedSub = data.subcategory || data.sub_category || '';
-                initCategoriesSelect(loadedCat, loadedSub);
-
+                document.getElementById('postCategory').value = data.category || 'other';
                 initCitiesSelect(data.city || 'budva');
                 
                 currentPostAttributes = data.attributes || {};
@@ -936,7 +750,6 @@
                 const postData = {
                     title: document.getElementById('postTitle').value.trim(),
                     category: document.getElementById('postCategory').value,
-                    subcategory: document.getElementById('postSubCategory') ? document.getElementById('postSubCategory').value : null,
                     city: document.getElementById('postCity').value,
                     attributes: collectAttributesFromDOM(),
                     price: Number(document.getElementById('postPrice').value || 0),
