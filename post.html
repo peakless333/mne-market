@@ -608,9 +608,18 @@
             // Обработка контактов (если указан только телефон или телеграм)
             const contactContainer = document.getElementById('contactButtonContainer');
             if (currentPost.phone && !currentPost.telegram) {
+                // Цензурируем большую часть номера телефона (оставляем код страны или первые пару цифр и последние 2)
+                const phone = currentPost.phone;
+                let maskedPhone = phone;
+                if (phone.length > 6) {
+                    maskedPhone = phone.slice(0, 4) + '*******' + phone.slice(-2);
+                } else {
+                    maskedPhone = '*******';
+                }
+
                 contactContainer.innerHTML = `
-                    <button onclick="copyPhone('${currentPost.phone}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
-                        <i data-lucide="phone" class="w-4 h-4"></i> <span>${currentPost.phone}</span>
+                    <button onclick="copyPhone('${currentPost.phone}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                        <i data-lucide="phone" class="w-4 h-4"></i> <span>${maskedPhone}</span>
                     </button>
                 `;
             } else {
