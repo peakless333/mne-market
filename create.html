@@ -781,8 +781,9 @@
                     imageUrls.push(publicUrlData.publicUrl);
                 }
 
+                // Исправлено: если фото не выбраны, массив остается пустым без дефолтного кресла
                 if (imageUrls.length === 0) {
-                    imageUrls.push('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500');
+                    imageUrls = [];
                 }
 
                 const telegramVal = document.getElementById('postTelegram').value.trim();
@@ -799,7 +800,7 @@
                     phone: phoneVal,
                     contact: telegramVal || phoneVal,
                     images: imageUrls,
-                    image_url: imageUrls[0],
+                    image_url: imageUrls.length > 0 ? imageUrls[0] : null,
                     username: usernameToken,
                     user_token: usernameToken
                 };
