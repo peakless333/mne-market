@@ -324,13 +324,13 @@
             await supabaseClient.from('posts').update({ views: newViews }).eq('id', postId);
             currentPost.views = newViews;
 
-            // Собираем картинки без дефолтной ссылки
+            // Тщательная фильтрация картинок: исключаем пустые значения, дефолтные сток-фото и случайные битые ссылки-заглушки
             postImages = [];
             const rawImages = currentPost.images && currentPost.images.length > 0 ? currentPost.images : (currentPost.image_url ? [currentPost.image_url] : []);
             
             for (const img of rawImages) {
-                if (img && !img.includes('images.unsplash.com/photo-1555041469')) {
-                    postImages.push(img);
+                if (img && typeof img === 'string' && img.trim() !== '' && !img.includes('images.unsplash.com/photo-1555041469') && !img.startsWith('data:image/svg+xml')) {
+                    postImages.push(img.trim());
                 }
             }
 
@@ -673,8 +673,8 @@
             
             if (similar.length > 0) {
                 similarContainer.innerHTML = similar.map(p => {
-                    const cleanPImages = (p.images || []).filter(i => !i.includes('images.unsplash.com/photo-1555041469'));
-                    const sImg = cleanPImages.length > 0 ? cleanPImages[0] : ((p.image_url && !p.image_url.includes('images.unsplash.com/photo-1555041469')) ? p.image_url : '');
+                    const cleanPImages = (p.images || []).filter(i => i && typeof i === 'string' && !i.includes('images.unsplash.com/photo-1555041469') && !i.startsWith('data:image/svg+xml'));
+                    const sImg = cleanPImages.length > 0 ? cleanPImages[0] : ((p.image_url && !p.image_url.includes('images.unsplash.com/photo-1555041469') && !p.image_url.startsWith('data:image/svg+xml')) ? p.image_url : '');
                     const sPrice = formatPrice(p.price);
                     return `
                         <a href="post.html?id=${p.id}" class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
