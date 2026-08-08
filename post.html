@@ -50,7 +50,7 @@
                     <div id="mainImageWrapper" class="relative h-[380px] bg-gray-50 rounded-xl overflow-hidden group flex items-center justify-center">
                         <!-- Само изображение или Заглушка Без фото -->
                         <div id="noImagePlaceholder" class="hidden flex flex-col items-center justify-center text-gray-400 select-none w-full h-full">
-                            <div class="w-20 h-20 bg-white rounded-2xl shadow-sm flex items-center justify-center mb-2 border border-gray-100">
+                            <div class="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center mb-2 border border-gray-100">
                                 <i data-lucide="camera" class="w-10 h-10 text-blue-500"></i>
                             </div>
                             <span class="text-xs font-bold tracking-wider text-gray-400" data-i18n="noPhoto">БЕЗ ФОТО</span>
@@ -621,7 +621,7 @@
 
             updateFavIcon();
 
-            // Отображение фото или заглушки "Без фото" со стилем из Screenshot_2.png
+            // Отображение фото или заглушки "Без фото" со стилем из index.html
             const imgElement = document.getElementById('mainProductImage');
             const placeholderElement = document.getElementById('noImagePlaceholder');
             const zoomBadge = document.getElementById('zoomBadge');
@@ -636,8 +636,7 @@
                 updateInlineButtonsVisibility();
             } else {
                 imgElement.classList.add('hidden');
-                placeholderElement.classList.remove('hidden', 'flex-col');
-                // Применяем точную стилизацию блока заглушки по аналогии с карточкой из Screenshot_2.png
+                placeholderElement.classList.remove('hidden');
                 placeholderElement.className = "flex flex-col items-center justify-center text-gray-400 select-none w-full h-full";
                 placeholderElement.innerHTML = `
                     <div class="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center mb-2 border border-gray-100">
@@ -722,3 +721,4 @@
     </script>
 </body>
 </html>
+```[cite: 16]
