@@ -172,11 +172,11 @@
                 similarTitle: "Похожие объявления", noSimilar: "Нет похожих объявлений",
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 categories: { 
-                    furniture: "Мебель", tech: "Техника", property: "Недвижимость", auto: "Авто", 
+                    furniture: "Мебель", tech: "Техника", realestate: "Недвижимость", auto: "Авто", 
                     clothes: "Одежда и обувь", kids: "Детские товары", services: "Услуги", other: "Разное" 
                 },
                 subcategories: {
-                    property: { rent_long: "Аренда на долгий срок", rent_daily: "Посуточная аренда", sale: "Продажа" },
+                    realestate: { rent_long: "Аренда на долгий срок", rent_daily: "Посуточная аренда", sale: "Продажа" },
                     auto: { cars: "Легковые авто", moto: "Мотоциклы и скутеры", parts: "Запчасти и аксессуары", rent: "Аренда авто" },
                     tech: { phones: "Смартфоны и планшеты", laptops: "Ноутбуки и компьютеры", tv: "ТВ и аудио", appliances: "Бытовая техника" },
                     furniture: { living: "Гостиная", bedroom: "Спальня", kitchen: "Кухня", office: "Офис", other: "Другое" },
@@ -253,11 +253,11 @@
                 similarTitle: "Related listings", noSimilar: "No related listings",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { 
-                    furniture: "Furniture", tech: "Electronics", property: "Real estate", auto: "Vehicles", 
+                    furniture: "Furniture", tech: "Electronics", realestate: "Real estate", auto: "Vehicles", 
                     clothes: "Clothing", kids: "Kids", services: "Services", other: "Other" 
                 },
                 subcategories: {
-                    property: { rent_long: "Long-term rent", rent_daily: "Daily rent", sale: "Sale" },
+                    realestate: { rent_long: "Long-term rent", rent_daily: "Daily rent", sale: "Sale" },
                     auto: { cars: "Cars", moto: "Motorcycles & Scooters", parts: "Parts & Accessories", rent: "Car rental" },
                     tech: { phones: "Smartphones & Tablets", laptops: "Laptops & Computers", tv: "TV & Audio", appliances: "Home appliances" },
                     furniture: { living: "Living room", bedroom: "Bedroom", kitchen: "Kitchen", office: "Office", other: "Other" },
@@ -334,11 +334,11 @@
                 similarTitle: "Slični oglasi", noSimilar: "Nema sličnih oglasa",
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 categories: { 
-                    furniture: "Namještaj", tech: "Tehnika", property: "Nekretnine", auto: "Auto", 
+                    furniture: "Namještaj", tech: "Tehnika", realestate: "Nekretnine", auto: "Auto", 
                     clothes: "Odjeća", kids: "Dječije stvari", services: "Usluge", other: "Razno" 
                 },
                 subcategories: {
-                    property: { rent_long: "Dugoročni zakup", rent_daily: "Izdavanje na dan", sale: "Prodaja" },
+                    realestate: { rent_long: "Dugoročni zakup", rent_daily: "Izdavanje na dan", sale: "Prodaja" },
                     auto: { cars: "Automobili", moto: "Motocikli i skuteri", parts: "Dijelovi i oprema", rent: "Iznajmljivanje vozila" },
                     tech: { phones: "Telefoni i tableti", laptops: "Laptopi i računari", tv: "TV i audio", appliances: "Kućni aparati" },
                     furniture: { living: "Dnevna soba", bedroom: "Spavaća soba", kitchen: "Kuhinja", office: "Kancelarija", other: "Ostalo" },
@@ -460,7 +460,7 @@
             
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (key && dict[lang][key]) el.innerText = dict[lang][key];
+                if (dict[lang][key]) el.innerText = dict[lang][key];
             });
 
             if (currentPost) renderPost();
@@ -753,7 +753,7 @@
                 categoryText += ` / ${dict[currentLang].subcategories[currentPost.category][currentPost.subcategory]}`;
             }
             document.getElementById('postCategoryBadge').innerText = categoryText;
-            document.getElementById('postCategoryBadge.').removeAttribute?.('data-i18n');
+            document.getElementById('postCategoryBadge').setAttribute('data-i18n', ''); // Блокируем перезапись через общий статический ключ категорий если нужно, но badge генерируется динамически
 
             document.getElementById('viewsCount').innerText = currentPost.views || 0;
             document.getElementById('postDate').innerText = new Date(currentPost.created_at).toLocaleDateString();
@@ -777,7 +777,7 @@
 
             updateFavIcon();
 
-            // Отображение фото или плашки камеры
+            // Отображение фото или красивой плашки камеры с градиентом
             const imgElement = document.getElementById('mainProductImage');
             const placeholderElement = document.getElementById('noImagePlaceholder');
             const zoomBadge = document.getElementById('zoomBadge');
@@ -859,7 +859,7 @@
 
             contactContainer.innerHTML = `
                 <button onclick="handlePhoneClick('${phone}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
-                    <i data-lucide="phone" class="w-4 h-4"><span>${displayText}</span></i>
+                    <i data-lucide="phone" class="w-4 h-4"></i> <span>${displayText}</span>
                 </button>
             `;
             lucide.createIcons();
