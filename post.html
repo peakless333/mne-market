@@ -164,7 +164,7 @@
 
         const dict = {
             ru: {
-                back: "Назад к объявлениям", loading: "Загрузка...", free: "Бесплатно",
+                back: "Назад к объявлениям", loading: "Загрузка...", free: "Бесплатно", negotiable: "Договорная",
                 price: "Цена", city: "Город", desc: "ОПИСАНИЕ", contactBtn: "Написать продавцу",
                 phoneBtn: "Номер телефона", phoneCopied: "Номер скопирован!",
                 shareBtn: "Поделиться в Telegram", copyBtn: "Скопировать ссылку",
@@ -207,7 +207,7 @@
                 }
             },
             en: {
-                back: "Back to listings", loading: "Loading...", free: "Free",
+                back: "Back to listings", loading: "Loading...", free: "Free", negotiable: "Negotiable",
                 price: "Price", city: "City", desc: "DESCRIPTION", contactBtn: "Contact seller",
                 phoneBtn: "Phone number", phoneCopied: "Number copied!",
                 shareBtn: "Share to Telegram", copyBtn: "Copy link",
@@ -250,7 +250,7 @@
                 }
             },
             cnr: {
-                back: "Nazad na oglase", loading: "Učitavanje...", free: "Besplatno",
+                back: "Nazad na oglase", loading: "Učitavanje...", free: "Besplatno", negotiable: "Dogovor",
                 price: "Cijena", city: "Grad", desc: "OPIS", contactBtn: "Kontaktiraj prodavca",
                 phoneBtn: "Broj telefona", phoneCopied: "Broj kopiran!",
                 shareBtn: "Podijeli na Telegram", copyBtn: "Kopiraj link",
@@ -353,6 +353,7 @@
         }
 
         function formatPrice(val) {
+            if (currentPost && currentPost.price_negotiable) return dict[currentLang].negotiable;
             const num = Number(val);
             if (num === 0) return dict[currentLang].free;
             return num.toLocaleString('ru-RU') + ' €';
@@ -675,7 +676,7 @@
                 similarContainer.innerHTML = similar.map(p => {
                     const cleanPImages = (p.images || []).filter(i => i && typeof i === 'string' && !i.includes('images.unsplash.com/photo-1555041469') && !i.startsWith('data:image/svg+xml'));
                     const sImg = cleanPImages.length > 0 ? cleanPImages[0] : ((p.image_url && !p.image_url.includes('images.unsplash.com/photo-1555041469') && !p.image_url.startsWith('data:image/svg+xml')) ? p.image_url : '');
-                    const sPrice = formatPrice(p.price);
+                    const sPrice = (p.price_negotiable) ? dict[currentLang].negotiable : formatPrice(p.price);
                     return `
                         <a href="post.html?id=${p.id}" class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
                             ${sImg ? `<img src="${sImg}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="Similar">` : `<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 flex items-center justify-center shrink-0 border border-gray-100 text-[#009cf0]"><i data-lucide="camera" class="w-6 h-6"></i></div>`}
