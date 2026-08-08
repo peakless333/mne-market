@@ -710,7 +710,7 @@
                 renderCategoryAttributes(currentPostAttributes);
 
                 // Восстанавливаем статус «Договорная»
-                if (data.is_negotiable) {
+                if (data.price_negotiable) {
                     document.getElementById('priceNegotiable').checked = true;
                     togglePriceNegotiable();
                 } else {
@@ -935,7 +935,7 @@
                     city: document.getElementById('postCity').value,
                     attributes: collectAttributesFromDOM(),
                     price: isNegotiable ? 0 : Number(document.getElementById('postPrice').value || 0),
-                    is_negotiable: isNegotiable, // Передаем корректное поле для Supabase
+                    price_negotiable: isNegotiable, // Передаем корректное поле для Supabase
                     description: document.getElementById('postDesc').value.trim(),
                     telegram: telegramVal,
                     phone: phoneVal,
