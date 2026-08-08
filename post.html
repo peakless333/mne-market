@@ -752,8 +752,10 @@
             if (currentPost.subcategory && dict[currentLang].subcategories?.[currentPost.category]?.[currentPost.subcategory]) {
                 categoryText += ` / ${dict[currentLang].subcategories[currentPost.category][currentPost.subcategory]}`;
             }
-            document.getElementById('postCategoryBadge').innerText = categoryText;
-            document.getElementById('postCategoryBadge').setAttribute('data-i18n', ''); // Блокируем перезапись через общий статический ключ категорий если нужно, но badge генерируется динамически
+            
+            const badgeEl = document.getElementById('postCategoryBadge');
+            badgeEl.innerText = categoryText;
+            badgeEl.removeAttribute('data-i18n');
 
             document.getElementById('viewsCount').innerText = currentPost.views || 0;
             document.getElementById('postDate').innerText = new Date(currentPost.created_at).toLocaleDateString();
