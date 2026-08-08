@@ -1053,7 +1053,8 @@
                 if (showOnlyMyPosts && !isMyPost(post)) return false;
 
                 // Проверка цены (если цена договорная, пропускаем фильтр мин/макс цен, чтобы она всегда показывалась)
-                const isNegotiable = String(post.price).toLowerCase() === 'договорная' || String(post.price).toLowerCase() === 'negotiable' || String(post.price).toLowerCase() === 'po dogovoru';
+                const rawPriceCheck = String(post.price || '').toLowerCase().trim();
+                const isNegotiable = rawPriceCheck === 'договорная' || rawPriceCheck === 'negotiable' || rawPriceCheck === 'po dogovoru' || rawPriceCheck === '0';
                 
                 if (!isNegotiable) {
                     const postPrice = Number(post.price || 0);
@@ -1066,8 +1067,10 @@
             });
 
             filtered.sort((a, b) => {
-                const aNeg = String(a.price).toLowerCase() === 'договорная' || String(a.price).toLowerCase() === 'negotiable' || String(a.price).toLowerCase() === 'po dogovoru';
-                const bNeg = String(b.price).toLowerCase() === 'договорная' || String(b.price).toLowerCase() === 'negotiable' || String(b.price).toLowerCase() === 'po dogovoru';
+                const aRaw = String(a.price || '').toLowerCase().trim();
+                const bRaw = String(b.price || '').toLowerCase().trim();
+                const aNeg = aRaw === 'договорная' || aRaw === 'negotiable' || aRaw === 'po dogovoru' || aRaw === '0';
+                const bNeg = bRaw === 'договорная' || bRaw === 'negotiable' || bRaw === 'po dogovoru' || bRaw === '0';
 
                 if (sortBy === 'cheap') {
                     if (aNeg) return 1;
@@ -1117,7 +1120,7 @@
                 const cityName = citiesMap[post.city] || post.city;
                 
                 const rawPriceStr = String(post.price || '').toLowerCase().trim();
-                const isNegotiable = rawPriceStr === 'договорная' || rawPriceStr === 'negotiable' || rawPriceStr === 'po dogovoru';
+                const isNegotiable = rawPriceStr === 'договорная' || rawPriceStr === 'negotiable' || rawPriceStr === 'po dogovoru' || rawPriceStr === '0';
 
                 let priceText = '';
                 if (isNegotiable) {
