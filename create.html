@@ -64,7 +64,7 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="categoryLabel">Категория</label>
                         <select id="postCategory" onchange="renderCategoryAttributes()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
-                            <option value="property" data-i18n="cat_property">Недвижимость</option>
+                            <option value="realestate" data-i18n="cat_property">Недвижимость</option>
                             <option value="furniture" data-i18n="cat_furniture">Мебель</option>
                             <option value="tech" data-i18n="cat_tech">Техника</option>
                             <option value="auto" data-i18n="cat_auto">Авто</option>
@@ -462,7 +462,7 @@
             const a = dict[currentLang].attrs;
             let html = '';
 
-            if (category === 'property') {
+            if (category === 'realestate') {
                 html += `
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.property_type.label}</label>
