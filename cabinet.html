@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Создать объявление — MNE Market</title>
+    <title id="pageTitle">Личный кабинет — MNE Market</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🇲🇪</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,7 +18,7 @@
 
     <!-- Шапка -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-xs">
-        <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-2 font-black text-lg text-gray-950 tracking-tight">
                 <span class="text-xl">🇲🇪</span> 
                 <span>MNE<span class="text-[#009cf0]">Market</span></span>
@@ -37,121 +37,129 @@
         </div>
     </header>
 
-    <main class="max-w-3xl mx-auto px-4 pt-6">
-        <div class="bg-white rounded-3xl p-6 md:p-8 border border-gray-200/80 shadow-xs space-y-6">
-            <h1 id="mainTitle" class="text-xl font-black text-gray-950">Создать объявление</h1>
-
-            <form id="createForm" onsubmit="handleSubmit(event)" class="space-y-5">
-                
-                <!-- Название -->
+    <main class="max-w-6xl mx-auto px-4 pt-6 space-y-6">
+        <!-- Блок профиля -->
+        <div class="bg-white rounded-3xl p-6 border border-gray-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-gradient-to-tr from-blue-500 to-[#009cf0] text-white rounded-2xl flex items-center justify-center text-xl font-black shadow-md shadow-blue-500/20" id="profileInitials">
+                    U
+                </div>
                 <div>
-                    <label id="labelTitle" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Название товара или услуги</label>
-                    <input type="text" id="postTitle" required class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[#009cf0] transition-colors" placeholder="Например: iPhone 13 Pro 128GB">
+                    <h1 id="cabinetUsername" class="text-base font-extrabold text-gray-950">Загрузка...</h1>
+                    <p id="profileSubtitle" class="text-xs text-gray-400 mt-0.5">Управление вашими объявлениями в Черногории</p>
                 </div>
-
-                <!-- Категория -->
-                <div>
-                    <label id="labelCategory" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Категория</label>
-                    <select id="postCategory" required class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[#009cf0] transition-colors cursor-pointer">
-                        <option value="tech" id="catTech">Техника</option>
-                        <option value="furniture" id="catFurniture">Мебель</option>
-                        <option value="kids" id="catKids">Детские товары</option>
-                        <option value="property" id="catProperty">Недвижимость</option>
-                        <option value="auto" id="catAuto">Автомобили</option>
-                        <option value="services" id="catServices">Услуги</option>
-                        <option value="jobs" id="catJobs">Работа</option>
-                        <option value="clothes" id="catClothes">Одежда и обувь</option>
-                        <option value="sport" id="catSport">Спорт и отдых</option>
-                        <option value="other" id="catOther">Другое</option>
-                    </select>
-                </div>
-
-                <!-- Город / Локация -->
-                <div>
-                    <label id="labelLocation" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Город / Локация</label>
-                    <input type="text" id="postLocation" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[#009cf0] transition-colors" placeholder="Например: Будва, Подгорица">
-                </div>
-
-                <!-- Цена -->
-                <div>
-                    <label id="labelPrice" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Цена (€)</label>
-                    <input type="number" id="postPrice" min="0" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[#009cf0] transition-colors" placeholder="Оставьте пустым, если бесплатно">
-                </div>
-
-                <!-- Описание -->
-                <div>
-                    <label id="labelDesc" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Описание</label>
-                    <textarea id="postDescription" rows="4" required class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[#009cf0] transition-colors resize-none" placeholder="Расскажите подробнее о вашем товаре или услуге..."></textarea>
-                </div>
-
-                <!-- Загрузка фото -->
-                <div>
-                    <label id="labelImages" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Фотографии (до 5 шт)</label>
-                    <div class="flex flex-wrap gap-3" id="imagePreviewsContainer">
-                        <label class="w-24 h-24 border-2 border-dashed border-gray-200 hover:border-[#009cf0] rounded-2xl flex flex-col items-center justify-center cursor-pointer text-gray-400 hover:text-[#009cf0] transition-all bg-gray-50">
-                            <i data-lucide="camera" class="w-6 h-6"></i>
-                            <span id="textAddPhoto" class="text-[10px] font-semibold mt-1">Добавить</span>
-                            <input type="file" id="imageInput" accept="image/*" multiple class="hidden" onchange="handleImagesSelect(event)">
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Контактные данные -->
-                <div class="border-t border-gray-100 pt-5 space-y-4">
-                    <div>
-                        <label id="labelTelegram" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Telegram для связи</label>
-                        <input type="text" id="postTelegram" oninput="validateForm()" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[#009cf0] transition-colors" placeholder="@username">
-                    </div>
-
-                    <!-- Кнопка "Другие методы" -->
-                    <div>
-                        <button type="button" onclick="toggleOtherContact()" id="btnOtherMethods" class="text-xs font-semibold text-[#009cf0] hover:underline flex items-center gap-1 cursor-pointer">
-                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-                            <span id="textOtherMethods">Другие методы</span>
-                        </button>
-                    </div>
-
-                    <!-- Поле Номер телефона (скрытое по умолчанию) -->
-                    <div id="phoneContainer" class="hidden">
-                        <label id="labelPhone" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Номер телефона</label>
-                        <input type="text" id="postPhone" oninput="validateForm()" class="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[#009cf0] transition-colors" placeholder="+382 XX XXX XXX">
-                    </div>
-                </div>
-
-                <!-- Кнопка публикации -->
-                <button type="submit" id="submitBtn" disabled class="w-full bg-gray-300 text-white font-bold py-3.5 rounded-2xl text-sm transition-all shadow-sm flex items-center justify-center gap-2 cursor-not-allowed">
-                    <span id="submitBtnText">Опубликовать объявление</span>
+            </div>
+            
+            <!-- Кнопки действий в профиле -->
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <a href="create.html" id="createBtn" class="flex-1 sm:flex-none bg-[#009cf0] hover:bg-[#0089d1] text-white font-semibold px-4 py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span id="createBtnText">Разместить</span>
+                </a>
+                <a href="https://t.me/peakless333" target="_blank" id="supportBtn" class="flex-1 sm:flex-none bg-blue-50 hover:bg-blue-100 text-[#009cf0] font-semibold px-4 py-2.5 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    <span id="supportBtnText">Поддержка</span>
+                </a>
+                <button onclick="logout()" id="logoutBtn" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer">
+                    Выйти
                 </button>
-            </form>
+            </div>
+        </div>
+
+        <h2 id="sectionTitle" class="text-lg font-extrabold text-gray-900">Ваши объявления</h2>
+
+        <!-- Скелетон загрузки -->
+        <div id="loadingSkeleton" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden animate-pulse h-60"></div>
+            <div class="bg-white rounded-2xl border border-gray-200/60 overflow-hidden animate-pulse h-60"></div>
+        </div>
+
+        <!-- Контейнер с объявлениями -->
+        <div id="userPostsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 hidden"></div>
+
+        <!-- Если объявлений нет -->
+        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-center space-y-3">
+            <div class="bg-gray-100 p-4 rounded-full text-gray-400">
+                <i data-lucide="package-open" class="w-8 h-8"></i>
+            </div>
+            <h3 id="emptyTitle" class="font-bold text-gray-900 text-base">У вас пока нет объявлений</h3>
+            <p id="emptyDesc" class="text-xs text-gray-500 max-w-xs">Разместите свой первый товар или услугу на платформе.</p>
+            <a href="create.html" id="emptyBtn" class="bg-[#009cf0] hover:bg-[#0089d1] text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shadow-sm">
+                Разместить объявление
+            </a>
         </div>
     </main>
+
+    <!-- Модальное окно просмотра объявления -->
+    <div id="postModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div id="modalContentBox" class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-300">
+            <div class="p-5 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
+                <h3 id="modalCategory" class="text-xs font-bold text-[#009cf0] uppercase tracking-wider">Категория</h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-5">
+                <!-- Галерея фото в модалке -->
+                <div id="modalImagesContainer" class="relative rounded-2xl overflow-hidden bg-gray-100 h-80 flex items-center justify-center"></div>
+
+                <div class="space-y-2">
+                    <div class="flex items-baseline justify-between">
+                        <h2 id="modalTitle" class="text-xl font-black text-gray-950">Название</h2>
+                        <span id="modalPrice" class="text-2xl font-black text-gray-950">0 €</span>
+                    </div>
+                    <p id="modalLocation" class="text-xs text-gray-500 flex items-center gap-1 hidden">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> <span id="modalLocationText">Город</span>
+                    </p>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4">
+                    <h4 id="modalDescTitle" class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Описание</h4>
+                    <p id="modalDescription" class="text-sm text-gray-700 whitespace-pre-line leading-relaxed"></p>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4 flex items-center justify-between text-xs text-gray-400">
+                    <span id="modalDate">Дата</span>
+                    <span id="modalContact" class="font-semibold text-gray-800"></span>
+                </div>
+
+                <!-- Кнопки управления в модалке -->
+                <div class="border-t border-gray-100 pt-4 flex gap-3">
+                    <button id="modalEditBtn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+                        <i data-lucide="pencil" class="w-4 h-4"></i> <span id="textEditBtn">Редактировать</span>
+                    </button>
+                    <button id="modalDeleteBtn" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold px-5 py-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> <span id="textDeleteBtn">Удалить</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         lucide.createIcons();
 
         const translations = {
             ru: {
-                pageTitle: "Создать объявление — MNE Market",
+                pageTitle: "Личный кабинет — MNE Market",
                 navHome: "На главную",
-                mainTitle: "Создать объявление",
-                labelTitle: "Название товара или услуги",
-                placeholderTitle: "Например: iPhone 13 Pro 128GB",
-                labelCategory: "Категория",
-                labelLocation: "Город / Локация",
-                placeholderLocation: "Например: Будва, Подгорица",
-                labelPrice: "Цена (€)",
-                placeholderPrice: "Оставьте пустым, если бесплатно",
-                labelDesc: "Описание",
-                placeholderDesc: "Расскажите подробнее о вашем товаре или услуге...",
-                labelImages: "Фотографии (до 5 шт)",
-                textAddPhoto: "Добавить",
-                labelTelegram: "Telegram для связи",
-                textOtherMethods: "Другие методы",
-                labelPhone: "Номер телефона",
-                submitBtnText: "Опубликовать объявление",
-                toastFillContact: "Укажите Telegram или номер телефона",
-                toastSuccess: "Объявление успешно опубликовано!",
-                toastError: "Ошибка при публикации",
+                profileSubtitle: "Управление вашими объявлениями в Черногории",
+                logoutBtn: "Выйти",
+                supportBtn: "Поддержка",
+                createBtn: "Разместить",
+                sectionTitle: "Ваши объявления",
+                emptyTitle: "У вас пока нет объявлений",
+                emptyDesc: "Разместите свой первый товар или услугу на платформе.",
+                emptyBtn: "Разместить объявление",
+                noPhoto: "Нет фото",
+                free: "Бесплатно",
+                descTitle: "Описание",
+                editBtn: "Редактировать",
+                deleteBtn: "Удалить",
+                toastLoadError: "Ошибка загрузки объявлений",
+                confirmDelete: "Точно удалить это объявление?",
+                toastDeleted: "Объявление удалено",
+                toastDeleteError: "Не удалось удалить",
                 categories: {
                     "tech": "Техника",
                     "furniture": "Мебель",
@@ -166,27 +174,25 @@
                 }
             },
             en: {
-                pageTitle: "Create Listing — MNE Market",
+                pageTitle: "Dashboard — MNE Market",
                 navHome: "Home",
-                mainTitle: "Create Listing",
-                labelTitle: "Item or Service Title",
-                placeholderTitle: "E.g.: iPhone 13 Pro 128GB",
-                labelCategory: "Category",
-                labelLocation: "City / Location",
-                placeholderLocation: "E.g.: Budva, Podgorica",
-                labelPrice: "Price (€)",
-                placeholderPrice: "Leave empty if free",
-                labelDesc: "Description",
-                placeholderDesc: "Tell more about your item or service...",
-                labelImages: "Photos (up to 5)",
-                textAddPhoto: "Add",
-                labelTelegram: "Telegram for contact",
-                textOtherMethods: "Other methods",
-                labelPhone: "Phone number",
-                submitBtnText: "Publish listing",
-                toastFillContact: "Please provide Telegram or phone number",
-                toastSuccess: "Listing published successfully!",
-                toastError: "Error publishing listing",
+                profileSubtitle: "Manage your listings in Montenegro",
+                logoutBtn: "Log out",
+                supportBtn: "Support",
+                createBtn: "Create",
+                sectionTitle: "Your Listings",
+                emptyTitle: "You don't have any listings yet",
+                emptyDesc: "Post your first item or service on the platform.",
+                emptyBtn: "Create Listing",
+                noPhoto: "No photo",
+                free: "Free",
+                descTitle: "Description",
+                editBtn: "Edit",
+                deleteBtn: "Delete",
+                toastLoadError: "Error loading listings",
+                confirmDelete: "Are you sure you want to delete this listing?",
+                toastDeleted: "Listing deleted",
+                toastDeleteError: "Failed to delete",
                 categories: {
                     "tech": "Tech",
                     "furniture": "Furniture",
@@ -201,27 +207,25 @@
                 }
             },
             cnr: {
-                pageTitle: "Kreiraj oglas — MNE Market",
+                pageTitle: "Korisnički profil — MNE Market",
                 navHome: "Početna",
-                mainTitle: "Kreiraj oglas",
-                labelTitle: "Naziv proizvoda ili usluge",
-                placeholderTitle: "Na primjer: iPhone 13 Pro 128GB",
-                labelCategory: "Kategorija",
-                labelLocation: "Grad / Lokacija",
-                placeholderLocation: "Na primjer: Budva, Podgorica",
-                labelPrice: "Cijena (€)",
-                placeholderPrice: "Ostavite prazno ako je besplatno",
-                labelDesc: "Opis",
-                placeholderDesc: "Opišite detaljnije vaš proizvod ili uslugu...",
-                labelImages: "Fotografije (do 5 kom)",
-                textAddPhoto: "Dodaj",
-                labelTelegram: "Telegram za kontakt",
-                textOtherMethods: "Ostale metode",
-                labelPhone: "Broj telefona",
-                submitBtnText: "Objavi oglas",
-                toastFillContact: "Unesite Telegram ili broj telefona",
-                toastSuccess: "Oglas je uspješno objavljen!",
-                toastError: "Greška prilikom objavljivanja",
+                profileSubtitle: "Upravljajte svojim oglasima u Crnoj Gori",
+                logoutBtn: "Odjavite se",
+                supportBtn: "Podrška",
+                createBtn: "Kreiraj",
+                sectionTitle: "Vaši oglasi",
+                emptyTitle: "Još nemate oglasa",
+                emptyDesc: "Objavite svoj prvi proizvod ili uslugu na platformi.",
+                emptyBtn: "Kreiraj oglas",
+                noPhoto: "Nema slike",
+                free: "Besplatno",
+                descTitle: "Opis",
+                editBtn: "Izmijeni",
+                deleteBtn: "Obriši",
+                toastLoadError: "Greška pri učitavanju oglasa",
+                confirmDelete: "Da li ste sigurni da želite da obrišete ovaj oglas?",
+                toastDeleted: "Oglas je obrisan",
+                toastDeleteError: "Brisanje nije uspjelo",
                 categories: {
                     "tech": "Tehnika",
                     "furniture": "Namještaj",
@@ -243,42 +247,32 @@
             localStorage.setItem('mne_lang', 'cnr');
         }
 
-        let uploadedImages = [];
+        let allUserPosts = [];
+        let currentModalImages = [];
+        let currentImageIndex = 0;
 
         function setLang(lang) {
             currentLang = lang;
             localStorage.setItem('mne_lang', lang);
             updateLocalization();
+            fetchUserPosts();
         }
 
         function updateLocalization() {
             const t = translations[currentLang] || translations.ru;
             document.getElementById('pageTitle').innerText = t.pageTitle;
             document.getElementById('navHome').innerText = t.navHome;
-            document.getElementById('mainTitle').innerText = t.mainTitle;
-            document.getElementById('labelTitle').innerText = t.labelTitle;
-            document.getElementById('postTitle').placeholder = t.placeholderTitle;
-            document.getElementById('labelCategory').innerText = t.labelCategory;
-            document.getElementById('labelLocation').innerText = t.labelLocation;
-            document.getElementById('postLocation').placeholder = t.placeholderLocation;
-            document.getElementById('labelPrice').innerText = t.labelPrice;
-            document.getElementById('postPrice').placeholder = t.placeholderPrice;
-            document.getElementById('labelDesc').innerText = t.labelDesc;
-            document.getElementById('postDescription').placeholder = t.placeholderDesc;
-            document.getElementById('labelImages').innerText = t.labelImages;
-            document.getElementById('textAddPhoto').innerText = t.textAddPhoto;
-            document.getElementById('labelTelegram').innerText = t.labelTelegram;
-            document.getElementById('textOtherMethods').innerText = t.textOtherMethods;
-            document.getElementById('labelPhone').innerText = t.labelPhone;
-            document.getElementById('submitBtnText').innerText = t.submitBtnText;
-
-            // Обновление категорий в селекте
-            const categorySelect = document.getElementById('postCategory');
-            Array.from(categorySelect.options).forEach(option => {
-                if (t.categories[option.value]) {
-                    option.innerText = t.categories[option.value];
-                }
-            });
+            document.getElementById('profileSubtitle').innerText = t.profileSubtitle;
+            document.getElementById('logoutBtn').innerText = t.logoutBtn;
+            document.getElementById('supportBtnText').innerText = t.supportBtn;
+            document.getElementById('createBtnText').innerText = t.createBtn;
+            document.getElementById('sectionTitle').innerText = t.sectionTitle;
+            document.getElementById('emptyTitle').innerText = t.emptyTitle;
+            document.getElementById('emptyDesc').innerText = t.emptyDesc;
+            document.getElementById('emptyBtn').innerText = t.emptyBtn;
+            document.getElementById('modalDescTitle').innerText = t.descTitle;
+            document.getElementById('textEditBtn').innerText = t.editBtn;
+            document.getElementById('textDeleteBtn').innerText = t.deleteBtn;
 
             ['ru', 'en', 'cnr'].forEach(l => {
                 const btnId = l === 'cnr' ? 'langCnr' : `lang${l.charAt(0).toUpperCase() + l.slice(1)}`;
@@ -293,23 +287,21 @@
             });
         }
 
-        function toggleOtherContact() {
-            const phoneContainer = document.getElementById('phoneContainer');
-            phoneContainer.classList.toggle('hidden');
+        const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const currentUser = JSON.parse(localStorage.getItem('mne_logged_user') || 'null');
+        if (!currentUser) {
+            window.location.href = 'index.html'; 
+        } else {
+            updateProfileUI();
         }
 
-        function validateForm() {
-            const telegramVal = document.getElementById('postTelegram').value.trim();
-            const phoneVal = document.getElementById('postPhone').value.trim();
-            const submitBtn = document.getElementById('submitBtn');
-
-            if (telegramVal !== '' || phoneVal !== '') {
-                submitBtn.disabled = false;
-                submitBtn.className = "w-full bg-[#009cf0] hover:bg-[#0089d1] text-white font-bold py-3.5 rounded-2xl text-sm transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer";
-            } else {
-                submitBtn.disabled = true;
-                submitBtn.className = "w-full bg-gray-300 text-white font-bold py-3.5 rounded-2xl text-sm transition-all shadow-sm flex items-center justify-center gap-2 cursor-not-allowed";
-            }
+        function updateProfileUI() {
+            const username = currentUser.username;
+            document.getElementById('cabinetUsername').innerText = username;
+            document.getElementById('profileInitials').innerText = username.charAt(0).toUpperCase();
         }
 
         function showToast(text) {
@@ -319,107 +311,233 @@
             setTimeout(() => toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none'), 2000);
         }
 
-        function handleImagesSelect(event) {
-            const files = Array.from(event.target.files);
-            files.forEach(file => {
-                if (uploadedImages.length >= 5) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    uploadedImages.push(e.target.result);
-                    renderImagePreviews();
-                };
-                reader.readAsDataURL(file);
-            });
+        function logout() {
+            localStorage.removeItem('mne_logged_user');
+            window.location.href = 'index.html';
         }
 
-        function renderImagePreviews() {
-            const container = document.getElementById('imagePreviewsContainer');
+        function getCategoryName(catKey) {
+            if (!catKey) return 'MNE Market';
             const t = translations[currentLang] || translations.ru;
-            
-            let html = `
-                <label class="w-24 h-24 border-2 border-dashed border-gray-200 hover:border-[#009cf0] rounded-2xl flex flex-col items-center justify-center cursor-pointer text-gray-400 hover:text-[#009cf0] transition-all bg-gray-50">
-                    <i data-lucide="camera" class="w-6 h-6"></i>
-                    <span class="text-[10px] font-semibold mt-1">${t.textAddPhoto}</span>
-                    <input type="file" id="imageInput" accept="image/*" multiple class="hidden" onchange="handleImagesSelect(event)">
-                </label>
-            `;
-
-            uploadedImages.forEach((imgSrc, index) => {
-                html += `
-                    <div class="relative w-24 h-24 rounded-2xl overflow-hidden border border-gray-200 group">
-                        <img src="${imgSrc}" class="w-full h-full object-cover">
-                        <button type="button" onclick="removeImage(${index})" class="absolute top-1 right-1 bg-black/60 hover:bg-rose-600 text-white p-1 rounded-full transition-colors cursor-pointer">
-                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                        </button>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-            lucide.createIcons();
+            const lowerKey = String(catKey).toLowerCase().trim();
+            return t.categories[lowerKey] || catKey;
         }
 
-        function removeImage(index) {
-            uploadedImages.splice(index, 1);
-            renderImagePreviews();
-        }
-
-        const SUPABASE_URL = 'https://kxrdujitnswuajtbdgar.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cmR1aml0bnN3dWFqdGJkZ2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NjgxNzYsImV4cCI6MjEwMTQ0NDE3Nn0.17Gx37ZpxkJPNICCISTZHOdbflbmiV36NtORnWjCLOY';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        const currentUser = JSON.parse(localStorage.getItem('mne_logged_user') || 'null');
-
-        async function handleSubmit(event) {
-            event.preventDefault();
+        async function fetchUserPosts() {
             const t = translations[currentLang] || translations.ru;
-
-            const telegramVal = document.getElementById('postTelegram').value.trim();
-            const phoneVal = document.getElementById('postPhone').value.trim();
-
-            if (!telegramVal && !phoneVal) {
-                showToast(t.toastFillContact);
-                return;
-            }
-
-            const title = document.getElementById('postTitle').value.trim();
-            const category = document.getElementById('postCategory').value;
-            const location = document.getElementById('postLocation').value.trim();
-            const price = document.getElementById('postPrice').value.trim();
-            const description = document.getElementById('postDescription').value.trim();
-
-            const postData = {
-                title: title,
-                category: category,
-                location: location,
-                price: price ? Number(price) : null,
-                description: description,
-                telegram: telegramVal,
-                phone: phoneVal,
-                contact: telegramVal || phoneVal,
-                images: uploadedImages,
-                image_url: uploadedImages[0] || '',
-                username: currentUser ? currentUser.username : 'Guest',
-                user_token: currentUser ? currentUser.username : 'Guest',
-                created_at: new Date().toISOString()
-            };
-
             try {
-                const { error } = await supabaseClient.from('posts').insert([postData]);
+                const { data, error } = await supabaseClient
+                    .from('posts')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
                 if (error) throw error;
-                showToast(t.toastSuccess);
-                setTimeout(() => {
-                    window.location.href = 'cabinet.html';
-                }, 1000);
+
+                const currentName = String(currentUser.username || '').toLowerCase().trim();
+                allUserPosts = (data || []).filter(post => {
+                    const postUser = String(post.username || '').toLowerCase().trim();
+                    const postToken = String(post.user_token || '').toLowerCase().trim();
+                    const postContact = String(post.contact || post.telegram || '').toLowerCase().trim();
+                    return postUser === currentName || postToken === currentName || postContact.includes(currentName);
+                });
+
+                document.getElementById('loadingSkeleton').classList.add('hidden');
+                const container = document.getElementById('userPostsContainer');
+                const emptyState = document.getElementById('emptyState');
+
+                if (allUserPosts.length === 0) {
+                    container.classList.add('hidden');
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                container.classList.remove('hidden');
+                container.classList.add('grid');
+
+                container.innerHTML = allUserPosts.map(post => {
+                    const rawImage = post.image_url || (post.images && post.images[0]);
+                    const hasValidImage = rawImage && rawImage.trim() !== '' && !rawImage.includes('images.unsplash.com');
+                    const imageBlock = hasValidImage 
+                        ? `<img src="${rawImage}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                        : `<div class="w-full h-full bg-blue-50 flex items-center justify-center text-gray-400 text-xs">${t.noPhoto}</div>`;
+
+                    const priceText = post.price ? post.price + ' €' : t.free;
+
+                    return `
+                        <div onclick="openPostModal('${post.id}')" class="bg-white rounded-2xl border border-gray-200/70 overflow-hidden shadow-xs flex flex-col justify-between group cursor-pointer hover:border-gray-300 transition-all">
+                            <div>
+                                <div class="relative aspect-square bg-gray-50 overflow-hidden">
+                                    ${imageBlock}
+                                    <div class="absolute top-2.5 right-2.5 flex gap-1" onclick="event.stopPropagation()">
+                                        <button onclick="window.location.href='create.html?edit=${post.id}'" class="bg-white/90 hover:bg-[#009cf0] hover:text-white text-gray-700 p-2 rounded-full shadow-sm cursor-pointer">
+                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                        <button onclick="deletePost('${post.id}')" class="bg-white/90 hover:bg-rose-600 hover:text-white text-rose-600 p-2 rounded-full shadow-sm cursor-pointer">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="p-3">
+                                    <span class="font-extrabold text-gray-950 text-sm block">${priceText}</span>
+                                    <h3 class="font-medium text-gray-800 text-xs line-clamp-2 mt-1">${post.title}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                lucide.createIcons();
             } catch (err) {
                 console.error(err);
-                showToast(t.toastError);
+                showToast(t.toastLoadError);
+            }
+        }
+
+        function openPostModal(id) {
+            const post = allUserPosts.find(p => String(p.id) === String(id));
+            if (!post) return;
+
+            const t = translations[currentLang] || translations.ru;
+            document.getElementById('modalCategory').innerText = getCategoryName(post.category);
+            document.getElementById('modalTitle').innerText = post.title || '';
+            document.getElementById('modalPrice').innerText = post.price ? post.price + ' €' : t.free;
+            
+            const locationEl = document.getElementById('modalLocation');
+            if (post.location && post.location.trim() !== '') {
+                document.getElementById('modalLocationText').innerText = post.location;
+                locationEl.classList.remove('hidden');
+            } else {
+                locationEl.classList.add('hidden');
+            }
+
+            document.getElementById('modalDescription').innerText = post.description || '';
+            document.getElementById('modalDate').innerText = post.created_at ? new Date(post.created_at).toLocaleDateString() : '';
+            
+            // Обработка контактов (Telegram + опционально Телефон/WhatsApp)
+            const contactEl = document.getElementById('modalContact');
+            const contactVal = post.contact || post.telegram || '';
+            const altContactVal = post.phone || post.whatsapp || '';
+            
+            if (contactVal) {
+                let contactHtml = `<div class="flex flex-col gap-1.5">`;
+                const cleanTg = contactVal.replace(/^@/, '');
+                contactHtml += `<a href="https://t.me/${cleanTg}" target="_blank" class="inline-flex items-center gap-1.5 text-blue-600 hover:underline font-semibold"><i data-lucide="send" class="w-3.5 h-3.5"></i> @${cleanTg}</a>`;
+                
+                if (altContactVal) {
+                    contactHtml += `<button onclick="toggleAltContact(event)" class="text-[11px] text-gray-400 hover:text-gray-600 text-left transition-colors cursor-pointer flex items-center gap-1" id="altContactToggleBtn"><span>${currentLang === 'en' ? 'Other contact methods' : currentLang === 'cnr' ? 'Ostale metode kontakta' : 'Другие методы'}</span> <i data-lucide="chevron-down" class="w-3 h-3"></i></button>`;
+                    contactHtml += `<div id="altContactBox" class="hidden text-xs text-gray-700 font-medium mt-0.5 bg-gray-50 p-2 rounded-xl border border-gray-100 flex items-center gap-1.5"><i data-lucide="phone" class="w-3.5 h-3.5 text-emerald-600"></i> <span>${altContactVal}</span></div>`;
+                }
+                contactHtml += `</div>`;
+                contactEl.innerHTML = contactHtml;
+            } else {
+                contactEl.innerHTML = '';
+            }
+
+            document.getElementById('modalEditBtn').onclick = () => { window.location.href = `create.html?edit=${post.id}`; };
+            document.getElementById('modalDeleteBtn').onclick = () => { closeModal(); deletePost(post.id); };
+
+            const images = post.images && post.images.length > 0 ? post.images : (post.image_url ? [post.image_url] : []);
+            currentModalImages = images.filter(img => img && img.trim() !== '' && !img.includes('images.unsplash.com'));
+            currentImageIndex = 0;
+
+            renderModalImage();
+
+            const modal = document.getElementById('postModal');
+            const box = document.getElementById('modalContentBox');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                box.classList.remove('scale-95');
+                box.classList.add('scale-100');
+                lucide.createIcons();
+            }, 10);
+        }
+
+        function toggleAltContact(e) {
+            e.stopPropagation();
+            const box = document.getElementById('altContactBox');
+            if (box) {
+                box.classList.toggle('hidden');
+            }
+        }
+
+        function renderModalImage() {
+            const imagesContainer = document.getElementById('modalImagesContainer');
+            const t = translations[currentLang] || translations.ru;
+
+            if (currentModalImages.length > 0) {
+                let arrowsHtml = '';
+                if (currentModalImages.length > 1) {
+                    arrowsHtml = `
+                        <button onclick="prevImage(event)" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all cursor-pointer z-10">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="nextImage(event)" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all cursor-pointer z-10">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                        <div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full z-10">
+                            ${currentImageIndex + 1} / ${currentModalImages.length}
+                        </div>
+                    `;
+                }
+
+                imagesContainer.innerHTML = `
+                    <img src="${currentModalImages[currentImageIndex]}" class="w-full h-full object-contain max-h-80 transition-all duration-200">
+                    ${arrowsHtml}
+                `;
+                lucide.createIcons();
+            } else {
+                imagesContainer.innerHTML = `<div class="w-full h-48 bg-blue-50 flex items-center justify-center text-gray-400 text-sm">${t.noPhoto}</div>`;
+            }
+        }
+
+        function prevImage(e) {
+            e.stopPropagation();
+            if (currentModalImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex - 1 + currentModalImages.length) % currentModalImages.length;
+            renderModalImage();
+        }
+
+        function nextImage(e) {
+            e.stopPropagation();
+            if (currentModalImages.length <= 1) return;
+            currentImageIndex = (currentImageIndex + 1) % currentModalImages.length;
+            renderModalImage();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('postModal');
+            const box = document.getElementById('modalContentBox');
+            modal.classList.add('opacity-0');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.getElementById('postModal').addEventListener('click', (e) => {
+            if (e.target.id === 'postModal') closeModal();
+        });
+
+        async function deletePost(id) {
+            const t = translations[currentLang] || translations.ru;
+            if (!confirm(t.confirmDelete)) return;
+            try {
+                const { error } = await supabaseClient.from('posts').delete().eq('id', id);
+                if (error) throw error;
+                showToast(t.toastDeleted);
+                fetchUserPosts();
+            } catch (err) {
+                console.error(err);
+                showToast(t.toastDeleteError);
             }
         }
 
         // Инициализация при загрузке
         updateLocalization();
-        renderImagePreviews();
+        fetchUserPosts();
     </script>
 </body>
 </html>
