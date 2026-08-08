@@ -338,6 +338,37 @@
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 attrs: {
                     condition: { label: "Состояние", opts: { all: "Любое", new: "Новое", used: "Б/У" } },
+                    property_type: { 
+                        label: "Тип недвижимости", 
+                        opts: { 
+                            all: "Все типы",
+                            apartment: "Апартаменты / квартира", 
+                            house: "Дом / Вилла", 
+                            room: "Комната", 
+                            commercial: "Коммерческая недвижимость", 
+                            land: "Участок" 
+                        } 
+                    },
+                    property_deal_type: { 
+                        label: "Тип сделки", 
+                        opts: { 
+                            all: "Все сделки",
+                            long_rent: "Долгосрочная аренда (на год)", 
+                            daily_rent: "Посуточная аренда", 
+                            sale: "Продажа" 
+                        } 
+                    },
+                    rooms_count: { 
+                        label: "Кол-во комнат", 
+                        opts: { 
+                            all: "Любое",
+                            "1": "1 комната", 
+                            "2": "2 комнаты", 
+                            "3": "3 комнаты", 
+                            studio: "Студия", 
+                            "4_plus": "4+ комнат" 
+                        } 
+                    },
                     services_type: { label: "Вид услуги", opts: { all: "Все виды", beauty: "Красота", repair: "Ремонт/Строительство", auto: "Авто", it: "Услуги / IT", other: "Другое" } },
                     clothes_type: { label: "Тип одежды", opts: { all: "Все типы", top: "Верх", bottom: "Низ", shoes: "Обувь" } },
                     size: { label: "Размер", opts: { all: "Все", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL" } },
@@ -377,6 +408,37 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Condition", opts: { all: "Any", new: "New", used: "Used" } },
+                    property_type: { 
+                        label: "Property Type", 
+                        opts: { 
+                            all: "All types",
+                            apartment: "Apartment / Flat", 
+                            house: "House / Villa", 
+                            room: "Room", 
+                            commercial: "Commercial Property", 
+                            land: "Land Plot" 
+                        } 
+                    },
+                    property_deal_type: { 
+                        label: "Deal Type", 
+                        opts: { 
+                            all: "All deals",
+                            long_rent: "Long-term Rent (yearly)", 
+                            daily_rent: "Daily Rent", 
+                            sale: "Sale" 
+                        } 
+                    },
+                    rooms_count: { 
+                        label: "Rooms Count", 
+                        opts: { 
+                            all: "Any",
+                            "1": "1 room", 
+                            "2": "2 rooms", 
+                            "3": "3 rooms", 
+                            studio: "Studio", 
+                            "4_plus": "4+ rooms" 
+                        } 
+                    },
                     services_type: { label: "Service Type", opts: { all: "All types", beauty: "Beauty", repair: "Repair & Construction", auto: "Auto", it: "Services / IT", other: "Other" } },
                     clothes_type: { label: "Type", opts: { all: "All types", top: "Top", bottom: "Bottom", shoes: "Shoes" } },
                     size: { label: "Size", opts: { all: "All", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL" } },
@@ -416,6 +478,37 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Stanje", opts: { all: "Bilo koje", new: "Novo", used: "Korišćeno" } },
+                    property_type: { 
+                        label: "Tip nekretnine", 
+                        opts: { 
+                            all: "Svi tipovi",
+                            apartment: "Apartman / Stan", 
+                            house: "Kuća / Vila", 
+                            room: "Soba", 
+                            commercial: "Komercijalni prostor", 
+                            land: "Zemljište" 
+                        } 
+                    },
+                    property_deal_type: { 
+                        label: "Tip oglasa", 
+                        opts: { 
+                            all: "Sve ponude",
+                            long_rent: "Dugoročni najam (na godinu)", 
+                            daily_rent: "Dnevni najam", 
+                            sale: "Prodaja" 
+                        } 
+                    },
+                    rooms_count: { 
+                        label: "Broj soba", 
+                        opts: { 
+                            all: "Bilo koje",
+                            "1": "1 soba", 
+                            "2": "2 sobe", 
+                            "3": "3 sobe", 
+                            studio: "Studio", 
+                            "4_plus": "4+ soba" 
+                        } 
+                    },
                     services_type: { label: "Vrsta usluge", opts: { all: "Sve vrste", beauty: "Ljepota", repair: "Popravka/Gradnja", auto: "Auto", it: "Usluge / IT", other: "Ostalo" } },
                     clothes_type: { label: "Tip odjeće", opts: { all: "Svi tipovi", top: "Gornji dio", bottom: "Donji dio", shoes: "Obuća" } },
                     size: { label: "Veličina", opts: { all: "Sve", xs: "XS", s: "S", m: "M", l: "L", xl: "XL", xxl: "XXL" } },
@@ -855,7 +948,11 @@
             container.classList.remove('hidden');
             let html = '<div class="flex flex-wrap items-center gap-3 text-xs">';
 
-            if (selectedCategory === 'clothes') {
+            if (selectedCategory === 'realestate') {
+                html += renderSelectFilter('property_type', a.property_type.label, a.property_type.opts);
+                html += renderSelectFilter('property_deal_type', a.property_deal_type.label, a.property_deal_type.opts);
+                html += renderSelectFilter('rooms_count', a.rooms_count.label, a.rooms_count.opts);
+            } else if (selectedCategory === 'clothes') {
                 html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
                 html += renderSelectFilter('clothes_type', a.clothes_type.label, a.clothes_type.opts);
                 
@@ -1050,7 +1147,6 @@
                 if (showOnlyFavorites && !favorites.includes(postIdStr)) return false;
                 if (showOnlyMyPosts && !isMyPost(post)) return false;
 
-                // Проверяем статус договорной цены через колонку price_negotiable или старые текстовые значения
                 const rawPriceCheck = String(post.price || '').toLowerCase().trim();
                 const isNegotiable = Boolean(post.price_negotiable) || rawPriceCheck === 'договорная' || rawPriceCheck === 'negotiable' || rawPriceCheck === 'po dogovoru';
                 
