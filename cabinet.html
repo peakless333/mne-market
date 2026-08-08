@@ -77,6 +77,13 @@
         <!-- Контейнер с объявлениями -->
         <div id="userPostsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 hidden"></div>
 
+        <!-- Кнопка "Показать ещё" -->
+        <div id="loadMoreContainer" class="flex justify-center pt-4 hidden">
+            <button onclick="loadMorePosts()" id="loadMoreBtn" class="bg-white hover:bg-gray-50 text-gray-800 font-bold px-6 py-3 rounded-2xl text-xs transition-all border border-gray-200/80 shadow-xs cursor-pointer">
+                Показать ещё
+            </button>
+        </div>
+
         <!-- Если объявлений нет -->
         <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-center space-y-3">
             <div class="bg-gray-100 p-4 rounded-full text-gray-400">
@@ -153,6 +160,8 @@
                 emptyBtn: "Разместить объявление",
                 noPhoto: "Нет фото",
                 free: "Бесплатно",
+                negotiable: "Договорная",
+                loadMore: "Показать ещё",
                 descTitle: "Описание",
                 editBtn: "Редактировать",
                 deleteBtn: "Удалить",
@@ -186,6 +195,8 @@
                 emptyBtn: "Create Listing",
                 noPhoto: "No photo",
                 free: "Free",
+                negotiable: "Negotiable",
+                loadMore: "Load more",
                 descTitle: "Description",
                 editBtn: "Edit",
                 deleteBtn: "Delete",
@@ -219,6 +230,8 @@
                 emptyBtn: "Kreiraj oglas",
                 noPhoto: "Nema slike",
                 free: "Besplatno",
+                negotiable: "Dogovor",
+                loadMore: "Učitaj još",
                 descTitle: "Opis",
                 editBtn: "Izmijeni",
                 deleteBtn: "Obriši",
@@ -248,6 +261,7 @@
         }
 
         let allUserPosts = [];
+        let displayedCount = 20;
         let currentModalImages = [];
         let currentImageIndex = 0;
 
@@ -270,6 +284,7 @@
             document.getElementById('emptyTitle').innerText = t.emptyTitle;
             document.getElementById('emptyDesc').innerText = t.emptyDesc;
             document.getElementById('emptyBtn').innerText = t.emptyBtn;
+            document.getElementById('loadMoreBtn').innerText = t.loadMore;
             document.getElementById('modalDescTitle').innerText = t.descTitle;
             document.getElementById('textEditBtn').innerText = t.editBtn;
             document.getElementById('textDeleteBtn').innerText = t.deleteBtn;
@@ -341,57 +356,85 @@
                     return postUser === currentName || postToken === currentName || postContact.includes(currentName);
                 });
 
+                displayedCount = 20;
                 document.getElementById('loadingSkeleton').classList.add('hidden');
-                const container = document.getElementById('userPostsContainer');
-                const emptyState = document.getElementById('emptyState');
+                renderUserPosts();
 
-                if (allUserPosts.length === 0) {
-                    container.classList.add('hidden');
-                    emptyState.classList.remove('hidden');
-                    return;
-                }
-
-                emptyState.classList.add('hidden');
-                container.classList.remove('hidden');
-                container.classList.add('grid');
-
-                container.innerHTML = allUserPosts.map(post => {
-                    const rawImage = post.image_url || (post.images && post.images[0]);
-                    const hasValidImage = rawImage && rawImage.trim() !== '' && !rawImage.includes('images.unsplash.com');
-                    const imageBlock = hasValidImage 
-                        ? `<img src="${rawImage}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
-                        : `<div class="w-full h-full bg-blue-50 flex items-center justify-center text-gray-400 text-xs">${t.noPhoto}</div>`;
-
-                    const priceText = post.price ? post.price + ' €' : t.free;
-
-                    return `
-                        <div onclick="openPostModal('${post.id}')" class="bg-white rounded-2xl border border-gray-200/70 overflow-hidden shadow-xs flex flex-col justify-between group cursor-pointer hover:border-gray-300 transition-all">
-                            <div>
-                                <div class="relative aspect-square bg-gray-50 overflow-hidden">
-                                    ${imageBlock}
-                                    <div class="absolute top-2.5 right-2.5 flex gap-1" onclick="event.stopPropagation()">
-                                        <button onclick="window.location.href='create.html?edit=${post.id}'" class="bg-white/90 hover:bg-[#009cf0] hover:text-white text-gray-700 p-2 rounded-full shadow-sm cursor-pointer">
-                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                        <button onclick="deletePost('${post.id}')" class="bg-white/90 hover:bg-rose-600 hover:text-white text-rose-600 p-2 rounded-full shadow-sm cursor-pointer">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="p-3">
-                                    <span class="font-extrabold text-gray-950 text-sm block">${priceText}</span>
-                                    <h3 class="font-medium text-gray-800 text-xs line-clamp-2 mt-1">${post.title}</h3>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                lucide.createIcons();
             } catch (err) {
                 console.error(err);
                 showToast(t.toastLoadError);
             }
+        }
+
+        function renderUserPosts() {
+            const t = translations[currentLang] || translations.ru;
+            const container = document.getElementById('userPostsContainer');
+            const emptyState = document.getElementById('emptyState');
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
+
+            if (allUserPosts.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                loadMoreContainer.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            container.classList.remove('hidden');
+            container.classList.add('grid');
+
+            const postsToDisplay = allUserPosts.slice(0, displayedCount);
+
+            container.innerHTML = postsToDisplay.map(post => {
+                const rawImage = post.image_url || (post.images && post.images[0]);
+                const hasValidImage = rawImage && rawImage.trim() !== '' && !rawImage.includes('images.unsplash.com');
+                const imageBlock = hasValidImage 
+                    ? `<img src="${rawImage}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
+                    : `<div class="w-full h-full bg-blue-50 flex items-center justify-center text-gray-400 text-xs">${t.noPhoto}</div>`;
+
+                let priceText = t.free;
+                if (post.price_negotiable) {
+                    priceText = t.negotiable;
+                } else if (post.price !== null && post.price !== undefined && post.price !== '') {
+                    const num = Number(post.price);
+                    priceText = num === 0 ? t.free : num.toLocaleString('ru-RU') + ' €';
+                }
+
+                return `
+                    <div onclick="openPostModal('${post.id}')" class="bg-white rounded-2xl border border-gray-200/70 overflow-hidden shadow-xs flex flex-col justify-between group cursor-pointer hover:border-gray-300 transition-all">
+                        <div>
+                            <div class="relative aspect-square bg-gray-50 overflow-hidden">
+                                ${imageBlock}
+                                <div class="absolute top-2.5 right-2.5 flex gap-1" onclick="event.stopPropagation()">
+                                    <button onclick="window.location.href='create.html?edit=${post.id}'" class="bg-white/90 hover:bg-[#009cf0] hover:text-white text-gray-700 p-2 rounded-full shadow-sm cursor-pointer">
+                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button onclick="deletePost('${post.id}')" class="bg-white/90 hover:bg-rose-600 hover:text-white text-rose-600 p-2 rounded-full shadow-sm cursor-pointer">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <span class="font-extrabold text-gray-950 text-sm block">${priceText}</span>
+                                <h3 class="font-medium text-gray-800 text-xs line-clamp-2 mt-1">${post.title}</h3>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (allUserPosts.length > displayedCount) {
+                loadMoreContainer.classList.remove('hidden');
+            } else {
+                loadMoreContainer.classList.add('hidden');
+            }
+
+            lucide.createIcons();
+        }
+
+        function loadMorePosts() {
+            displayedCount += 20;
+            renderUserPosts();
         }
 
         function openPostModal(id) {
@@ -401,7 +444,15 @@
             const t = translations[currentLang] || translations.ru;
             document.getElementById('modalCategory').innerText = getCategoryName(post.category);
             document.getElementById('modalTitle').innerText = post.title || '';
-            document.getElementById('modalPrice').innerText = post.price ? post.price + ' €' : t.free;
+            
+            let modalPriceText = t.free;
+            if (post.price_negotiable) {
+                modalPriceText = t.negotiable;
+            } else if (post.price !== null && post.price !== undefined && post.price !== '') {
+                const num = Number(post.price);
+                modalPriceText = num === 0 ? t.free : num.toLocaleString('ru-RU') + ' €';
+            }
+            document.getElementById('modalPrice').innerText = modalPriceText;
             
             const locationEl = document.getElementById('modalLocation');
             if (post.location && post.location.trim() !== '') {
