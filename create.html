@@ -64,6 +64,7 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="categoryLabel">Категория</label>
                         <select id="postCategory" onchange="renderCategoryAttributes()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            <option value="property" data-i18n="cat_property">Недвижимость</option>
                             <option value="furniture" data-i18n="cat_furniture">Мебель</option>
                             <option value="tech" data-i18n="cat_tech">Техника</option>
                             <option value="auto" data-i18n="cat_auto">Авто</option>
@@ -151,7 +152,7 @@
                 addPhotoBtn: "Нажмите или перетащите фото сюда", nameLabel: "Название",
                 categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)", negotiableCheckbox: "Договорная",
                 descLabel: "Описание", tgLabel: "Telegram для связи", otherMethodsBtn: "Другие методы", phoneLabel: "Номер телефона", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
-                cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_kids: "Детские товары", cat_services: "Услуги", cat_other: "Разное",
+                cat_property: "Недвижимость", cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_kids: "Детские товары", cat_services: "Услуги", cat_other: "Разное",
                 publishing: "Сохранение...", maxPhotos: "Максимально можно загрузить 10 фотографий",
                 ph_title: "Например: iPhone 13 Pro 128GB",
                 ph_price: "0 (если бесплатно)",
@@ -159,6 +160,34 @@
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 attrs: {
                     condition: { label: "Состояние", opts: { new: "Новое", used: "Б/У" } },
+                    property_type: { 
+                        label: "Тип недвижимости", 
+                        opts: { 
+                            apartment: "Апартаменты / Квартира", 
+                            house: "Дом / Вилла", 
+                            room: "Комната", 
+                            commercial: "Коммерческая недвижимость", 
+                            land: "Участок" 
+                        } 
+                    },
+                    property_deal_type: { 
+                        label: "Тип сделки", 
+                        opts: { 
+                            long_rent: "Долгосрочная аренда (на год)", 
+                            daily_rent: "Посуточная аренда", 
+                            sale: "Продажа" 
+                        } 
+                    },
+                    rooms_count: { 
+                        label: "Количество комнат", 
+                        opts: { 
+                            studio: "Студия", 
+                            "1": "1 комната", 
+                            "2": "2 комнаты", 
+                            "3": "3 комнаты", 
+                            "4_plus": "4+ комнат" 
+                        } 
+                    },
                     clothes_type: { 
                         label: "Тип одежды", 
                         opts: { top: "Верх (Куртки, Худи, Футболки)", bottom: "Низ (Брюки, Джинсы, Шорты)", shoes: "Обувь" } 
@@ -209,7 +238,7 @@
                 addPhotoBtn: "Click or drag photos here", nameLabel: "Title",
                 categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)", negotiableCheckbox: "Negotiable",
                 descLabel: "Description", tgLabel: "Telegram username", otherMethodsBtn: "Other methods", phoneLabel: "Phone number", publishBtn: "Publish listing", saveBtn: "Save changes",
-                cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_kids: "Kids items", cat_services: "Services", cat_other: "Other",
+                cat_property: "Property", cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_kids: "Kids items", cat_services: "Services", cat_other: "Other",
                 publishing: "Saving...", maxPhotos: "Maximum 10 photos allowed",
                 ph_title: "e.g. iPhone 13 Pro 128GB",
                 ph_price: "0 (if free)",
@@ -217,6 +246,34 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Condition", opts: { new: "New", used: "Used" } },
+                    property_type: { 
+                        label: "Property Type", 
+                        opts: { 
+                            apartment: "Apartment / Flat", 
+                            house: "House / Villa", 
+                            room: "Room", 
+                            commercial: "Commercial Property", 
+                            land: "Land Plot" 
+                        } 
+                    },
+                    property_deal_type: { 
+                        label: "Deal Type", 
+                        opts: { 
+                            long_rent: "Long-term Rent (yearly)", 
+                            daily_rent: "Daily Rent", 
+                            sale: "Sale" 
+                        } 
+                    },
+                    rooms_count: { 
+                        label: "Rooms Count", 
+                        opts: { 
+                            studio: "Studio", 
+                            "1": "1 room", 
+                            "2": "2 rooms", 
+                            "3": "3 rooms", 
+                            "4_plus": "4+ rooms" 
+                        } 
+                    },
                     clothes_type: { 
                         label: "Clothing Type", 
                         opts: { top: "Top (Jackets, Hoodies, T-shirts)", bottom: "Bottom (Pants, Jeans, Shorts)", shoes: "Shoes" } 
@@ -267,7 +324,7 @@
                 addPhotoBtn: "Kliknite ili prevucite fotografije ovdje", nameLabel: "Naziv",
                 categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)", negotiableCheckbox: "Po dogovoru",
                 descLabel: "Opis", tgLabel: "Telegram za kontakt", otherMethodsBtn: "Ostale metode", phoneLabel: "Broj telefona", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
-                cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_kids: "Za djecu", cat_services: "Usluge", cat_other: "Razno",
+                cat_property: "Nekretnine", cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_kids: "Za djecu", cat_services: "Usluge", cat_other: "Razno",
                 publishing: "Čuvanje...", maxPhotos: "Možete otpremiti najviše 10 fotografija",
                 ph_title: "npr. iPhone 13 Pro 128GB",
                 ph_price: "0 (ako je besplatno)",
@@ -275,6 +332,34 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Stanje", opts: { new: "Novo", used: "Korišćeno" } },
+                    property_type: { 
+                        label: "Tip nekretnine", 
+                        opts: { 
+                            apartment: "Apartman / Stan", 
+                            house: "Kuća / Vila", 
+                            room: "Soba", 
+                            commercial: "Komercijalni prostor", 
+                            land: "Zemljište" 
+                        } 
+                    },
+                    property_deal_type: { 
+                        label: "Tip oglasa", 
+                        opts: { 
+                            long_rent: "Dugoročni najam (na godinu)", 
+                            daily_rent: "Dnevni najam", 
+                            sale: "Prodaja" 
+                        } 
+                    },
+                    rooms_count: { 
+                        label: "Broj soba", 
+                        opts: { 
+                            studio: "Studio", 
+                            "1": "1 soba", 
+                            "2": "2 sobe", 
+                            "3": "3 sobe", 
+                            "4_plus": "4+ soba" 
+                        } 
+                    },
                     clothes_type: { 
                         label: "Vrsta odjeće", 
                         opts: { top: "Gornji dio (Jakne, Duksevi, Majice)", bottom: "Donji dio (Pantalone, Farmerice, Šortsevi)", shoes: "Obuća" } 
@@ -377,7 +462,28 @@
             const a = dict[currentLang].attrs;
             let html = '';
 
-            if (category === 'clothes') {
+            if (category === 'property') {
+                html += `
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.property_type.label}</label>
+                        <select id="attr_property_type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.property_type.opts).map(k => `<option value="${k}" ${savedValues.property_type === k ? 'selected' : ''}>${a.property_type.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.property_deal_type.label}</label>
+                        <select id="attr_property_deal_type" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.property_deal_type.opts).map(k => `<option value="${k}" ${savedValues.property_deal_type === k ? 'selected' : ''}>${a.property_deal_type.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${a.rooms_count.label}</label>
+                        <select id="attr_rooms_count" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all cursor-pointer">
+                            ${Object.keys(a.rooms_count.opts).map(k => `<option value="${k}" ${savedValues.rooms_count === k ? 'selected' : ''}>${a.rooms_count.opts[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            } else if (category === 'clothes') {
                 const currentClothesType = savedValues.clothes_type || 'top';
                 html += `
                     <div>
@@ -543,6 +649,9 @@
 
         function collectAttributesFromDOM() {
             const attrs = {};
+            const propTypeEl = document.getElementById('attr_property_type');
+            const propDealEl = document.getElementById('attr_property_deal_type');
+            const roomsEl = document.getElementById('attr_rooms_count');
             const condEl = document.getElementById('attr_condition');
             const clothesTypeEl = document.getElementById('attr_clothes_type');
             const sizeTopEl = document.getElementById('attr_size_top');
@@ -555,6 +664,9 @@
             const yearEl = document.getElementById('attr_year');
             const milEl = document.getElementById('attr_mileage');
 
+            if (propTypeEl) attrs.property_type = propTypeEl.value;
+            if (propDealEl) attrs.property_deal_type = propDealEl.value;
+            if (roomsEl) attrs.rooms_count = roomsEl.value;
             if (condEl) attrs.condition = condEl.value;
             if (clothesTypeEl) {
                 attrs.clothes_type = clothesTypeEl.value;
