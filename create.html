@@ -597,19 +597,12 @@
                 currentPostAttributes = data.attributes || {};
                 renderCategoryAttributes(currentPostAttributes);
 
-                if (data.price === null || data.price === undefined || data.price === 0 && data.is_negotiable) { // поддержка если цена 0/пустая
-                    // можно настроить под себя
-                }
-                
-                if (data.price === 0 && data.description?.includes('Договорная') /* или ваш флаг */) {
-                    // по умолчанию проверим поле
-                }
-                
-                if (data.price === -1 || data.price_negotiable) {
+                // Восстанавливаем статус «Договорная»
+                if (data.is_negotiable) {
                     document.getElementById('priceNegotiable').checked = true;
                     togglePriceNegotiable();
                 } else {
-                    document.getElementById('postPrice').value = data.price || 0;
+                    document.getElementById('postPrice').value = data.price !== null ? data.price : '';
                 }
 
                 document.getElementById('postDesc').value = data.description || '';
@@ -830,7 +823,7 @@
                     city: document.getElementById('postCity').value,
                     attributes: collectAttributesFromDOM(),
                     price: isNegotiable ? 0 : Number(document.getElementById('postPrice').value || 0),
-                    price_negotiable: isNegotiable,
+                    is_negotiable: isNegotiable, // Передаем корректное поле для Supabase
                     description: document.getElementById('postDesc').value.trim(),
                     telegram: telegramVal,
                     phone: phoneVal,
