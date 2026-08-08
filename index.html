@@ -155,8 +155,8 @@
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_furniture">Мебель</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">🛋️</div>
             </div>
-            <div onclick="setCategory(event, 'realestate')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
-                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_realestate">Недвижимость</span>
+            <div onclick="setCategory(event, 'property')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+                <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_property">Недвижимость</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">🏢</div>
             </div>
             <div onclick="setCategory(event, 'auto')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
@@ -310,7 +310,7 @@
             ru: {
                 postAd: "Разместить", searchBtn: "Найти", searchPh: "Поиск товаров...", allCities: "Все города",
                 recommendations: "Объявления",
-                cat_auto: "Авто", cat_realestate: "Недвижимость", cat_furniture: "Мебель", cat_tech: "Техника", 
+                cat_auto: "Авто", cat_property: "Недвижимость", cat_furniture: "Мебель", cat_tech: "Техника", 
                 cat_services: "Услуги", cat_clothes: "Одежда и обувь", cat_kids: "Детские товары", cat_other: "Разное",
                 sort_newest: "Сначала новые", sort_cheap: "Сначала дешевле", sort_expensive: "Сначала дороже",
                 resetFilters: "Сбросить", priceFrom: "От", priceTo: "До", emptyTitle: "Ничего не найдено", emptyDesc: "Попробуйте изменить параметры поиска или сбросить фильтры.",
@@ -380,7 +380,7 @@
             en: {
                 postAd: "Post", searchBtn: "Search", searchPh: "Search items...", allCities: "All cities",
                 recommendations: "Listings",
-                cat_auto: "Vehicles", cat_realestate: "Real estate", cat_furniture: "Furniture", cat_tech: "Electronics", 
+                cat_auto: "Vehicles", cat_property: "Real estate", cat_furniture: "Furniture", cat_tech: "Electronics", 
                 cat_services: "Services", cat_clothes: "Clothing & shoes", cat_kids: "Kids", cat_other: "Other",
                 sort_newest: "Newest first", sort_cheap: "Cheapest first", sort_expensive: "Most expensive",
                 resetFilters: "Reset", priceFrom: "From", priceTo: "To", emptyTitle: "No items found", emptyDesc: "Try changing search parameters.",
@@ -450,7 +450,7 @@
             cnr: {
                 postAd: "Objavi", searchBtn: "Traži", searchPh: "Pretraga artikala...", allCities: "Svi gradovi",
                 recommendations: "Oglasi",
-                cat_auto: "Auto", cat_realestate: "Nekretnine", cat_furniture: "Namještaj", cat_tech: "Tehnika", 
+                cat_auto: "Auto", cat_property: "Nekretnine", cat_furniture: "Namještaj", cat_tech: "Tehnika", 
                 cat_services: "Usluge", cat_clothes: "Odjeća i obuća", cat_kids: "Za djecu", cat_other: "Razno",
                 sort_newest: "Najnovije", sort_cheap: "Najjeftinije", sort_expensive: "Najskuplje",
                 resetFilters: "Resetuj", priceFrom: "Od", priceTo: "Do", emptyTitle: "Nema rezultata", emptyDesc: "Pokušajte da promijenite parametre pretrage.",
@@ -948,7 +948,7 @@
             container.classList.remove('hidden');
             let html = '<div class="flex flex-wrap items-center gap-3 text-xs">';
 
-            if (selectedCategory === 'realestate') {
+            if (selectedCategory === 'property') {
                 html += renderSelectFilter('property_type', a.property_type.label, a.property_type.opts);
                 html += renderSelectFilter('property_deal_type', a.property_deal_type.label, a.property_deal_type.opts);
                 html += renderSelectFilter('rooms_count', a.rooms_count.label, a.rooms_count.opts);
@@ -1284,3 +1284,4 @@
     </script>
 </body>
 </html>
+```[cite: 11]
