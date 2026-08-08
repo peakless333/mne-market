@@ -324,8 +324,15 @@
             await supabaseClient.from('posts').update({ views: newViews }).eq('id', postId);
             currentPost.views = newViews;
 
-            postImages = currentPost.images && currentPost.images.length > 0 ? currentPost.images : [];
-            if (postImages.length === 0 && currentPost.image_url) postImages.push(currentPost.image_url);
+            // Собираем картинки и фильтруем мусор (если в базу случайно попала та самая дефолтная ссылка кресла)
+            postImages = [];
+            const rawImages = currentPost.images && currentPost.images.length > 0 ? currentPost.images : (currentPost.image_url ? [currentPost.image_url] : []);
+            
+            for (const img of rawImages) {
+                if (img && !img.includes('images.unsplash.com/photo-1555041469')) {
+                    postImages.push(img);
+                }
+            }
 
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('postContent').classList.remove('hidden');
@@ -666,7 +673,9 @@
             
             if (similar.length > 0) {
                 similarContainer.innerHTML = similar.map(p => {
-                    const sImg = (p.images && p.images.length > 0) ? p.images[0] : (p.image_url || '');
+                    // Также очищаем похожие от дефолтной картинки кресла
+                    const cleanPImages = (p.images || []).filter(i => !i.includes('images.unsplash.com/photo-1555041469'));
+                    const sImg = cleanPImages.length > 0 ? cleanPImages[0] : ((p.image_url && !p.image_url.includes('images.unsplash.com/photo-1555041469')) ? p.image_url : '');
                     const sPrice = formatPrice(p.price);
                     return `
                         <a href="post.html?id=${p.id}" class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
