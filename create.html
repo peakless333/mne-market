@@ -85,7 +85,13 @@
                 <div id="categoryAttributesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1" data-i18n="priceLabel">Цена (€)</label>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider" data-i18n="priceLabel">Цена (€)</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-gray-600 hover:text-blue-600 select-none">
+                            <input type="checkbox" id="priceNegotiable" onchange="togglePriceNegotiable()" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4">
+                            <span data-i18n="negotiableCheckbox">Договорная</span>
+                        </label>
+                    </div>
                     <input type="number" id="postPrice" required placeholder="0 (если бесплатно)" min="0" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all">
                 </div>
 
@@ -143,7 +149,7 @@
             ru: {
                 back: "Назад", titleNew: "Новое объявление", titleEdit: "Редактировать объявление", photosLabel: "Фотографии (до 10 шт.)",
                 addPhotoBtn: "Нажмите или перетащите фото сюда", nameLabel: "Название",
-                categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
+                categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)", negotiableCheckbox: "Договорная",
                 descLabel: "Описание", tgLabel: "Telegram для связи", otherMethodsBtn: "Другие методы", phoneLabel: "Номер телефона", publishBtn: "Опубликовать объявление", saveBtn: "Сохранить изменения",
                 cat_furniture: "Мебель", cat_tech: "Техника", cat_auto: "Авто", cat_clothes: "Одежда", cat_kids: "Детские товары", cat_services: "Услуги", cat_other: "Разное",
                 publishing: "Сохранение...", maxPhotos: "Максимально можно загрузить 10 фотографий",
@@ -201,7 +207,7 @@
             en: {
                 back: "Back", titleNew: "New Listing", titleEdit: "Edit Listing", photosLabel: "Photos (up to 10)",
                 addPhotoBtn: "Click or drag photos here", nameLabel: "Title",
-                categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
+                categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)", negotiableCheckbox: "Negotiable",
                 descLabel: "Description", tgLabel: "Telegram username", otherMethodsBtn: "Other methods", phoneLabel: "Phone number", publishBtn: "Publish listing", saveBtn: "Save changes",
                 cat_furniture: "Furniture", cat_tech: "Electronics", cat_auto: "Vehicles", cat_clothes: "Clothing", cat_kids: "Kids items", cat_services: "Services", cat_other: "Other",
                 publishing: "Saving...", maxPhotos: "Maximum 10 photos allowed",
@@ -259,7 +265,7 @@
             cnr: {
                 back: "Nazad", titleNew: "Novi oglas", titleEdit: "Izmjena oglasa", photosLabel: "Fotografije (do 10)",
                 addPhotoBtn: "Kliknite ili prevucite fotografije ovdje", nameLabel: "Naziv",
-                categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
+                categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)", negotiableCheckbox: "Po dogovoru",
                 descLabel: "Opis", tgLabel: "Telegram za kontakt", otherMethodsBtn: "Ostale metode", phoneLabel: "Broj telefona", publishBtn: "Objavi oglas", saveBtn: "Sačuvaj izmjene",
                 cat_furniture: "Namještaj", cat_tech: "Tehnika", cat_auto: "Auto", cat_clothes: "Odjeća", cat_kids: "Za djecu", cat_services: "Usluge", cat_other: "Razno",
                 publishing: "Čuvanje...", maxPhotos: "Možete otpremiti najviše 10 fotografija",
@@ -324,6 +330,21 @@
         function toggleOtherContact() {
             const phoneContainer = document.getElementById('phoneContainer');
             phoneContainer.classList.toggle('hidden');
+        }
+
+        function togglePriceNegotiable() {
+            const checkbox = document.getElementById('priceNegotiable');
+            const priceInput = document.getElementById('postPrice');
+            if (checkbox.checked) {
+                priceInput.value = '';
+                priceInput.disabled = true;
+                priceInput.classList.add('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+                priceInput.removeAttribute('required');
+            } else {
+                priceInput.disabled = false;
+                priceInput.classList.remove('bg-gray-100', 'text-gray-400', 'cursor-not-allowed');
+                priceInput.setAttribute('required', 'true');
+            }
         }
 
         function checkFormValidity() {
@@ -576,7 +597,21 @@
                 currentPostAttributes = data.attributes || {};
                 renderCategoryAttributes(currentPostAttributes);
 
-                document.getElementById('postPrice').value = data.price || 0;
+                if (data.price === null || data.price === undefined || data.price === 0 && data.is_negotiable) { // поддержка если цена 0/пустая
+                    // можно настроить под себя
+                }
+                
+                if (data.price === 0 && data.description?.includes('Договорная') /* или ваш флаг */) {
+                    // по умолчанию проверим поле
+                }
+                
+                if (data.price === -1 || data.price_negotiable) {
+                    document.getElementById('priceNegotiable').checked = true;
+                    togglePriceNegotiable();
+                } else {
+                    document.getElementById('postPrice').value = data.price || 0;
+                }
+
                 document.getElementById('postDesc').value = data.description || '';
                 document.getElementById('postTelegram').value = data.telegram || '';
                 if (data.phone) {
@@ -781,20 +816,21 @@
                     imageUrls.push(publicUrlData.publicUrl);
                 }
 
-                // Исправлено: если фото не выбраны, массив остается пустым без дефолтного кресла
                 if (imageUrls.length === 0) {
                     imageUrls = [];
                 }
 
                 const telegramVal = document.getElementById('postTelegram').value.trim();
                 const phoneVal = document.getElementById('postPhone').value.trim();
+                const isNegotiable = document.getElementById('priceNegotiable').checked;
 
                 const postData = {
                     title: document.getElementById('postTitle').value.trim(),
                     category: document.getElementById('postCategory').value,
                     city: document.getElementById('postCity').value,
                     attributes: collectAttributesFromDOM(),
-                    price: Number(document.getElementById('postPrice').value || 0),
+                    price: isNegotiable ? 0 : Number(document.getElementById('postPrice').value || 0),
+                    price_negotiable: isNegotiable,
                     description: document.getElementById('postDesc').value.trim(),
                     telegram: telegramVal,
                     phone: phoneVal,
