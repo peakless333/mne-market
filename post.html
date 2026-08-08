@@ -175,6 +175,16 @@
                     furniture: "Мебель", tech: "Техника", realestate: "Недвижимость", auto: "Авто", 
                     clothes: "Одежда и обувь", kids: "Детские товары", services: "Услуги", other: "Разное" 
                 },
+                subcategories: {
+                    realestate: { rent_long: "Аренда на долгий срок", rent_daily: "Посуточная аренда", sale: "Продажа" },
+                    auto: { cars: "Легковые авто", moto: "Мотоциклы и скутеры", parts: "Запчасти и аксессуары", rent: "Аренда авто" },
+                    tech: { phones: "Смартфоны и планшеты", laptops: "Ноутбуки и компьютеры", tv: "ТВ и аудио", appliances: "Бытовая техника" },
+                    furniture: { living: "Гостиная", bedroom: "Спальня", kitchen: "Кухня", office: "Офис", other: "Другое" },
+                    clothes: { men: "Мужское", women: "Женское", kids: "Детское", shoes: "Обувь", accessories: "Аксессуары" },
+                    kids: { toys: "Игрушки", clothing: "Детская одежда", strollers: "Коляски и автокресла", furniture: "Детская мебель" },
+                    services: { beauty: "Красота и здоровье", repair: "Ремонт и строительство", it: "IT и дизайн", lessons: "Уроки и репетиторы", other: "Другие услуги" },
+                    other: { hobbies: "Хобби и спорт", pets: "Животные", garden: "Дача и сад", items: "Личные вещи" }
+                },
                 attrs: {
                     condition: { label: "Состояние", opts: { new: "Новое", used: "Б/У" } },
                     services_type: { 
@@ -218,6 +228,16 @@
                     furniture: "Furniture", tech: "Electronics", realestate: "Real estate", auto: "Vehicles", 
                     clothes: "Clothing", kids: "Kids", services: "Services", other: "Other" 
                 },
+                subcategories: {
+                    realestate: { rent_long: "Long-term rent", rent_daily: "Daily rent", sale: "Sale" },
+                    auto: { cars: "Cars", moto: "Motorcycles & Scooters", parts: "Parts & Accessories", rent: "Car rental" },
+                    tech: { phones: "Smartphones & Tablets", laptops: "Laptops & Computers", tv: "TV & Audio", appliances: "Home appliances" },
+                    furniture: { living: "Living room", bedroom: "Bedroom", kitchen: "Kitchen", office: "Office", other: "Other" },
+                    clothes: { men: "Men's", women: "Women's", kids: "Kids'", shoes: "Shoes", accessories: "Accessories" },
+                    kids: { toys: "Toys", clothing: "Kids' clothing", strollers: "Strollers & Car seats", furniture: "Kids' furniture" },
+                    services: { beauty: "Beauty & Health", repair: "Repair & Construction", it: "IT & Design", lessons: "Lessons & Tutors", other: "Other services" },
+                    other: { hobbies: "Hobbies & Sports", pets: "Pets", garden: "Garden", items: "Personal items" }
+                },
                 attrs: {
                     condition: { label: "Condition", opts: { new: "New", used: "Used" } },
                     services_type: { 
@@ -260,6 +280,16 @@
                 categories: { 
                     furniture: "Namještaj", tech: "Tehnika", realestate: "Nekretnine", auto: "Auto", 
                     clothes: "Odjeća", kids: "Dječije stvari", services: "Usluge", other: "Razno" 
+                },
+                subcategories: {
+                    realestate: { rent_long: "Dugoročni zakup", rent_daily: "Izdavanje na dan", sale: "Prodaja" },
+                    auto: { cars: "Automobili", moto: "Motocikli i skuteri", parts: "Dijelovi i oprema", rent: "Iznajmljivanje vozila" },
+                    tech: { phones: "Telefoni i tableti", laptops: "Laptopi i računari", tv: "TV i audio", appliances: "Kućni aparati" },
+                    furniture: { living: "Dnevna soba", bedroom: "Spavaća soba", kitchen: "Kuhinja", office: "Kancelarija", other: "Ostalo" },
+                    clothes: { men: "Muška", women: "Ženska", kids: "Dječija", shoes: "Obuća", accessories: "Modni detalji" },
+                    kids: { toys: "Igračke", clothing: "Dječija odjeća", strollers: "Kolica i auto sjedišta", furniture: "Dječiji namještaj" },
+                    services: { beauty: "Ljepota i zdravlje", repair: "Popravka i gradnja", it: "IT i dizajn", lessons: "Časovi i instrukcije", other: "Ostale usluge" },
+                    other: { hobbies: "Hobi i sport", pets: "Kućni ljubimci", garden: "Bašta i dvorište", items: "Lične stvari" }
                 },
                 attrs: {
                     condition: { label: "Stanje", opts: { new: "Novo", used: "Korišćeno" } },
@@ -606,7 +636,13 @@
 
             document.getElementById('postPrice').innerText = formatPrice(currentPost.price);
             document.getElementById('postCity').innerText = dict[currentLang].cities[currentPost.city] || currentPost.city;
-            document.getElementById('postCategoryBadge').innerText = dict[currentLang].categories[currentPost.category] || currentPost.category || 'Other';
+            
+            let categoryText = dict[currentLang].categories[currentPost.category] || currentPost.category || 'Other';
+            if (currentPost.subcategory && dict[currentLang].subcategories?.[currentPost.category]?.[currentPost.subcategory]) {
+                categoryText += ` / ${dict[currentLang].subcategories[currentPost.category][currentPost.subcategory]}`;
+            }
+            document.getElementById('postCategoryBadge').innerText = categoryText;
+
             document.getElementById('viewsCount').innerText = currentPost.views || 0;
             document.getElementById('postDate').innerText = new Date(currentPost.created_at).toLocaleDateString();
             document.getElementById('postTitle').innerText = currentPost.title;
