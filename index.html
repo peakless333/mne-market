@@ -267,6 +267,13 @@
 
         <div id="postsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 hidden"></div>
 
+        <!-- Кнопка "Показать ещё" -->
+        <div id="loadMoreContainer" class="hidden flex justify-center pt-6 pb-2">
+            <button onclick="loadMorePosts()" class="bg-white hover:bg-gray-50 text-gray-800 font-semibold px-6 py-3 rounded-2xl border border-gray-200 shadow-sm text-xs transition-all cursor-pointer flex items-center gap-2" data-i18n="showMoreBtn">
+                Показать ещё
+            </button>
+        </div>
+
         <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-center space-y-3 animate-fade-in">
             <div class="bg-gray-100 p-4 rounded-full text-gray-400">
                 <i data-lucide="search-x" class="w-8 h-8"></i>
@@ -320,6 +327,7 @@
                 logoutBtn: "Выйти из аккаунта", closeBtn: "Закрыть", cancelBtn: "Отмена", deleteBtn: "Удалить", saveBtn: "Сохранить",
                 nameLabel: "Название", categoryLabel: "Категория", cityLabel: "Город", priceLabel: "Цена (€)",
                 descLabel: "Описание", tgLabel: "Telegram для связи", photosLabel: "Фотографии (до 5 шт.)", addPhotoBtn: "Добавить фото",
+                showMoreBtn: "Показать ещё",
                 toastUserNotFound: "Аккаунт не найден. Сначала зарегистрируйтесь!",
                 toastWrongPassword: "Неверный пароль!",
                 toastUserExists: "Такой логин уже занят!",
@@ -358,6 +366,7 @@
                 logoutBtn: "Log out", closeBtn: "Close", cancelBtn: "Cancel", deleteBtn: "Delete", saveBtn: "Save",
                 nameLabel: "Title", categoryLabel: "Category", cityLabel: "City", priceLabel: "Price (€)",
                 descLabel: "Description", tgLabel: "Telegram for contact", photosLabel: "Photos (up to 5)", addPhotoBtn: "Add photo",
+                showMoreBtn: "Show more",
                 toastUserNotFound: "Account not found. Please register first!",
                 toastWrongPassword: "Wrong password!",
                 toastUserExists: "Username is already taken!",
@@ -396,6 +405,7 @@
                 logoutBtn: "Odjavi se", closeBtn: "Zatvori", cancelBtn: "Otkaži", deleteBtn: "Obriši", saveBtn: "Sačuvaj",
                 nameLabel: "Naziv", categoryLabel: "Kategorija", cityLabel: "Grad", priceLabel: "Cijena (€)",
                 descLabel: "Opis", tgLabel: "Telegram za kontakt", photosLabel: "Fotografije (do 5)", addPhotoBtn: "Dodaj fotografiju",
+                showMoreBtn: "Prikaži još",
                 toastUserNotFound: "Nalog nije pronađen. Prvo se registrujte!",
                 toastWrongPassword: "Pogrešna lozinka!",
                 toastUserExists: "Korisničko ime je zauzeto!",
@@ -427,6 +437,10 @@
         let minPriceFilter = '';
         let maxPriceFilter = '';
         let postToDeleteId = null;
+
+        // Переменные для пагинации
+        let visiblePostsCount = 20;
+        const postsPerPage = 20;
         
         let rawFavorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
         let favorites = [...new Set(rawFavorites.map(id => String(id)))];
@@ -715,6 +729,7 @@
 
         function toggleMyPostsFilter() {
             showOnlyMyPosts = !showOnlyMyPosts;
+            visiblePostsCount = 20; // Сбрасываем пагинацию при смене фильтра
             const btn = document.getElementById('myPostsHeaderBtn');
             const banner = document.getElementById('myPostsBanner');
 
@@ -733,6 +748,7 @@
 
         function toggleFavoritesFilter() {
             showOnlyFavorites = !showOnlyFavorites;
+            visiblePostsCount = 20; // Сбрасываем пагинацию при смене фильтра
             const btn = document.getElementById('favoritesHeaderBtn');
             if (showOnlyFavorites) {
                 btn.classList.add('bg-rose-50', 'border', 'border-rose-200');
@@ -746,6 +762,7 @@
         function handlePriceFilterInput() {
             minPriceInput = document.getElementById('minPriceInput').value.trim();
             maxPriceInput = document.getElementById('maxPriceInput').value.trim();
+            visiblePostsCount = 20; // Сбрасываем пагинацию
             checkResetButtonVisibility();
             renderPosts();
         }
@@ -791,6 +808,7 @@
 
         function setCity(city) {
             selectedCity = city;
+            visiblePostsCount = 20; // Сбрасываем пагинацию
             document.querySelectorAll('.city-btn').forEach(btn => {
                 if (btn.getAttribute('data-city') === city) {
                     btn.className = "city-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer bg-gray-900 text-white shadow-xs shrink-0";
@@ -810,6 +828,7 @@
                 selectedCategory = cat;
                 categoryFiltersState = {};
             }
+            visiblePostsCount = 20; // Сбрасываем пагинацию
 
             document.querySelectorAll('.category-tile').forEach(tile => {
                 tile.classList.remove('ring-2', 'ring-[#009cf0]', 'bg-blue-50/50');
@@ -895,6 +914,7 @@
                 delete categoryFiltersState['size'];
             }
 
+            visiblePostsCount = 20; // Сбрасываем пагинацию
             renderDynamicCategoryFilters();
             checkResetButtonVisibility();
             renderPosts();
@@ -912,12 +932,14 @@
 
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
+                visiblePostsCount = 20; // Сбрасываем пагинацию
                 checkResetButtonVisibility();
                 renderPosts();
             }, 200);
         }
 
         function performSearchClick() {
+            visiblePostsCount = 20;
             checkResetButtonVisibility();
             renderPosts();
         }
@@ -926,6 +948,7 @@
             const input = document.getElementById('searchInput');
             input.value = '';
             searchQuery = '';
+            visiblePostsCount = 20;
             document.getElementById('clearSearchBtn').classList.add('hidden');
             checkResetButtonVisibility();
             renderPosts();
@@ -953,6 +976,7 @@
             searchQuery = '';
             showOnlyFavorites = false;
             showOnlyMyPosts = false;
+            visiblePostsCount = 20;
             
             const input = document.getElementById('searchInput');
             input.value = '';
@@ -1000,9 +1024,16 @@
             }
         }
 
+        // Функция кнопки "Показать ещё"
+        function loadMorePosts() {
+            visiblePostsCount += postsPerPage;
+            renderPosts();
+        }
+
         function renderPosts() {
             const container = document.getElementById('postsContainer');
             const emptyState = document.getElementById('emptyState');
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
             const sortBy = document.getElementById('sortSelect').value;
             const countText = document.getElementById('resultsCountText');
 
@@ -1040,6 +1071,7 @@
             if (filtered.length === 0) {
                 container.innerHTML = '';
                 container.classList.add('hidden');
+                loadMoreContainer.classList.add('hidden');
                 emptyState.classList.remove('hidden');
                 return;
             }
@@ -1047,10 +1079,22 @@
             emptyState.classList.add('hidden');
             container.classList.remove('hidden');
 
+            // Ограничиваем список объявлений текущим значением visiblePostsCount (по умолчанию 20)
+            const paginatedFiltered = filtered.slice(0, visiblePostsCount);
+
+            // Управляем видимостью кнопки "Показать ещё"
+            if (paginatedFiltered.length < filtered.length) {
+                loadMoreContainer.classList.remove('hidden');
+                loadMoreContainer.classList.add('flex');
+            } else {
+                loadMoreContainer.classList.add('hidden');
+                loadMoreContainer.classList.remove('flex');
+            }
+
             const citiesMap = dict[currentLang].cities;
             const now = new Date();
 
-            container.innerHTML = filtered.map(post => {
+            container.innerHTML = paginatedFiltered.map(post => {
                 const postIdStr = String(post.id);
                 const isFav = favorites.includes(postIdStr);
                 const isMine = isMyPost(post);
