@@ -300,7 +300,7 @@
         let postImages = [];
         let currentImageIndex = 0;
         let favorites = JSON.parse(localStorage.getItem('mne_favorites') || '[]');
-        let phoneRevealed = false; // Состояние открыт ли номер
+        let phoneRevealed = false;
 
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
@@ -621,7 +621,7 @@
 
             updateFavIcon();
 
-            // Отображение фото или заглушки "Без фото"
+            // Отображение фото или заглушки "Без фото" со стилем из Screenshot_2.png
             const imgElement = document.getElementById('mainProductImage');
             const placeholderElement = document.getElementById('noImagePlaceholder');
             const zoomBadge = document.getElementById('zoomBadge');
@@ -636,7 +636,15 @@
                 updateInlineButtonsVisibility();
             } else {
                 imgElement.classList.add('hidden');
-                placeholderElement.classList.remove('hidden');
+                placeholderElement.classList.remove('hidden', 'flex-col');
+                // Применяем точную стилизацию блока заглушки по аналогии с карточкой из Screenshot_2.png
+                placeholderElement.className = "flex flex-col items-center justify-center text-gray-400 select-none w-full h-full";
+                placeholderElement.innerHTML = `
+                    <div class="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center mb-2 border border-gray-100">
+                        <i data-lucide="camera" class="w-10 h-10 text-blue-500"></i>
+                    </div>
+                    <span class="text-xs font-bold tracking-wider text-gray-400" data-i18n="noPhoto">БЕЗ ФОТО</span>
+                `;
                 zoomBadge.style.display = 'none';
                 if (prevBtn) prevBtn.style.display = 'none';
                 if (nextBtn) nextBtn.style.display = 'none';
@@ -703,11 +711,9 @@
 
         function handlePhoneClick(phone) {
             if (!phoneRevealed) {
-                // Первый клик: убираем цензуру (показываем полный номер)
                 phoneRevealed = true;
                 updatePhoneButtonUI();
             } else {
-                // Второй клик: переводим на звонилку устройства
                 window.location.href = `tel:${phone}`;
             }
         }
