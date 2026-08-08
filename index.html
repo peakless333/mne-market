@@ -314,7 +314,7 @@
                 cat_services: "Услуги", cat_clothes: "Одежда и обувь", cat_kids: "Детские товары", cat_other: "Разное",
                 sort_newest: "Сначала новые", sort_cheap: "Сначала дешевле", sort_expensive: "Сначала дороже",
                 resetFilters: "Сбросить", priceFrom: "От", priceTo: "До", emptyTitle: "Ничего не найдено", emptyDesc: "Попробуйте изменить параметры поиска или сбросить фильтры.",
-                free: "Бесплатно", newBadge: "NEW", deletePost: "Удалить", editPost: "Редактировать", confirmDelete: "Объявление успешно удалено",
+                free: "Бесплатно", negotiable: "Договорная", newBadge: "NEW", deletePost: "Удалить", editPost: "Редактировать", confirmDelete: "Объявление успешно удалено",
                 confirmEdit: "Объявление успешно обновлено",
                 addedToFav: "Добавлено в избранное ❤️", removedFromFav: "Удалено из избранного",
                 myPostsModeTitle: "Управление вашими объявлениями", myPostsModeDesc: "Здесь отображаются только созданные вами товары.", closeMode: "Закрыть",
@@ -353,7 +353,7 @@
                 cat_services: "Services", cat_clothes: "Clothing & shoes", cat_kids: "Kids", cat_other: "Other",
                 sort_newest: "Newest first", sort_cheap: "Cheapest first", sort_expensive: "Most expensive",
                 resetFilters: "Reset", priceFrom: "From", priceTo: "To", emptyTitle: "No items found", emptyDesc: "Try changing search parameters.",
-                free: "Free", newBadge: "NEW", deletePost: "Delete", editPost: "Edit", confirmDelete: "Listing successfully deleted",
+                free: "Free", negotiable: "Negotiable", newBadge: "NEW", deletePost: "Delete", editPost: "Edit", confirmDelete: "Listing successfully deleted",
                 confirmEdit: "Listing successfully updated",
                 addedToFav: "Added to favorites ❤️", removedFromFav: "Removed from favorites",
                 myPostsModeTitle: "Manage your listings", myPostsModeDesc: "Only listings created by you are displayed here.", closeMode: "Close",
@@ -392,7 +392,7 @@
                 cat_services: "Usluge", cat_clothes: "Odjeća i obuća", cat_kids: "Za djecu", cat_other: "Razno",
                 sort_newest: "Najnovije", sort_cheap: "Najjeftinije", sort_expensive: "Najskuplje",
                 resetFilters: "Resetuj", priceFrom: "Od", priceTo: "Do", emptyTitle: "Nema rezultata", emptyDesc: "Pokušajte da promijenite parametre pretrage.",
-                free: "Besplatno", newBadge: "NOVO", deletePost: "Obriši", editPost: "Izmjeni", confirmDelete: "Oglas je uspješno obrisan",
+                free: "Besplatno", negotiable: "Po dogovoru", newBadge: "NOVO", deletePost: "Obriši", editPost: "Izmjeni", confirmDelete: "Oglas je uspješno obrisan",
                 confirmEdit: "Oglas je uspješno ažuriran",
                 addedToFav: "Dodato u omiljene ❤️", removedFromFav: "Uklonjeno iz omiljenih",
                 myPostsModeTitle: "Upravljanje vašim oglasima", myPostsModeDesc: "Ovdje se prikazuju samo vaši oglasi.", closeMode: "Zatvori",
@@ -1052,17 +1052,33 @@
                 if (showOnlyFavorites && !favorites.includes(postIdStr)) return false;
                 if (showOnlyMyPosts && !isMyPost(post)) return false;
 
-                const postPrice = Number(post.price || 0);
-                if (minPriceInput !== '' && !isNaN(minPriceInput) && postPrice < Number(minPriceInput)) return false;
-                if (maxPriceInput !== '' && !isNaN(maxPriceInput) && postPrice > Number(maxPriceInput)) return false;
+                // Проверка цены (если цена договорная, пропускаем фильтр мин/макс цен, чтобы она всегда показывалась)
+                const isNegotiable = String(post.price).toLowerCase() === 'договорная' || String(post.price).toLowerCase() === 'negotiable' || String(post.price).toLowerCase() === 'po dogovoru';
+                
+                if (!isNegotiable) {
+                    const postPrice = Number(post.price || 0);
+                    if (minPriceInput !== '' && !isNaN(minPriceInput) && postPrice < Number(minPriceInput)) return false;
+                    if (maxPriceInput !== '' && !isNaN(maxPriceInput) && postPrice > Number(maxPriceInput)) return false;
+                }
 
                 if (searchQuery && !post.title.toLowerCase().includes(searchQuery) && !(post.description && post.description.toLowerCase().includes(searchQuery))) return false;
                 return true;
             });
 
             filtered.sort((a, b) => {
-                if (sortBy === 'cheap') return (a.price || 0) - (b.price || 0);
-                if (sortBy === 'expensive') return (b.price || 0) - (a.price || 0);
+                const aNeg = String(a.price).toLowerCase() === 'договорная' || String(a.price).toLowerCase() === 'negotiable' || String(a.price).toLowerCase() === 'po dogovoru';
+                const bNeg = String(b.price).toLowerCase() === 'договорная' || String(b.price).toLowerCase() === 'negotiable' || String(b.price).toLowerCase() === 'po dogovoru';
+
+                if (sortBy === 'cheap') {
+                    if (aNeg) return 1;
+                    if (bNeg) return -1;
+                    return (Number(a.price) || 0) - (Number(b.price) || 0);
+                }
+                if (sortBy === 'expensive') {
+                    if (aNeg) return 1;
+                    if (bNeg) return -1;
+                    return (Number(b.price) || 0) - (Number(a.price) || 0);
+                }
                 return new Date(b.created_at || 0) - new Date(a.created_at || 0);
             });
 
@@ -1100,8 +1116,16 @@
                 const isMine = isMyPost(post);
                 const cityName = citiesMap[post.city] || post.city;
                 
-                const formattedNumber = Number(post.price || 0).toLocaleString('ru-RU');
-                const priceText = post.price > 0 ? `${formattedNumber}&thinsp;€` : dict[currentLang].free;
+                const rawPriceStr = String(post.price || '').toLowerCase().trim();
+                const isNegotiable = rawPriceStr === 'договорная' || rawPriceStr === 'negotiable' || rawPriceStr === 'po dogovoru';
+
+                let priceText = '';
+                if (isNegotiable) {
+                    priceText = dict[currentLang].negotiable;
+                } else {
+                    const numericPrice = Number(post.price || 0);
+                    priceText = numericPrice > 0 ? `${numericPrice.toLocaleString('ru-RU')}&thinsp;€` : dict[currentLang].free;
+                }
                 
                 let rawImage = post.image_url || (post.images && post.images[0]);
                 const hasValidImage = rawImage && rawImage.trim() !== '' && !rawImage.includes('images.unsplash.com') && !rawImage.startsWith('data:image/svg+xml');
