@@ -187,6 +187,34 @@
                 },
                 attrs: {
                     condition: { label: "Состояние", opts: { new: "Новое", used: "Б/У" } },
+                    property_type: { 
+                        label: "Тип недвижимости", 
+                        opts: { 
+                            apartment: "Апартаменты / Квартира", 
+                            house: "Дом / Вилла", 
+                            room: "Комната", 
+                            commercial: "Коммерческая недвижимость", 
+                            land: "Участок" 
+                        } 
+                    },
+                    property_deal_type: { 
+                        label: "Тип сделки", 
+                        opts: { 
+                            long_rent: "Долгосрочная аренда (на год)", 
+                            daily_rent: "Посуточная аренда", 
+                            sale: "Продажа" 
+                        } 
+                    },
+                    rooms_count: { 
+                        label: "Количество комнат", 
+                        opts: { 
+                            studio: "Студия", 
+                            "1": "1 комната", 
+                            "2": "2 комнаты", 
+                            "3": "3 комнаты", 
+                            "4_plus": "4+ комнат" 
+                        } 
+                    },
                     services_type: { 
                         label: "Вид услуги", 
                         opts: { beauty: "Красота", repair: "Ремонт/Строительство", auto: "Авто", it: "Услуги / IT", other: "Другое" } 
@@ -240,6 +268,34 @@
                 },
                 attrs: {
                     condition: { label: "Condition", opts: { new: "New", used: "Used" } },
+                    property_type: { 
+                        label: "Property Type", 
+                        opts: { 
+                            apartment: "Apartment / Flat", 
+                            house: "House / Villa", 
+                            room: "Room", 
+                            commercial: "Commercial Property", 
+                            land: "Land Plot" 
+                        } 
+                    },
+                    property_deal_type: { 
+                        label: "Deal Type", 
+                        opts: { 
+                            long_rent: "Long-term Rent (yearly)", 
+                            daily_rent: "Daily Rent", 
+                            sale: "Sale" 
+                        } 
+                    },
+                    rooms_count: { 
+                        label: "Rooms Count", 
+                        opts: { 
+                            studio: "Studio", 
+                            "1": "1 room", 
+                            "2": "2 rooms", 
+                            "3": "3 rooms", 
+                            "4_plus": "4+ rooms" 
+                        } 
+                    },
                     services_type: { 
                         label: "Service Type", 
                         opts: { beauty: "Beauty", repair: "Repair & Construction", auto: "Auto", it: "Services / IT", other: "Other" } 
@@ -293,6 +349,34 @@
                 },
                 attrs: {
                     condition: { label: "Stanje", opts: { new: "Novo", used: "Korišćeno" } },
+                    property_type: { 
+                        label: "Tip nekretnine", 
+                        opts: { 
+                            apartment: "Apartman / Stan", 
+                            house: "Kuća / Vila", 
+                            room: "Soba", 
+                            commercial: "Komercijalni prostor", 
+                            land: "Zemljište" 
+                        } 
+                    },
+                    property_deal_type: { 
+                        label: "Tip oglasa", 
+                        opts: { 
+                            long_rent: "Dugoročni najam (na godinu)", 
+                            daily_rent: "Dnevni najam", 
+                            sale: "Prodaja" 
+                        } 
+                    },
+                    rooms_count: { 
+                        label: "Broj soba", 
+                        opts: { 
+                            studio: "Studio", 
+                            "1": "1 soba", 
+                            "2": "2 sobe", 
+                            "3": "3 sobe", 
+                            "4_plus": "4+ soba" 
+                        } 
+                    },
                     services_type: { 
                         label: "Vrsta usluge", 
                         opts: { beauty: "Ljepota", repair: "Popravka/Gradnja", auto: "Auto", it: "Usluge / IT", other: "Ostalo" } 
@@ -545,6 +629,33 @@
 
             let html = '';
             
+            if (attrs.property_type && aDict.property_type.opts[attrs.property_type]) {
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${aDict.property_type.label}</span>
+                        <span class="font-semibold text-gray-800">${aDict.property_type.opts[attrs.property_type]}</span>
+                    </div>
+                `;
+            }
+
+            if (attrs.property_deal_type && aDict.property_deal_type.opts[attrs.property_deal_type]) {
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${aDict.property_deal_type.label}</span>
+                        <span class="font-semibold text-gray-800">${aDict.property_deal_type.opts[attrs.property_deal_type]}</span>
+                    </div>
+                `;
+            }
+
+            if (attrs.rooms_count && aDict.rooms_count.opts[attrs.rooms_count]) {
+                html += `
+                    <div class="flex justify-between text-xs py-1 border-b border-gray-50">
+                        <span class="text-gray-400 font-medium">${aDict.rooms_count.label}</span>
+                        <span class="font-semibold text-gray-800">${aDict.rooms_count.opts[attrs.rooms_count]}</span>
+                    </div>
+                `;
+            }
+
             if (attrs.condition && aDict.condition.opts[attrs.condition]) {
                 html += `
                     <div class="flex justify-between text-xs py-1 border-b border-gray-50">
