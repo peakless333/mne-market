@@ -50,10 +50,10 @@
                     <div id="mainImageWrapper" class="relative h-[380px] bg-gray-50 rounded-xl overflow-hidden group flex items-center justify-center">
                         <!-- Само изображение или Заглушка Без фото -->
                         <div id="noImagePlaceholder" class="hidden flex flex-col items-center justify-center text-gray-400 select-none w-full h-full">
-                            <div class="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center mb-2 border border-gray-100">
-                                <i data-lucide="camera" class="w-10 h-10 text-blue-500"></i>
+                            <div class="w-12 h-12 rounded-2xl bg-white/80 shadow-sm flex items-center justify-center text-[#009cf0] mb-1">
+                                <i data-lucide="camera" class="w-6 h-6"></i>
                             </div>
-                            <span class="text-xs font-bold tracking-wider text-gray-400" data-i18n="noPhoto">БЕЗ ФОТО</span>
+                            <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider" data-i18n="noPhoto">БЕЗ ФОТО</span>
                         </div>
                         
                         <img id="mainProductImage" src="" onclick="openFullscreen()" class="w-full h-full object-contain cursor-zoom-in" alt="Product">
@@ -621,7 +621,7 @@
 
             updateFavIcon();
 
-            // Отображение фото или заглушки "Без фото" со стилем из index.html
+            // Отображение фото или заглушки "Без фото" с градиентом как на главной
             const imgElement = document.getElementById('mainProductImage');
             const placeholderElement = document.getElementById('noImagePlaceholder');
             const zoomBadge = document.getElementById('zoomBadge');
@@ -637,12 +637,12 @@
             } else {
                 imgElement.classList.add('hidden');
                 placeholderElement.classList.remove('hidden');
-                placeholderElement.className = "flex flex-col items-center justify-center text-gray-400 select-none w-full h-full";
+                placeholderElement.className = "w-full h-full bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 flex flex-col items-center justify-center text-gray-400 select-none";
                 placeholderElement.innerHTML = `
-                    <div class="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center mb-2 border border-gray-100">
-                        <i data-lucide="camera" class="w-10 h-10 text-blue-500"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-white/80 shadow-sm flex items-center justify-center text-[#009cf0] mb-1">
+                        <i data-lucide="camera" class="w-6 h-6"></i>
                     </div>
-                    <span class="text-xs font-bold tracking-wider text-gray-400" data-i18n="noPhoto">БЕЗ ФОТО</span>
+                    <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider" data-i18n="noPhoto">БЕЗ ФОТО</span>
                 `;
                 zoomBadge.style.display = 'none';
                 if (prevBtn) prevBtn.style.display = 'none';
@@ -721,4 +721,3 @@
     </script>
 </body>
 </html>
-```[cite: 16]
