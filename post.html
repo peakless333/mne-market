@@ -324,7 +324,7 @@
             await supabaseClient.from('posts').update({ views: newViews }).eq('id', postId);
             currentPost.views = newViews;
 
-            // Собираем картинки и фильтруем мусор (если в базу случайно попала та самая дефолтная ссылка кресла)
+            // Собираем картинки без дефолтной ссылки
             postImages = [];
             const rawImages = currentPost.images && currentPost.images.length > 0 ? currentPost.images : (currentPost.image_url ? [currentPost.image_url] : []);
             
@@ -613,7 +613,7 @@
             
             renderAttributes();
 
-            // Обработка контактов (если указан только телефон или телеграм)
+            // Обработка контактов
             const contactContainer = document.getElementById('contactButtonContainer');
             if (currentPost.phone && !currentPost.telegram) {
                 updatePhoneButtonUI();
@@ -628,7 +628,7 @@
 
             updateFavIcon();
 
-            // Отображение фото или заглушки "Без фото" с градиентом как на главной
+            // Отображение фото или красивой плашки камеры с градиентом
             const imgElement = document.getElementById('mainProductImage');
             const placeholderElement = document.getElementById('noImagePlaceholder');
             const zoomBadge = document.getElementById('zoomBadge');
@@ -673,13 +673,12 @@
             
             if (similar.length > 0) {
                 similarContainer.innerHTML = similar.map(p => {
-                    // Также очищаем похожие от дефолтной картинки кресла
                     const cleanPImages = (p.images || []).filter(i => !i.includes('images.unsplash.com/photo-1555041469'));
                     const sImg = cleanPImages.length > 0 ? cleanPImages[0] : ((p.image_url && !p.image_url.includes('images.unsplash.com/photo-1555041469')) ? p.image_url : '');
                     const sPrice = formatPrice(p.price);
                     return `
                         <a href="post.html?id=${p.id}" class="bg-white rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-3 group">
-                            ${sImg ? `<img src="${sImg}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="Similar">` : `<div class="w-16 h-16 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100"><i data-lucide="camera" class="w-6 h-6 text-gray-300"></i></div>`}
+                            ${sImg ? `<img src="${sImg}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="Similar">` : `<div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 flex items-center justify-center shrink-0 border border-gray-100 text-[#009cf0]"><i data-lucide="camera" class="w-6 h-6"></i></div>`}
                             <div class="min-w-0 flex-1">
                                 <h4 class="font-semibold text-xs text-gray-900 truncate group-hover:text-blue-600 transition-colors">${p.title}</h4>
                                 <p class="text-[11px] text-gray-400 mt-0.5">${dict[currentLang].cities[p.city] || p.city}</p>
