@@ -155,7 +155,7 @@
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_furniture">Мебель</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">🛋️</div>
             </div>
-            <div onclick="setCategory(event, 'property')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
+            <div onclick="setCategory(event, 'realestate')" class="category-tile bg-white hover:bg-blue-50/40 border border-gray-200/80 hover:border-blue-300 rounded-2xl p-3.5 transition-all cursor-pointer flex flex-col justify-between h-28 group relative overflow-hidden shadow-xs">
                 <span class="text-xs font-bold text-gray-900 group-hover:text-[#009cf0] transition-colors" data-i18n="cat_property">Недвижимость</span>
                 <div class="self-end text-2xl group-hover:scale-110 transition-transform">🏢</div>
             </div>
@@ -338,7 +338,7 @@
                 cities: { budva: "Будва", bar: "Бар", tivat: "Тиват", podgorica: "Подгорица", kotor: "Котор", herceg_novi: "Херцег-Нови" },
                 attrs: {
                     condition: { label: "Состояние", opts: { all: "Любое", new: "Новое", used: "Б/У" } },
-                    property_type: { 
+                    realestate_type: { 
                         label: "Тип недвижимости", 
                         opts: { 
                             all: "Все типы",
@@ -349,7 +349,7 @@
                             land: "Участок" 
                         } 
                     },
-                    property_deal_type: { 
+                    realestate_deal_type: { 
                         label: "Тип сделки", 
                         opts: { 
                             all: "Все сделки",
@@ -408,8 +408,8 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Condition", opts: { all: "Any", new: "New", used: "Used" } },
-                    property_type: { 
-                        label: "Property Type", 
+                    realestate_type: { 
+                        label: "Real estate Type", 
                         opts: { 
                             all: "All types",
                             apartment: "Apartment / Flat", 
@@ -419,7 +419,7 @@
                             land: "Land Plot" 
                         } 
                     },
-                    property_deal_type: { 
+                    realestate_deal_type: { 
                         label: "Deal Type", 
                         opts: { 
                             all: "All deals",
@@ -478,7 +478,7 @@
                 cities: { budva: "Budva", bar: "Bar", tivat: "Tivat", podgorica: "Podgorica", kotor: "Kotor", herceg_novi: "Herceg Novi" },
                 attrs: {
                     condition: { label: "Stanje", opts: { all: "Bilo koje", new: "Novo", used: "Korišćeno" } },
-                    property_type: { 
+                    realestate_type: { 
                         label: "Tip nekretnine", 
                         opts: { 
                             all: "Svi tipovi",
@@ -489,7 +489,7 @@
                             land: "Zemljište" 
                         } 
                     },
-                    property_deal_type: { 
+                    realestate_deal_type: { 
                         label: "Tip oglasa", 
                         opts: { 
                             all: "Sve ponude",
@@ -948,9 +948,9 @@
             container.classList.remove('hidden');
             let html = '<div class="flex flex-wrap items-center gap-3 text-xs">';
 
-            if (selectedCategory === 'property') {
-                html += renderSelectFilter('property_type', a.property_type.label, a.property_type.opts);
-                html += renderSelectFilter('property_deal_type', a.property_deal_type.label, a.property_deal_type.opts);
+            if (selectedCategory === 'realestate') {
+                html += renderSelectFilter('realestate_type', a.realestate_type.label, a.realestate_type.opts);
+                html += renderSelectFilter('realestate_deal_type', a.realestate_deal_type.label, a.realestate_deal_type.opts);
                 html += renderSelectFilter('rooms_count', a.rooms_count.label, a.rooms_count.opts);
             } else if (selectedCategory === 'clothes') {
                 html += renderSelectFilter('condition', a.condition.label, a.condition.opts);
